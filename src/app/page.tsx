@@ -1,103 +1,160 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+import Link from 'next/link'
+import { Button } from 'primereact/button'
+import { Card } from 'primereact/card'
+import { NewsTicker } from '@/components/news-ticker'
+import { useNewsTicker } from '@/hooks/useNewsTicker'
+import { useStockData } from '@/hooks/useStockData'
+import { useAIInsight } from '@/hooks/useAIInsight'
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+export default function HomePage() {
+	const { news } = useNewsTicker()
+	const { stocks } = useStockData()
+	const { insight } = useAIInsight()
+
+	// Calculate summary stats
+	const totalStocks = stocks.length
+	const positiveStocks = stocks.filter(s => s.change >= 0).length
+	const negativeStocks = stocks.filter(s => s.change < 0).length
+	const avgChange = stocks.length > 0 
+		? stocks.reduce((sum, s) => sum + s.changePercent, 0) / stocks.length 
+		: 0
+
+	return (
+		<div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+			{/* Sticky News Ticker */}
+			<div className="sticky top-0 z-50">
+				<NewsTicker news={news} />
+			</div>
+
+			{/* Main Content */}
+			<div className="container mx-auto px-4 py-8">
+				{/* Hero Section */}
+				<div className="text-center mb-12">
+					<div className="mb-6">
+						<h1 className="text-5xl font-bold text-white mb-4">
+							Market-Mage
+						</h1>
+						<p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+							Your AI-powered companion for intelligent trading decisions. 
+							Get real-time market insights, track your portfolio, and receive 
+							daily AI-generated trading recommendations.
+						</p>
+						<Link href="/dashboard">
+							<Button 
+								label="Launch Dashboard" 
+								icon="pi pi-chart-line"
+								className="p-button-primary p-button-lg"
+								size="large"
+							/>
+						</Link>
+					</div>
+				</div>
+
+				{/* Features Grid */}
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+					<Card className="text-center">
+						<div className="mb-4">
+							<i className="pi pi-chart-line text-4xl text-orange-500"></i>
+						</div>
+						<h3 className="text-xl font-semibold mb-2">Real-Time Data</h3>
+						<p className="text-gray-600">
+							Live stock prices and market data updated every 5 minutes
+						</p>
+					</Card>
+
+					<Card className="text-center">
+						<div className="mb-4">
+							<i className="pi pi-magic text-4xl text-orange-500"></i>
+						</div>
+						<h3 className="text-xl font-semibold mb-2">AI Oracle</h3>
+						<p className="text-gray-600">
+							Daily AI-powered trading insights and market analysis
+						</p>
+					</Card>
+
+					<Card className="text-center">
+						<div className="mb-4">
+							<i className="pi pi-book text-4xl text-orange-500"></i>
+						</div>
+						<h3 className="text-xl font-semibold mb-2">Portfolio Tracking</h3>
+						<p className="text-gray-600">
+							Manage your watchlist and track historical notes
+						</p>
+					</Card>
+				</div>
+
+				{/* Quick Stats */}
+				{totalStocks > 0 && (
+					<div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+						<Card className="text-center">
+							<div className="text-2xl font-bold text-orange-500 mb-1">
+								{totalStocks}
+							</div>
+							<div className="text-sm text-gray-600">Stocks Tracked</div>
+						</Card>
+						<Card className="text-center">
+							<div className="text-2xl font-bold text-green-500 mb-1">
+								{positiveStocks}
+							</div>
+							<div className="text-sm text-gray-600">Gaining</div>
+						</Card>
+						<Card className="text-center">
+							<div className="text-2xl font-bold text-red-500 mb-1">
+								{negativeStocks}
+							</div>
+							<div className="text-sm text-gray-600">Declining</div>
+						</Card>
+						<Card className="text-center">
+							<div className={`text-2xl font-bold mb-1 ${avgChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+								{avgChange >= 0 ? '+' : ''}{avgChange.toFixed(2)}%
+							</div>
+							<div className="text-sm text-gray-600">Avg Change</div>
+						</Card>
+					</div>
+				)}
+
+				{/* Latest AI Insight Preview */}
+				{insight && (
+					<Card className="mb-8">
+						<div className="flex items-center gap-2 mb-4">
+							<i className="pi pi-lightbulb text-orange-500 text-xl"></i>
+							<h3 className="text-xl font-semibold">Today&apos;s AI Insight</h3>
+						</div>
+						<p className="text-gray-600 mb-4 line-clamp-3">
+							{insight.content.substring(0, 200)}...
+						</p>
+						<Link href="/dashboard">
+							<Button 
+								label="Read Full Insight" 
+								icon="pi pi-arrow-right"
+								className="p-button-text"
+							/>
+						</Link>
+					</Card>
+				)}
+
+				{/* Call to Action */}
+				<div className="text-center">
+					<Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white">
+						<h3 className="text-2xl font-bold mb-4">
+							Ready to Start Trading Smarter?
+						</h3>
+						<p className="text-orange-100 mb-6">
+							Join thousands of traders who use Market-Mage to make informed decisions
+						</p>
+						<Link href="/dashboard">
+							<Button 
+								label="Get Started Now" 
+								icon="pi pi-rocket"
+								className="p-button-outlined p-button-white"
+								size="large"
+							/>
+						</Link>
+					</Card>
+				</div>
+			</div>
+		</div>
+	)
 }

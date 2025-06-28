@@ -1,36 +1,216 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Market-Mage 🧙‍♂️
 
-## Getting Started
+A modern, AI-powered stock dashboard built with Next.js 15, TypeScript, and PrimeReact. Get real-time market data, AI-generated trading insights, and portfolio management tools.
 
-First, run the development server:
+## ✨ Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **📊 Real-Time Stock Data**: Live prices updated every 5 minutes
+- **🤖 AI Oracle**: Daily AI-powered trading insights (1 per day limit)
+- **📰 Live News Ticker**: Scrolling financial news banner
+- **📝 Historical Notes**: Track your trading observations
+- **📱 Mobile-First Design**: Fully responsive interface
+- **🎨 Viva Dark Theme**: Beautiful PrimeReact Viva Dark theme
+- **💾 Local Storage**: All data stored locally for privacy
+- **📈 CSV Export**: Export your portfolio data
+
+## 🚀 Tech Stack
+
+- **Framework**: Next.js 15+ (App Router)
+- **Language**: TypeScript
+- **Styling**: TailwindCSS + PrimeReact
+- **UI Components**: PrimeReact (Viva Dark theme)
+- **AI**: OpenAI GPT-3.5/4 API
+- **Stock Data**: Alpha Vantage API (free tier)
+- **News**: NewsAPI (free tier)
+- **Deployment**: Netlify ready
+
+## 📦 Installation
+
+1. **Clone the repository**
+
+   ```bash
+   git clone <your-repo-url>
+   cd market-mage
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   Create a `.env.local` file in the root directory:
+
+   ```env
+   # OpenAI API Key (required for AI insights)
+   OPENAI_API_KEY=your_openai_api_key_here
+
+   # Alpha Vantage API Key (optional, uses demo key if not provided)
+   NEXT_PUBLIC_ALPHA_VANTAGE_API_KEY=your_alpha_vantage_key_here
+
+   # News API Key (optional, uses mock data if not provided)
+   NEXT_PUBLIC_NEWS_API_KEY=your_news_api_key_here
+   ```
+
+4. **Run the development server**
+
+   ```bash
+   npm run dev
+   ```
+
+5. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## 🔧 API Keys Setup
+
+### OpenAI API Key (Required for AI Insights)
+
+1. Go to [OpenAI Platform](https://platform.openai.com/)
+2. Create an account and get your API key
+3. Add it to `.env.local` as `OPENAI_API_KEY`
+
+### Alpha Vantage API Key (Optional)
+
+1. Go to [Alpha Vantage](https://www.alphavantage.co/)
+2. Get a free API key
+3. Add it to `.env.local` as `NEXT_PUBLIC_ALPHA_VANTAGE_API_KEY`
+
+### News API Key (Optional)
+
+1. Go to [NewsAPI](https://newsapi.org/)
+2. Get a free API key
+3. Add it to `.env.local` as `NEXT_PUBLIC_NEWS_API_KEY`
+
+## 📱 Usage
+
+### Homepage (`/`)
+
+- Sticky news ticker with live financial news
+- Quick stats overview of your portfolio
+- Navigation to the main dashboard
+
+### Dashboard (`/dashboard`)
+
+- **Watchlist Tab**: View and manage your stock portfolio
+- **AI Oracle Tab**: Get daily AI-generated trading insights
+- **Historical Notes Tab**: Track your trading observations
+
+### Adding Stocks
+
+1. Click "Add Stock" button
+2. Enter stock symbol (e.g., AAPL, MSFT)
+3. Enter company name
+4. Stock will be added to your watchlist
+
+### AI Insights
+
+- Generate one insight per day
+- Insights reset at midnight
+- Manual refresh available after daily limit
+
+## 🏗️ Project Structure
+
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── api/               # API routes
+│   ├── dashboard/         # Dashboard page
+│   └── page.tsx           # Homepage
+├── components/            # React components
+│   ├── ai-oracle.tsx      # AI insights component
+│   ├── add-stock.tsx      # Add stock dialog
+│   ├── historical-notes.tsx # Notes management
+│   ├── news-ticker.tsx    # News ticker
+│   └── stock-table.tsx    # Stock data table
+├── hooks/                 # Custom React hooks
+│   ├── useAIInsight.ts    # AI insight management
+│   ├── useNewsTicker.ts   # News data
+│   └── useStockData.ts    # Stock data management
+├── lib/                   # Library configurations
+│   └── providers/         # Context providers
+├── types/                 # TypeScript type definitions
+└── utils/                 # Utility functions
+    ├── api.ts             # API utilities
+    ├── date.ts            # Date utilities
+    └── storage.ts         # Local storage utilities
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🎨 Customization
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Theme
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The app uses PrimeReact's Viva Dark theme. To customize:
 
-## Learn More
+1. Modify `src/app/globals.css`
+2. Update theme imports
+3. Adjust Tailwind classes
 
-To learn more about Next.js, take a look at the following resources:
+### Styling
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Uses TailwindCSS for utility-first styling
+- PrimeReact components for UI elements
+- Custom CSS for animations and scrollbars
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🚀 Deployment
 
-## Deploy on Vercel
+### Netlify (Recommended)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Connect your GitHub repository to Netlify
+2. Set environment variables in Netlify dashboard
+3. Deploy automatically on push to main branch
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Vercel
+
+1. Connect your GitHub repository to Vercel
+2. Set environment variables in Vercel dashboard
+3. Deploy automatically on push to main branch
+
+## 📊 Data Storage
+
+All data is stored in the browser's localStorage:
+
+- **Watchlist**: Stock symbols and company names
+- **AI Insights**: Daily generated insights with expiration
+- **Historical Notes**: Trading observations and notes
+
+## 🔒 Privacy
+
+- No data is sent to external servers except for API calls
+- All personal data stays in your browser
+- No user accounts or authentication required
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 🆘 Support
+
+If you encounter any issues:
+
+1. Check the browser console for errors
+2. Verify your API keys are correct
+3. Ensure all dependencies are installed
+4. Create an issue on GitHub
+
+## 🔮 Future Features
+
+- [ ] Real-time price alerts
+- [ ] Technical indicators
+- [ ] Portfolio performance charts
+- [ ] Social trading features
+- [ ] Multiple watchlists
+- [ ] Advanced AI insights
+- [ ] Market sentiment analysis
+
+---
+
+**Built with ❤️ using Next.js, TypeScript, and PrimeReact**

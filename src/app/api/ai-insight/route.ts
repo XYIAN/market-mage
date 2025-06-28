@@ -1,9 +1,4 @@
 import { NextResponse } from 'next/server'
-import OpenAI from 'openai'
-
-const openai = new OpenAI({
-	apiKey: process.env.OPENAI_API_KEY
-})
 
 export async function POST() {
 	try {
@@ -13,6 +8,13 @@ export async function POST() {
 				{ status: 500 }
 			)
 		}
+
+		// Only import OpenAI if API key is available
+		const { default: OpenAI } = await import('openai')
+		
+		const openai = new OpenAI({
+			apiKey: process.env.OPENAI_API_KEY
+		})
 
 		const prompt = `You are a financial analyst and trading expert. Provide a concise, actionable trading insight for today's market. Focus on:
 

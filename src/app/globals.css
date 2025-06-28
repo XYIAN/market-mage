@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 /* PrimeReact Theme */
-@import "primereact/resources/themes/lara-dark-orange/theme.css";
-@import "primereact/resources/primereact.min.css";
-@import "primeicons/primeicons.css";
-@import "primeflex/primeflex.css";
+@import 'primereact/resources/themes/viva-dark/theme.css';
+@import 'primereact/resources/primereact.min.css';
+@import 'primeicons/primeicons.css';
+@import 'primeflex/primeflex.css';
 
 :root {
   --foreground-rgb: 255, 255, 255;
@@ -25,11 +25,11 @@
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
-    to bottom,
-    transparent,
-    rgb(var(--background-end-rgb))
-  )
-  rgb(var(--background-start-rgb));
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
 }
 
 /* Custom scrollbar */
@@ -56,3 +56,29 @@ body {
   }
   100% {
     transform: translateX(-100%);
+  }
+}
+
+.ticker-animation {
+  animation: ticker 30s linear infinite;
+}
+
+/* Custom card styles */
+.card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .p-datatable .p-datatable-thead > tr > th {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .p-datatable .p-datatable-tbody > tr > td {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+  }
+}
