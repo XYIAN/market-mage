@@ -4,15 +4,16 @@ import { Card } from 'primereact/card'
 import { useStockData } from '@/hooks/useStockData'
 
 export const StatsSection = () => {
-  const { stocks } = useStockData()
+  const { stockData } = useStockData([])
 
   // Calculate summary stats
-  const totalStocks = stocks.length
-  const positiveStocks = stocks.filter((s) => s.change >= 0).length
-  const negativeStocks = stocks.filter((s) => s.change < 0).length
+  const totalStocks = stockData.length
+  const positiveStocks = stockData.filter((s) => s.change >= 0).length
+  const negativeStocks = stockData.filter((s) => s.change < 0).length
   const avgChange =
-    stocks.length > 0
-      ? stocks.reduce((sum, s) => sum + s.changePercent, 0) / stocks.length
+    stockData.length > 0
+      ? stockData.reduce((sum, s) => sum + s.changePercent, 0) /
+        stockData.length
       : 0
 
   if (totalStocks === 0) return null

@@ -16,16 +16,22 @@ import { storageUtils } from '@/utils/storage'
 import { apiUtils } from '@/utils/api'
 
 export default function DashboardPage() {
-  const { stocks, loading, refresh } = useStockData()
   const [showAddDialog, setShowAddDialog] = useState(false)
   const [newSymbol, setNewSymbol] = useState('')
   const [addLoading, setAddLoading] = useState(false)
   const [notes, setNotes] = useState<HistoricalNote[]>([])
+  const [watchlist, setWatchlist] = useState<
+    { symbol: string; name: string }[]
+  >([])
   const toast = useRef<Toast>(null)
 
   useEffect(() => {
     setNotes(storageUtils.getHistoricalNotes())
+    setWatchlist(storageUtils.getWatchlist())
   }, [])
+
+  const symbols = watchlist.map((item) => item.symbol)
+  const { stockData, loading, refresh } = useStockData(symbols)
 
   const handleAddStock = async () => {
     if (!newSymbol.trim()) return
@@ -38,6 +44,7 @@ export default function DashboardPage() {
         storageUtils.addToWatchlist(stock.symbol, stock.name)
         setNewSymbol('')
         setShowAddDialog(false)
+        setWatchlist(storageUtils.getWatchlist())
         refresh() // Refresh the stock data
 
         toast.current?.show({
@@ -68,6 +75,7 @@ export default function DashboardPage() {
 
   const handleRemoveStock = (symbol: string) => {
     storageUtils.removeFromWatchlist(symbol)
+    setWatchlist(storageUtils.getWatchlist())
     refresh() // Refresh the stock data
 
     toast.current?.show({
@@ -122,7 +130,7 @@ export default function DashboardPage() {
     )
   }
 
-  if (stocks.length === 0 && !loading) {
+  if (stockData.length === 0 && !loading) {
     return (
       <div className="min-h-screen p-4">
         <Toast ref={toast} />
@@ -235,7 +243,7 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <DataTable
-                  value={stocks}
+                  value={stockData}
                   responsiveLayout="scroll"
                   className="p-datatable-sm"
                   scrollable

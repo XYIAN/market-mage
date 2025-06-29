@@ -3,86 +3,56 @@
 import { useState, useEffect, useCallback } from 'react'
 import { StockData } from '@/types'
 import { apiUtils } from '@/utils/api'
-import { storageUtils } from '@/utils/storage'
+import { useWizardToast } from '@/components/layout/WizardToastProvider'
+import { createWizardToast } from '@/utils/toast'
 
-export const useStockData = () => {
-  const [stocks, setStocks] = useState<StockData[]>([])
+export const useStockData = (symbols: string[]) => {
+  const [stockData, setStockData] = useState<StockData[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+  const { show } = useWizardToast()
 
-  const fetchStocks = useCallback(async () => {
+  const fetchStockData = useCallback(async () => {
+    if (!symbols.length) return
+
     setLoading(true)
     setError(null)
 
     try {
-      const watchlist = storageUtils.getWatchlist()
-      const symbols = watchlist.map((item) => item.symbol)
-
-      if (symbols.length === 0) {
-        setStocks([])
-        return
-      }
-
-      const stockData = await apiUtils.fetchStockData(symbols)
-
-      // Merge with watchlist data to get company names
-      const enrichedData = stockData.map((stock) => {
-        const watchlistItem = watchlist.find((w) => w.symbol === stock.symbol)
-        return {
-          ...stock,
-          name: watchlistItem?.name || stock.symbol,
-        }
-      })
-
-      setStocks(enrichedData)
-      setLastUpdated(new Date())
+      const data = await apiUtils.fetchStockData(symbols)
+      setStockData(data)
+      show(
+        createWizardToast({
+          action: 'stock',
+          success: true,
+          customMessage: `📈 Stock prophecy revealed! ${symbols.length} symbols updated.`,
+        })
+      )
     } catch (err) {
+      console.error(`Error fetching stock data for ${symbols.join(', ')}:`, err)
       setError(
         err instanceof Error ? err.message : 'Failed to fetch stock data'
+      )
+      show(
+        createWizardToast({
+          action: 'stock',
+          success: false,
+          customMessage: `📉 The market oracle is silent. Stock data unavailable.`,
+        })
       )
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [symbols, show])
 
-  // Initial fetch
   useEffect(() => {
-    fetchStocks()
-  }, [fetchStocks])
-
-  // Auto-refresh every 5 minutes
-  useEffect(() => {
-    const interval = setInterval(() => {
-      fetchStocks()
-    }, 5 * 60 * 1000) // 5 minutes
-
-    return () => clearInterval(interval)
-  }, [fetchStocks])
-
-  // Refresh when user becomes active
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (!document.hidden && lastUpdated) {
-        const timeSinceUpdate = Date.now() - lastUpdated.getTime()
-        const fiveMinutes = 5 * 60 * 1000
-
-        if (timeSinceUpdate > fiveMinutes) {
-          fetchStocks()
-        }
-      }
-    }
-
-    document.addEventListener('visibilitychange', handleVisibilityChange)
-    return () =>
-      document.removeEventListener('visibilitychange', handleVisibilityChange)
-  }, [fetchStocks, lastUpdated])
+    fetchStockData()
+  }, [fetchStockData])
 
   return {
-    stocks,
+    stockData,
     loading,
     error,
-    lastUpdated,
-    refresh: fetchStocks,
+    refresh: fetchStockData,
   }
 }

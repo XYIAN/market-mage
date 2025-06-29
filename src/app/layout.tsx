@@ -3,7 +3,9 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import '@/styles/components/hero.css'
 import { PrimeReactProvider } from 'primereact/api'
-import { AppContent } from '@/components'
+import { AppContent } from '@/components/layout/AppContent'
+import { WizardToastProvider } from '@/components/layout/WizardToastProvider'
+import LayoutShell from '@/components/layout/LayoutShell'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -30,7 +32,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <PrimeReactProvider>
-          <AppContent>{children}</AppContent>
+          <WizardToastProvider>
+            <LayoutShell>
+              <AppContent>{children}</AppContent>
+            </LayoutShell>
+          </WizardToastProvider>
         </PrimeReactProvider>
       </body>
     </html>

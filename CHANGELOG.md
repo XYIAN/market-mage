@@ -41,6 +41,26 @@ All notable changes to this project will be documented in this file.
 - Cookie consent banner with wizard/space theme and user preferences
 - Improved error handling and user feedback in all major API hooks
 
+## [1.2.2] - 2024-06-13
+
+### Fixed
+
+- Toast text visibility issues with improved contrast and styling
+- Enhanced toast readability on dark theme
+
+### Changed
+
+- Replaced SpeedDial navigation with hamburger menu and sidebar
+- Added wizard-themed sidebar navigation with all major pages
+- Improved mobile navigation experience
+- Kept SpeedDial component code for future use
+
+### Added
+
+- HamburgerMenu component with animated toggle
+- Sidebar navigation with PrimeReact Sidebar
+- Enhanced navigation UX with proper icons and labels
+
 ## [1.0.1] - 2024-12-19
 
 ### Added

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { CryptoData, MarketStats } from '@/types'
 import { apiUtils } from '@/utils/api'
-import { useWizardToast } from '@/components/layout/AppContent'
+import { useWizardToast } from '@/components/layout/WizardToastProvider'
 import { createWizardToast } from '@/utils/toast'
 
 export const useCoinbaseData = () => {

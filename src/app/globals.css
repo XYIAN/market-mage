@@ -353,3 +353,111 @@ a {
     padding: 0.5rem;
   }
 }
+
+/* Custom styles */
+body {
+  padding: 1rem;
+  background-image: url('/bg-3.png');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  min-height: 100vh;
+}
+
+/* Card elevation and transparency */
+.p-card {
+  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Toast visibility fixes */
+.p-toast .p-toast-message {
+  color: white !important;
+}
+
+.p-toast .p-toast-message .p-toast-message-text {
+  color: white !important;
+}
+
+.p-toast .p-toast-message .p-toast-summary {
+  color: white !important;
+  font-weight: bold;
+}
+
+.p-toast .p-toast-message .p-toast-detail {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Button text visibility */
+.p-button {
+  color: white !important;
+}
+
+/* Hero section glow effect */
+.hero-glow {
+  text-shadow: 0 0 20px rgba(59, 130, 246, 0.8);
+  animation: glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 20px rgba(59, 130, 246, 0.8);
+  }
+  to {
+    text-shadow: 0 0 30px rgba(59, 130, 246, 1),
+      0 0 40px rgba(59, 130, 246, 0.6);
+  }
+}
+
+/* News ticker */
+.news-ticker {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.news-ticker-content {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  animation: scroll-left 60s linear infinite;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* Loading text */
+.loading-text {
+  font-family: 'Courier New', monospace;
+  color: #3b82f6;
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+/* Sidebar styling */
+.p-sidebar {
+  background: rgba(0, 0, 0, 0.95) !important;
+  backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.p-sidebar .p-sidebar-header {
+  background: transparent;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.p-sidebar .p-sidebar-content {
+  background: transparent;
+}
