@@ -529,3 +529,17 @@ body {
 .p-tieredmenu .p-submenu-list .p-menuitem-link:hover {
   background: rgba(59, 130, 246, 0.15) !important;
 }
+
+.sidebar-neon-glow::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 12px;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, #0ff 60%, #00f 100%);
+  filter: blur(8px) brightness(1.5);
+  opacity: 0.7;
+  z-index: 10;
+}

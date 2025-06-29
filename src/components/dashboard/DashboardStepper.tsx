@@ -6,11 +6,8 @@ import { Dialog } from 'primereact/dialog'
 import { Steps } from 'primereact/steps'
 import { Button } from 'primereact/button'
 import { InputText } from 'primereact/inputtext'
-import { Dropdown } from 'primereact/dropdown'
-import { MultiSelect } from 'primereact/multiselect'
 import { Card } from 'primereact/card'
 import { Fieldset } from 'primereact/fieldset'
-import { DataView } from 'primereact/dataview'
 import { Checkbox } from 'primereact/checkbox'
 import {
   DashboardConfig,
@@ -116,17 +113,29 @@ export function DashboardStepper({
         }
       })
 
-      const config: DashboardConfig = {
-        id: `dashboard-${Date.now()}`,
-        name: data.dashboardName,
-        type: dashboardType,
-        createdAt: now,
-        updatedAt: now,
-        sections,
-        aiOracleRefreshCount: 0,
-        ...(dashboardType === 'crypto'
-          ? { assets: data.assets as CryptoAsset[] }
-          : { stocks: data.assets as WatchlistItem[] }),
+      let config: DashboardConfig
+      if (dashboardType === 'crypto') {
+        config = {
+          id: `dashboard-${Date.now()}`,
+          name: data.dashboardName,
+          type: 'crypto',
+          createdAt: now,
+          updatedAt: now,
+          sections,
+          aiOracleRefreshCount: 0,
+          assets: data.assets as CryptoAsset[],
+        }
+      } else {
+        config = {
+          id: `dashboard-${Date.now()}`,
+          name: data.dashboardName,
+          type: 'market',
+          createdAt: now,
+          updatedAt: now,
+          sections,
+          aiOracleRefreshCount: 0,
+          stocks: data.assets as WatchlistItem[],
+        }
       }
 
       await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate save delay
@@ -402,7 +411,7 @@ export function DashboardStepper({
       className="dashboard-stepper"
     >
       <div className="space-y-6">
-        <Steps model={STEPS} activeStep={activeStep} />
+        <Steps model={STEPS} activeIndex={activeStep} />
 
         <div className="min-h-[400px]">{renderStepContent()}</div>
 

@@ -200,3 +200,26 @@ All notable changes to this project will be documented in this file.
 - Improved card dimensions and responsive layout
 - Enhanced button styling with gradient backgrounds
 - Better visual hierarchy in feature cards
+
+## [2.0.0] - 2024-06-09
+
+### Added
+
+- Unified customizable dashboard system for both Crypto and Stock dashboards
+- Unified stepper and edit dialog for dashboard setup and editing
+- Sidebar/menu structure simplified: Home, Dashboards (Crypto, Stock), News (Crypto, Stock), FAQ, About, Terms & Privacy
+- About page with app info, usage, and author details
+- Terms & Privacy page for XYIAN Software
+- Version and "Powered by AI Magic" now snap to sidebar/footer
+- Neon blue glow effect on sidebar (CSS)
+
+### Changed
+
+- Major UI/UX improvements for dashboard setup and editing
+- All dashboard config and section types unified and type-safe
+- Sidebar version always in sync with package.json
+
+### Fixed
+
+- Sidebar nested menu bugs
+- Type errors and build issues
