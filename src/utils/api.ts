@@ -152,6 +152,9 @@ export const apiUtils = {
         url: article.url,
         publishedAt: article.publishedAt,
         source: article.source.name,
+        sentiment: 'neutral',
+        category: 'General',
+        image: undefined,
       }))
     } catch (error) {
       console.error('Error fetching news:', error)
@@ -165,6 +168,9 @@ export const apiUtils = {
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Market News',
+          sentiment: 'neutral',
+          category: 'General',
+          image: undefined,
         },
         {
           id: 'mock-2',
@@ -174,6 +180,9 @@ export const apiUtils = {
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Financial Times',
+          sentiment: 'neutral',
+          category: 'General',
+          image: undefined,
         },
         {
           id: 'mock-3',
@@ -183,6 +192,9 @@ export const apiUtils = {
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Energy Report',
+          sentiment: 'neutral',
+          category: 'General',
+          image: undefined,
         },
         {
           id: 'mock-4',
@@ -192,6 +204,9 @@ export const apiUtils = {
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Crypto Daily',
+          sentiment: 'neutral',
+          category: 'General',
+          image: undefined,
         },
         {
           id: 'mock-5',
@@ -201,6 +216,9 @@ export const apiUtils = {
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Reuters',
+          sentiment: 'neutral',
+          category: 'General',
+          image: undefined,
         },
         {
           id: 'mock-6',
@@ -210,6 +228,9 @@ export const apiUtils = {
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Tech Finance',
+          sentiment: 'neutral',
+          category: 'General',
+          image: undefined,
         },
         {
           id: 'mock-7',
@@ -219,6 +240,9 @@ export const apiUtils = {
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Bloomberg',
+          sentiment: 'neutral',
+          category: 'General',
+          image: undefined,
         },
         {
           id: 'mock-8',
@@ -228,6 +252,9 @@ export const apiUtils = {
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Sustainable Finance',
+          sentiment: 'neutral',
+          category: 'General',
+          image: undefined,
         },
         {
           id: 'mock-9',
@@ -237,6 +264,9 @@ export const apiUtils = {
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Asia Markets',
+          sentiment: 'neutral',
+          category: 'General',
+          image: undefined,
         },
         {
           id: 'mock-10',
@@ -246,6 +276,9 @@ export const apiUtils = {
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Bond Market Daily',
+          sentiment: 'neutral',
+          category: 'General',
+          image: undefined,
         },
       ]
     }

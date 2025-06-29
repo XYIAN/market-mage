@@ -1,14 +1,16 @@
 'use client'
 
-import { NewsTicker } from '@/components/news-ticker'
+import {
+  NewsTicker,
+  HeroSection,
+  FeatureCards,
+  StatsSection,
+  AIInsightPreview,
+  CallToAction,
+} from '@/components'
 import { useNewsTicker } from '@/hooks/useNewsTicker'
 import { useStockData } from '@/hooks/useStockData'
 import { useAIInsight } from '@/hooks/useAIInsight'
-import { HeroSection } from '@/components/home/HeroSection'
-import { FeatureCards } from '@/components/home/FeatureCards'
-import { StatsSection } from '@/components/home/StatsSection'
-import { AIInsightPreview } from '@/components/home/AIInsightPreview'
-import { CallToAction } from '@/components/home/CallToAction'
 
 export default function HomePage() {
   const { news } = useNewsTicker()

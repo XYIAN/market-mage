@@ -1,6 +1,6 @@
 {
   "name": "market-mage",
-  "version": "1.0.1",
+  "version": "1.2.0",
   "description": "AI-powered stock dashboard with real-time market data and trading insights",
   "private": true,
   "scripts": {

@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2024-12-19
+
+### Added
+
+- Consolidated barrel imports for cleaner component organization
+- Unified NewsItem type across the application
+- Enhanced component modularization with proper index files
+- Improved TypeScript type safety and consistency
+
+### Changed
+
+- Refactored all component imports to use consolidated `@/components` barrel exports
+- Updated NewsItem interface to include sentiment, category, and image fields
+- Improved API service mapping with proper type compliance
+- Enhanced build process with better module resolution
+
+### Fixed
+
+- Type conflicts between different NewsItem interfaces
+- Module resolution issues with component barrel exports
+- API service type mismatches for news data
+- Build errors related to missing component exports
+
+### Technical
+
+- Implemented proper barrel export pattern across all component folders
+- Unified type definitions for better consistency
+- Enhanced TypeScript configuration and type checking
+- Improved development experience with cleaner imports
+
 ## [1.0.1] - 2024-12-19
 
 ### Added

@@ -11,8 +11,7 @@ import { ProgressSpinner } from 'primereact/progressspinner'
 import { Toast } from 'primereact/toast'
 import { StockData, HistoricalNote } from '@/types'
 import { useStockData } from '@/hooks/useStockData'
-import { AIOracle } from '@/components/dashboard/AIOracle'
-import { HistoricalNotes } from '@/components/dashboard/HistoricalNotes'
+import { AIOracle, HistoricalNotes } from '@/components'
 import { storageUtils } from '@/utils/storage'
 import { apiUtils } from '@/utils/api'
 
@@ -163,7 +162,7 @@ export default function DashboardPage() {
           header="Add Stock"
           visible={showAddDialog}
           onHide={() => setShowAddDialog(false)}
-          style={{ width: '400px' }}
+          style={{ width: '90vw', maxWidth: '400px' }}
         >
           <div className="flex flex-col gap-4">
             <div>
@@ -209,9 +208,11 @@ export default function DashboardPage() {
           {/* Stock Table */}
           <div className="lg:col-span-2">
             <Card>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-semibold">Watchlist</h2>
-                <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+                <h2 className="text-2xl font-semibold text-center sm:text-left">
+                  Watchlist
+                </h2>
+                <div className="flex flex-col sm:flex-row gap-2 justify-center sm:justify-end">
                   <Button
                     label="Refresh"
                     icon="pi pi-refresh"
@@ -237,11 +238,14 @@ export default function DashboardPage() {
                   value={stocks}
                   responsiveLayout="scroll"
                   className="p-datatable-sm"
+                  scrollable
+                  scrollHeight="400px"
                 >
                   <Column
                     field="symbol"
                     header="Symbol"
                     style={{ width: '100px' }}
+                    frozen
                   />
                   <Column field="name" header="Name" />
                   <Column
@@ -264,6 +268,7 @@ export default function DashboardPage() {
                   <Column
                     body={actionsBodyTemplate}
                     style={{ width: '80px' }}
+                    frozen={true}
                   />
                 </DataTable>
               )}
@@ -272,8 +277,13 @@ export default function DashboardPage() {
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <AIOracle />
-            <HistoricalNotes notes={notes} onNotesChange={handleNotesChange} />
+            <div className="space-y-6">
+              <AIOracle />
+              <HistoricalNotes
+                notes={notes}
+                onNotesChange={handleNotesChange}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -283,7 +293,7 @@ export default function DashboardPage() {
         header="Add Stock"
         visible={showAddDialog}
         onHide={() => setShowAddDialog(false)}
-        style={{ width: '400px' }}
+        style={{ width: '90vw', maxWidth: '400px' }}
       >
         <div className="flex flex-col gap-4">
           <div>

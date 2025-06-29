@@ -5,7 +5,7 @@ import { NewsCarousel } from '@/components'
 import { NewsItem } from '@/types'
 import { newsService } from '@/services/newsService'
 
-export default function MarketNewsPage() {
+export const CryptoNewsCarousel = () => {
   const [news, setNews] = useState<NewsItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -13,14 +13,15 @@ export default function MarketNewsPage() {
   const fetchNews = useCallback(async () => {
     setLoading(true)
     setError(null)
+
     try {
-      const data = await newsService.getStockNews()
+      const data = await newsService.getCryptoNews()
       setNews(data)
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : 'Failed to fetch market news'
+        err instanceof Error ? err.message : 'Failed to fetch crypto news'
       setError(errorMessage)
-      console.error('Error fetching market news:', err)
+      console.error('Error fetching crypto news:', err)
     } finally {
       setLoading(false)
     }
@@ -34,7 +35,7 @@ export default function MarketNewsPage() {
     return (
       <div className="w-full">
         <div className="text-center mb-4">
-          <h2 className="text-xl font-semibold">Market News</h2>
+          <h2 className="text-xl font-semibold">Latest Crypto News</h2>
         </div>
         <div className="text-center py-8">
           <p className="text-gray-400">Error loading news: {error}</p>
@@ -44,22 +45,6 @@ export default function MarketNewsPage() {
   }
 
   return (
-    <div className="min-h-screen p-4">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">Market News & Insights</h1>
-          <p className="text-gray-400">
-            Stay updated with the latest stock market news, trends, and insights
-          </p>
-        </div>
-        <div className="w-full">
-          <NewsCarousel
-            news={news}
-            loading={loading}
-            title="Latest Market News"
-          />
-        </div>
-      </div>
-    </div>
+    <NewsCarousel news={news} loading={loading} title="Latest Crypto News" />
   )
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import NavDial from '@/components/layout/NavDial'
-import { NewsTicker } from '@/components/news-ticker'
+import { NewsTicker } from '@/components/layout/news-ticker'
 import { useNewsTicker } from '@/hooks/useNewsTicker'
 
 interface AppContentProps {

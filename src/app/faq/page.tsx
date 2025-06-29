@@ -34,10 +34,18 @@ export default function FAQPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
+    <div
+      className="container mx-auto px-4 py-8"
+      style={{
+        background: 'rgba(255, 255, 255, 0.03)',
+        backdropFilter: 'blur(10px)',
+        borderRadius: '16px',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+      }}
+    >
+      <div className="mb-4">
         <h1 className="text-3xl font-bold mb-2">Frequently Asked Questions</h1>
-        <p className="text-gray-600">
+        <p>
           Find answers to common questions about Market-Mage and our AI-powered
           trading platform.
         </p>
@@ -52,9 +60,7 @@ export default function FAQPage() {
             <Accordion multiple>
               {faqs.map((faq) => (
                 <AccordionTab key={faq.id} header={faq.question}>
-                  <div className="text-gray-700 leading-relaxed">
-                    {faq.answer}
-                  </div>
+                  <div className="leading-relaxed">{faq.answer}</div>
                 </AccordionTab>
               ))}
             </Accordion>
@@ -66,24 +72,18 @@ export default function FAQPage() {
       <Card className="mt-8">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Still Have Questions?</h2>
-          <p className="text-gray-600 mb-4">
-            Can&apos;t find what you&apos;re looking for? Contact our support
-            team.
+          <p className="mb-4">
+            Can&apos;t find what you&apos;re looking for? Create an issue on
+            GitHub.
           </p>
-          <div className="flex justify-center gap-4">
+          <div className="flex justify-center">
             <a
-              href="mailto:support@market-mage.com"
-              className="p-button p-button-primary"
-            >
-              Email Support
-            </a>
-            <a
-              href="https://docs.market-mage.com"
+              href="https://github.com/XYIAN/market-mage/issues"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-button p-button-outlined"
+              className="space-button"
             >
-              Documentation
+              Create GitHub Issue
             </a>
           </div>
         </div>

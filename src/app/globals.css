@@ -11,11 +11,12 @@
 @import 'primereact/resources/themes/viva-dark/theme.css';
 @import 'primereact/resources/primereact.min.css';
 @import 'primeicons/primeicons.css';
+@import 'primeflex/primeflex.css';
 
 :root {
   --foreground-rgb: 255, 255, 255;
-  /* --background-start-rgb: 0, 0, 0;
-	--background-end-rgb: 0, 0, 0; */
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 0, 0, 0;
 }
 
 /* * {
@@ -34,7 +35,12 @@ body {
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-start-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
   background-image: url('/bg-4.png');
   background-attachment: fixed;
   background-position: center;
@@ -76,58 +82,268 @@ a {
   background-size: cover;
 }
 
-/* Global Space Theme Button */
-.space-button {
-  background: linear-gradient(
-    135deg,
-    #1e3a8a 0%,
-    #1e40af 50%,
-    #3b82f6 100%
-  ) !important;
-  border: 2px solid #1e40af !important;
-  color: white !important;
-  font-weight: 600 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.5px !important;
-  padding: 0.75rem 2rem !important;
-  box-shadow: 0 0 10px rgba(30, 64, 175, 0.5), 0 0 20px rgba(30, 64, 175, 0.3),
-    0 0 30px rgba(30, 64, 175, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
-  transition: all 0.3s ease !important;
-  position: relative !important;
-  overflow: hidden !important;
+/* Shimmer animation for news cards */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
-.space-button::before {
-  content: '';
+/* Dashboard Title Styles */
+.dashboard-title-section {
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(15px) !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+  border-radius: 16px !important;
+  padding: 1.5rem 2rem !important;
+  margin-bottom: 2rem !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+  transition: all 0.3s ease !important;
+}
+
+.dashboard-title-section:hover {
+  border-color: rgba(59, 130, 246, 0.5) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5) !important;
+}
+
+.title-container {
+  position: relative;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-title {
+  font-size: 2.5rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  margin: 0 !important;
+  background: linear-gradient(135deg, #1e40af, #3b82f6, #60a5fa) !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: drop-shadow(0 0 15px #1e40af) !important;
+  animation: titleGlow 3s ease-in-out infinite alternate !important;
+}
+
+@keyframes titleGlow {
+  from {
+    filter: drop-shadow(0 0 15px #1e40af);
+  }
+  to {
+    filter: drop-shadow(0 0 20px #1e40af) drop-shadow(0 0 30px #3b82f6);
+  }
+}
+
+.title-underline {
   position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 255, 255, 0.2),
+    #1e40af,
     transparent
-  );
-  transition: left 0.5s ease;
+  ) !important;
+  border-radius: 2px !important;
+  animation: underlineGlow 2s ease-in-out infinite alternate !important;
+}
+
+@keyframes underlineGlow {
+  from {
+    box-shadow: 0 0 5px #1e40af;
+  }
+  to {
+    box-shadow: 0 0 10px #1e40af, 0 0 15px #3b82f6;
+  }
+}
+
+.dashboard-subtitle {
+  color: #9ca3af !important;
+  font-size: 1.1rem !important;
+  font-weight: 400 !important;
+  margin: 0 !important;
+  text-shadow: 0 0 10px rgba(156, 163, 175, 0.3) !important;
+}
+
+/* Space Theme Styles */
+.space-card {
+  background: rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.space-card:hover {
+  border-color: rgba(59, 130, 246, 0.5) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4) !important;
+}
+
+.space-button {
+  background: rgba(0, 0, 0, 0.8) !important;
+  border: 1px solid rgba(59, 130, 246, 0.4) !important;
+  color: #3b82f6 !important;
+  backdrop-filter: blur(10px) !important;
+  transition: all 0.3s ease !important;
 }
 
 .space-button:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 0 15px rgba(30, 64, 175, 0.7), 0 0 30px rgba(30, 64, 175, 0.5),
-    0 0 45px rgba(30, 64, 175, 0.3), 0 4px 15px rgba(0, 0, 0, 0.3) !important;
-  border-color: #3b82f6 !important;
+  background: rgba(0, 0, 0, 0.9) !important;
+  border-color: rgba(59, 130, 246, 0.6) !important;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3) !important;
 }
 
-.space-button:hover::before {
-  left: 100%;
+/* Dark Blue Glow Effects */
+.dark-blue-glow {
+  color: #1e40af !important;
+  filter: drop-shadow(0 0 8px #1e40af) !important;
+  animation: glow 2s ease-in-out infinite alternate !important;
 }
 
-.space-button:active {
-  transform: translateY(0) !important;
-  box-shadow: 0 0 10px rgba(30, 64, 175, 0.5), 0 0 20px rgba(30, 64, 175, 0.3),
-    inset 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+@keyframes glow {
+  from {
+    filter: drop-shadow(0 0 8px #1e40af);
+  }
+  to {
+    filter: drop-shadow(0 0 12px #1e40af) drop-shadow(0 0 20px #1e40af);
+  }
+}
+
+/* Hero Section Glow */
+.hero-title-glow {
+  color: #1e40af !important;
+  filter: drop-shadow(0 0 10px #1e40af) !important;
+  animation: heroGlow 3s ease-in-out infinite alternate !important;
+}
+
+@keyframes heroGlow {
+  from {
+    filter: drop-shadow(0 0 10px #1e40af);
+  }
+  to {
+    filter: drop-shadow(0 0 15px #1e40af) drop-shadow(0 0 25px #1e40af);
+  }
+}
+
+/* Progress Bar Dark Blue */
+.p-progressbar .p-progressbar-value {
+  background: #1e40af !important;
+}
+
+/* Market Distribution Labels Fixed Size */
+.market-distribution-label {
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
+  text-align: center !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+}
+
+/* Transparent Background for Market Distribution */
+.market-distribution-section {
+  background: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(59, 130, 246, 0.2) !important;
+}
+
+/* News Ticker Animation */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 60s linear infinite;
+}
+
+/* Toast Styles */
+.p-toast .p-toast-message {
+  background: rgba(0, 0, 0, 0.9) !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+/* Dialog Styles */
+.p-dialog .p-dialog-header {
+  background: rgba(0, 0, 0, 0.8) !important;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.3) !important;
+}
+
+.p-dialog .p-dialog-content {
+  background: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* DataTable Styles */
+.p-datatable .p-datatable-header {
+  background: rgba(0, 0, 0, 0.8) !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  background: rgba(0, 0, 0, 0.6) !important;
+  border-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+.p-datatable .p-datatable-tbody > tr {
+  background: rgba(0, 0, 0, 0.4) !important;
+  border-color: rgba(59, 130, 246, 0.1) !important;
+}
+
+.p-datatable .p-datatable-tbody > tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Card Styles */
+.p-card {
+  background: rgba(0, 0, 0, 0.7) !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.p-card .p-card-header {
+  background: rgba(0, 0, 0, 0.8) !important;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.3) !important;
+}
+
+.p-card .p-card-content {
+  background: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Button Overrides */
+.p-button {
+  background: rgba(0, 0, 0, 0.8) !important;
+  border: 1px solid rgba(59, 130, 246, 0.4) !important;
+  color: #3b82f6 !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.p-button:hover {
+  background: rgba(0, 0, 0, 0.9) !important;
+  border-color: rgba(59, 130, 246, 0.6) !important;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.3) !important;
+}
+
+.p-button.p-button-primary {
+  background: rgba(59, 130, 246, 0.2) !important;
+  border-color: rgba(59, 130, 246, 0.6) !important;
+  color: #3b82f6 !important;
+}
+
+.p-button.p-button-primary:hover {
+  background: rgba(59, 130, 246, 0.3) !important;
+  border-color: rgba(59, 130, 246, 0.8) !important;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.4) !important;
 }
 
 /* Responsive adjustments */

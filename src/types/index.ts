@@ -27,6 +27,9 @@ export interface NewsItem {
   url: string
   publishedAt: string
   source: string
+  sentiment: 'positive' | 'negative' | 'neutral'
+  category: string
+  image?: string
 }
 
 export interface AIInsight {

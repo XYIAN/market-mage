@@ -4,78 +4,107 @@
 
 Market-Mage is a modern, responsive stock dashboard that combines real-time market data with AI-powered trading insights. Built with a focus on user experience and professional design, it provides traders and investors with the tools they need to make informed decisions.
 
-![Market-Mage Dashboard](https://img.shields.io/badge/Version-1.0.1-blue) ![Next.js](https://img.shields.io/badge/Next.js-15.3.4-black) ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue) ![PrimeReact](https://img.shields.io/badge/PrimeReact-10.7.0-purple)
+![Market-Mage Dashboard](https://img.shields.io/badge/Version-1.2.0-blue) ![Next.js](https://img.shields.io/badge/Next.js-15.3.4-black) ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue) ![PrimeReact](https://img.shields.io/badge/PrimeReact-10.7.0-purple)
 
-## ✨ Features
+## ✨ What Market-Mage Does
 
-### 📊 **Real-Time Dashboard**
+Market-Mage transforms how you interact with financial markets by providing:
 
-- Live stock data with price updates and percentage changes
-- Interactive stock table with sorting and filtering
-- Portfolio overview with gain/loss tracking
-- Responsive design that works on all devices
-
-### 🤖 **AI-Powered Insights**
-
-- Daily AI trading suggestions powered by OpenAI
-- Market analysis and trend predictions
-- Historical notes tracking for learning from past decisions
-- AI Oracle for strategic trading advice
-
-### 📰 **Live News Ticker**
-
-- Real-time financial news updates
-- Infinite scrolling ticker with smooth animations
-- Source attribution and timestamp display
-- Sticky positioning for constant visibility
-
-### 📈 **Advanced Analytics**
-
-- Chart.js integration for data visualization
-- Stock performance charts and trends
-- Technical analysis indicators
-- Historical data tracking
-
-### 🎯 **Smart Navigation**
-
-- SpeedDial navigation for quick access
-- Sticky positioning for easy reach
-- Intuitive icons and labels
-- Seamless page transitions
+- **Real-time stock tracking** with live price updates and performance metrics
+- **AI-powered trading insights** that help you make informed decisions
+- **Live market news** delivered through a smooth scrolling ticker
+- **Portfolio management** tools to track your investments
+- **Professional analytics** with charts and historical data
 
 ## 🚀 Getting Started
 
-### Quick Start
+### First Steps
 
-1. **Add Stocks**: Use the SpeedDial (bottom-right) to access the dashboard
-2. **View Data**: Browse real-time stock information in the main table
-3. **Get Insights**: Check the AI Oracle for daily trading suggestions
-4. **Track News**: Monitor the live news ticker for market updates
-5. **Analyze**: Use charts and historical data for informed decisions
+1. **Open the Dashboard**: Click the SpeedDial button (bottom-right) to access your stock dashboard
+2. **Add Your Stocks**: Use the "Add Stock" feature to track your favorite companies
+3. **Get AI Insights**: Check the AI Oracle for daily trading suggestions
+4. **Monitor News**: Watch the live news ticker for market updates
+5. **Analyze Performance**: Use charts and historical data to track trends
+
+### Key Features Explained
+
+#### 📊 **Stock Dashboard**
+
+- View real-time stock prices, changes, and percentages
+- Sort and filter your watchlist
+- Track portfolio gains and losses
+- Export your data to CSV
+
+#### 🤖 **AI Oracle**
+
+- Receive daily AI-powered trading insights
+- Get market analysis and trend predictions
+- Track historical notes and learn from past decisions
+- Generate new insights when needed
+
+#### 📰 **Live News Feed**
+
+- Real-time financial news updates
+- Smooth infinite scrolling display
+- Source attribution and timestamps
+- Always visible at the top of the screen
+
+#### 📈 **Analytics & Charts**
+
+- Interactive stock performance charts
+- Technical analysis indicators
+- Historical data visualization
+- Responsive design for all devices
+
+## 🎨 User Experience
+
+### Design Highlights
+
+- **Dark Professional Theme**: Easy on the eyes for extended use
+- **Mobile-First Design**: Works perfectly on phones, tablets, and desktops
+- **Intuitive Navigation**: SpeedDial provides quick access to all features
+- **Smooth Animations**: Polished interactions and transitions
+- **Fast Performance**: Optimized for quick loading and responsiveness
 
 ### Navigation Guide
 
-- **🏠 Home**: Landing page with feature overview
-- **📊 Dashboard**: Main stock tracking interface
-- **📰 News**: Detailed news page with charts
-- **❓ Learn More**: Access help and information
+- **🏠 Home**: Overview of features and capabilities
+- **📊 Dashboard**: Main stock tracking and management
+- **📰 News**: Detailed news with charts and analysis
+- **🪙 Crypto**: Cryptocurrency tracking and news
+- **❓ FAQ**: Help and frequently asked questions
 
-## 🎨 User Interface
+## 🎯 Perfect For
 
-### Design Philosophy
+### Individual Traders
 
-- **Dark Theme**: Professional Viva Dark theme for reduced eye strain
-- **Mobile-First**: Responsive design that works on all screen sizes
-- **Accessibility**: High contrast and keyboard navigation support
-- **Performance**: Optimized for fast loading and smooth interactions
+- Track personal stock portfolios
+- Get AI-powered trading suggestions
+- Monitor market news and trends
+- Analyze historical performance
 
-### Key Components
+### Investors
 
-- **Hero Section**: Eye-catching title with animated glow effects
-- **Feature Cards**: Modular display of app capabilities
-- **Stock Table**: Comprehensive data presentation with sorting
-- **News Ticker**: Live updates with smooth scrolling
-- **SpeedDial**: Quick access navigation system
+- Research potential investments
+- Monitor market conditions
+- Track portfolio performance
+- Access professional insights
+
+### Financial Enthusiasts
+
+- Learn about market dynamics
+- Practice portfolio management
+- Stay informed with real-time news
+- Explore AI-powered analysis
+
+## 🔮 What's Coming Next
+
+- Real-time portfolio alerts and notifications
+- Advanced charting tools and indicators
+- Social trading features and community insights
+- Mobile app for iOS and Android
+- Enhanced AI insights with more detailed analysis
+- API rate limit optimizations for better performance
 
 ## 🔧 Technical Stack
 
@@ -99,47 +128,6 @@ Market-Mage is a modern, responsive stock dashboard that combines real-time mark
 - **PostCSS** - CSS processing
 - **Turbopack** - Fast development builds
 
-## 📱 Responsive Design
-
-Market-Mage is built with mobile-first principles:
-
-- **Mobile**: Optimized touch interactions and compact layouts
-- **Tablet**: Enhanced navigation and larger touch targets
-- **Desktop**: Full-featured interface with advanced controls
-- **Large Screens**: Maximized data display and multi-column layouts
-
-## 🎯 Use Cases
-
-### For Individual Traders
-
-- Track personal stock portfolios
-- Get AI-powered trading suggestions
-- Monitor market news and trends
-- Analyze historical performance
-
-### For Investors
-
-- Research potential investments
-- Monitor market conditions
-- Track portfolio performance
-- Access professional insights
-
-### For Financial Analysts
-
-- Real-time market data access
-- Technical analysis tools
-- News aggregation and filtering
-- Performance tracking
-
-## 🔮 Future Roadmap
-
-- [ ] Real-time portfolio alerts
-- [ ] Advanced charting tools
-- [ ] Social trading features
-- [ ] Mobile app development
-- [ ] API rate limit optimization
-- [ ] Enhanced AI insights
-
 ## 👨‍💻 Developer
 
 **Kyle** - Full-Stack Developer & Financial Technology Enthusiast
@@ -151,7 +139,7 @@ Market-Mage is built with mobile-first principles:
 - 🐙 **GitHub**: [Your GitHub Profile]
 - 📧 **Email**: [Your Email]
 
-### Support
+### Support & Contribution
 
 If you find Market-Mage helpful, consider:
 
