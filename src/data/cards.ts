@@ -25,7 +25,7 @@ export const FEATURE_CARDS: FeatureCard[] = [
     id: 'ai-oracle',
     title: 'AI Oracle',
     description: 'Daily AI-powered trading insights and market analysis',
-    icon: 'pi pi-magic',
+    icon: 'pi pi-star',
   },
   {
     id: 'portfolio-tracking',

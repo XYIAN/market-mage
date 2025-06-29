@@ -6,21 +6,30 @@ import { Card } from 'primereact/card'
 
 export const CallToAction = () => {
   return (
-    <div className="text-center">
-      <Card className="bg-gradient-to-r from-primary to-primary-foreground max-w-2xl mx-auto">
-        <div className="p-1rem">
-          <h3 className="text-2xl font-bold mb-4">
-            Ready to Start Trading Smarter?
+    <div className="flex justify-center mb-8">
+      <Card
+        className="max-w-4xl w-[85%] md:w-[65%] lg:w-[50%]"
+        style={{
+          background: 'rgba(255, 255, 255, 0.05)',
+          backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          borderRadius: '16px',
+        }}
+      >
+        <div className="text-center p-4 md:p-8">
+          <h3 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6 text-white">
+            Deploy Advanced Trading Intelligence
           </h3>
-          <p className="mb-6">
-            Join thousands of traders who use Market-Mage to make informed
-            decisions
+          <p className="text-base md:text-lg text-gray-300 mb-6 md:mb-8 leading-relaxed max-w-2xl mx-auto">
+            Leverage cutting-edge AI algorithms and real-time market analytics
+            to execute data-driven trading strategies with institutional-grade
+            precision.
           </p>
           <Link href="/dashboard">
             <Button
-              label="Get Started Now"
+              label="Initialize Dashboard"
               icon="pi pi-rocket"
-              className="p-button-outlined p-button-white"
+              className="space-button"
               size="large"
             />
           </Link>
