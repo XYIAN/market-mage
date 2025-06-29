@@ -160,30 +160,40 @@ export const storageUtils = {
     }
   },
 
-  addHistoricalNote: (title: string, content: string): void => {
+  addHistoricalNote: (
+    symbol: string,
+    note: string,
+    type: 'buy' | 'sell' | 'hold' | 'note'
+  ): void => {
     const notes = storageUtils.getHistoricalNotes()
     const newNote: HistoricalNote = {
       id: `note-${Date.now()}`,
-      title,
-      content,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      symbol,
+      note,
+      timestamp: new Date().toISOString(),
+      type,
     }
 
     notes.unshift(newNote) // Add to beginning
     storageUtils.setHistoricalNotes(notes)
   },
 
-  updateHistoricalNote: (id: string, title: string, content: string): void => {
+  updateHistoricalNote: (
+    id: string,
+    updates: {
+      symbol: string
+      note: string
+      type: 'buy' | 'sell' | 'hold' | 'note'
+    }
+  ): void => {
     const notes = storageUtils.getHistoricalNotes()
     const index = notes.findIndex((n) => n.id === id)
 
     if (index !== -1) {
       notes[index] = {
         ...notes[index],
-        title,
-        content,
-        updatedAt: new Date().toISOString(),
+        ...updates,
+        timestamp: new Date().toISOString(),
       }
       storageUtils.setHistoricalNotes(notes)
     }

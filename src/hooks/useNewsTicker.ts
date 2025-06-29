@@ -27,62 +27,52 @@ export const useNewsTicker = () => {
         {
           id: 'mock-1',
           title: 'Market Update: Tech Stocks Rally on Strong Earnings',
-          summary:
+          description:
             'Major technology companies report better-than-expected quarterly results.',
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Market News',
           sentiment: 'positive',
-          category: 'Technology',
-          image: undefined,
         },
         {
           id: 'mock-2',
           title: 'Federal Reserve Signals Potential Rate Changes',
-          summary:
+          description:
             'Central bank officials hint at possible adjustments to monetary policy.',
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Financial Times',
           sentiment: 'neutral',
-          category: 'Economy',
-          image: undefined,
         },
         {
           id: 'mock-3',
           title: 'Cryptocurrency Market Shows Signs of Recovery',
-          summary:
+          description:
             'Bitcoin and Ethereum lead digital asset rally as institutional adoption grows.',
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Crypto Daily',
           sentiment: 'positive',
-          category: 'Cryptocurrency',
-          image: undefined,
         },
         {
           id: 'mock-4',
           title: 'Oil Prices Stabilize After Recent Volatility',
-          summary:
+          description:
             'Crude oil markets find equilibrium following weeks of uncertainty.',
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Energy Report',
           sentiment: 'neutral',
-          category: 'Energy',
-          image: undefined,
         },
         {
           id: 'mock-5',
           title: 'AI-Powered Trading Platforms Gain Traction',
-          summary:
+          description:
             'Financial institutions increasingly adopt machine learning algorithms.',
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Tech Finance',
           sentiment: 'positive',
-          category: 'Technology',
-          image: undefined,
         },
       ]
       setNews(mockNews)

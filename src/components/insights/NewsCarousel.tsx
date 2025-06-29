@@ -73,18 +73,19 @@ export const NewsCarousel = ({
       >
         <div className="flex flex-column h-full">
           <div className="flex justify-content-between align-items-start mb-3">
-            <Tag value={item.category} severity="info" className="text-xs" />
-            <Tag
-              value={item.sentiment}
-              severity={getSentimentSeverity(item.sentiment)}
-              className="text-xs"
-            />
+            {item.sentiment && (
+              <Tag
+                value={item.sentiment}
+                severity={getSentimentSeverity(item.sentiment)}
+                className="text-xs"
+              />
+            )}
           </div>
           <h3 className="text-lg font-semibold mb-3 line-height-1-4">
             {item.title}
           </h3>
           <p className="text-sm text-gray-300 mb-4 flex-grow-1 line-height-1-6">
-            {item.summary}
+            {item.description}
           </p>
           <div className="mt-auto">
             <div className="flex justify-content-between align-items-center mb-3">

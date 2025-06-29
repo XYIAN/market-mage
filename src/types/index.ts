@@ -5,31 +5,27 @@ export interface StockData {
   change: number
   changePercent: number
   volume: number
-  marketCap?: number
   lastUpdated: string
 }
 
 export interface CryptoData {
   symbol: string
   name: string
-  price: number
-  change: number
-  changePercent: number
-  volume: number
+  price: string
+  change: string
   marketCap: number
+  volume: number
   lastUpdated: string
 }
 
 export interface NewsItem {
   id: string
   title: string
-  summary: string
+  description: string
   url: string
   publishedAt: string
   source: string
-  sentiment: 'positive' | 'negative' | 'neutral'
-  category: string
-  image?: string
+  sentiment?: 'positive' | 'negative' | 'neutral'
 }
 
 export interface AIInsight {
@@ -53,10 +49,10 @@ export interface CryptoWatchlistItem {
 
 export interface HistoricalNote {
   id: string
-  title: string
-  content: string
-  createdAt: string
-  updatedAt: string
+  symbol: string
+  note: string
+  timestamp: string
+  type: 'buy' | 'sell' | 'hold' | 'note'
 }
 
 export interface StockApiResponse {
@@ -87,4 +83,22 @@ export interface NewsApiResponse {
       name: string
     }
   }>
+}
+
+export interface MarketStats {
+  totalMarketCap: number
+  totalVolume: number
+  averagePrice: number
+  topPerformer: {
+    symbol: string
+    name: string
+    price: string
+    change: string
+  }
+  worstPerformer: {
+    symbol: string
+    name: string
+    price: string
+    change: string
+  }
 }

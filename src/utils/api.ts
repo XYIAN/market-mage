@@ -78,9 +78,8 @@ export const apiUtils = {
         return {
           symbol: rate['1. From_Currency Code'],
           name: rate['2. From_Currency Name'],
-          price,
-          change,
-          changePercent,
+          price: price.toFixed(2),
+          change: change.toFixed(2),
           volume: Math.floor(Math.random() * 1000000000), // Mock volume
           marketCap: Math.floor(Math.random() * 1000000000000), // Mock market cap
           lastUpdated: new Date().toISOString(),
@@ -101,31 +100,28 @@ export const apiUtils = {
         {
           symbol: 'BTC',
           name: 'Bitcoin',
-          price: 45000 + Math.random() * 5000,
-          change: (Math.random() - 0.5) * 2000,
-          changePercent: (Math.random() - 0.5) * 10,
+          price: (45000 + Math.random() * 5000).toFixed(2),
+          change: ((Math.random() - 0.5) * 2000).toFixed(2),
+          marketCap: Math.floor(800000000000 + Math.random() * 100000000000),
           volume: Math.floor(Math.random() * 1000000000),
-          marketCap: 800000000000 + Math.random() * 100000000000,
           lastUpdated: new Date().toISOString(),
         },
         {
           symbol: 'ETH',
           name: 'Ethereum',
-          price: 3000 + Math.random() * 500,
-          change: (Math.random() - 0.5) * 200,
-          changePercent: (Math.random() - 0.5) * 8,
+          price: (3000 + Math.random() * 500).toFixed(2),
+          change: ((Math.random() - 0.5) * 200).toFixed(2),
+          marketCap: Math.floor(350000000000 + Math.random() * 50000000000),
           volume: Math.floor(Math.random() * 500000000),
-          marketCap: 350000000000 + Math.random() * 50000000000,
           lastUpdated: new Date().toISOString(),
         },
         {
           symbol: 'ADA',
           name: 'Cardano',
-          price: 1.5 + Math.random() * 0.5,
-          change: (Math.random() - 0.5) * 0.2,
-          changePercent: (Math.random() - 0.5) * 15,
+          price: (1.5 + Math.random() * 0.5).toFixed(4),
+          change: ((Math.random() - 0.5) * 0.2).toFixed(4),
+          marketCap: Math.floor(50000000000 + Math.random() * 10000000000),
           volume: Math.floor(Math.random() * 100000000),
-          marketCap: 50000000000 + Math.random() * 10000000000,
           lastUpdated: new Date().toISOString(),
         },
       ]
@@ -148,13 +144,11 @@ export const apiUtils = {
       return data.articles.map((article, index) => ({
         id: `news-${index}`,
         title: article.title,
-        summary: article.description || 'No description available',
+        description: article.description || 'No description available',
         url: article.url,
         publishedAt: article.publishedAt,
         source: article.source.name,
         sentiment: 'neutral',
-        category: 'General',
-        image: undefined,
       }))
     } catch (error) {
       console.error('Error fetching news:', error)
@@ -163,122 +157,102 @@ export const apiUtils = {
         {
           id: 'mock-1',
           title: 'Market Update: Tech Stocks Rally on Strong Earnings',
-          summary:
+          description:
             'Major technology companies report better-than-expected quarterly results, driving market optimism.',
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Market News',
           sentiment: 'neutral',
-          category: 'General',
-          image: undefined,
         },
         {
           id: 'mock-2',
           title: 'Federal Reserve Signals Potential Rate Changes',
-          summary:
+          description:
             'Central bank officials hint at possible adjustments to monetary policy in upcoming meetings.',
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Financial Times',
           sentiment: 'neutral',
-          category: 'General',
-          image: undefined,
         },
         {
           id: 'mock-3',
           title: 'Oil Prices Stabilize After Recent Volatility',
-          summary:
+          description:
             'Crude oil markets find equilibrium following weeks of geopolitical uncertainty.',
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Energy Report',
           sentiment: 'neutral',
-          category: 'General',
-          image: undefined,
         },
         {
           id: 'mock-4',
           title: 'Cryptocurrency Market Shows Signs of Recovery',
-          summary:
+          description:
             'Bitcoin and Ethereum lead digital asset rally as institutional adoption continues to grow.',
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Crypto Daily',
           sentiment: 'neutral',
-          category: 'General',
-          image: undefined,
         },
         {
           id: 'mock-5',
           title: 'Global Markets React to Economic Data Release',
-          summary:
+          description:
             'Investors digest latest employment and inflation figures, adjusting positions accordingly.',
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Reuters',
           sentiment: 'neutral',
-          category: 'General',
-          image: undefined,
         },
         {
           id: 'mock-6',
           title: 'AI-Powered Trading Platforms Gain Traction',
-          summary:
+          description:
             'Financial institutions increasingly adopt machine learning algorithms for market analysis.',
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Tech Finance',
           sentiment: 'neutral',
-          category: 'General',
-          image: undefined,
         },
         {
           id: 'mock-7',
           title: 'European Markets Open Higher on Positive Sentiment',
-          summary:
+          description:
             'European indices climb as investors remain optimistic about economic recovery prospects.',
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Bloomberg',
           sentiment: 'neutral',
-          category: 'General',
-          image: undefined,
         },
         {
           id: 'mock-8',
           title: 'Sustainable Investing Trends Continue to Rise',
-          summary:
+          description:
             'ESG-focused funds attract record inflows as environmental concerns drive investment decisions.',
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Sustainable Finance',
           sentiment: 'neutral',
-          category: 'General',
-          image: undefined,
         },
         {
           id: 'mock-9',
           title: 'Asian Markets Show Mixed Performance',
-          summary:
+          description:
             'Regional indices display varied results amid ongoing trade negotiations and policy uncertainty.',
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Asia Markets',
           sentiment: 'neutral',
-          category: 'General',
-          image: undefined,
         },
         {
           id: 'mock-10',
           title: 'Bond Yields Fluctuate Amid Economic Uncertainty',
-          summary:
+          description:
             'Treasury yields experience volatility as market participants assess inflation and growth outlook.',
           url: '#',
           publishedAt: new Date().toISOString(),
           source: 'Bond Market Daily',
           sentiment: 'neutral',
-          category: 'General',
-          image: undefined,
         },
       ]
     }

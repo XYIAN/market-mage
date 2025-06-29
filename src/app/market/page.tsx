@@ -1,46 +1,15 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card } from 'primereact/card'
 import { ProgressSpinner } from 'primereact/progressspinner'
 import { StockData, HistoricalNote } from '@/types'
 import { AIOracle, HistoricalNotes, StockTable } from '@/components'
-import { DashboardTitle } from '@/components/layout/DashboardTitle'
+import {
+  DashboardLayout,
+  DashboardSection,
+} from '@/components/dashboard/DashboardLayout'
 import { storageUtils } from '@/utils/storage'
 import { apiUtils } from '@/utils/api'
-
-// Separate wrapper components for each section
-const StockTableSection = ({
-  stocks,
-  loading,
-  lastUpdated,
-}: {
-  stocks: StockData[]
-  loading: boolean
-  lastUpdated: Date | null
-}) => (
-  <Card className="space-card w-full max-w-4xl">
-    <StockTable stocks={stocks} loading={loading} lastUpdated={lastUpdated} />
-  </Card>
-)
-
-const AIOracleSection = () => (
-  <Card className="space-card w-full max-w-4xl">
-    <AIOracle />
-  </Card>
-)
-
-const HistoricalNotesSection = ({
-  notes,
-  onNotesChange,
-}: {
-  notes: HistoricalNote[]
-  onNotesChange: () => void
-}) => (
-  <Card className="space-card w-full max-w-4xl">
-    <HistoricalNotes notes={notes} onNotesChange={onNotesChange} />
-  </Card>
-)
 
 export default function MarketDashboard() {
   const [watchlist, setWatchlist] = useState<string[]>([])
@@ -129,10 +98,6 @@ export default function MarketDashboard() {
     setNotes(storageUtils.getHistoricalNotes())
   }
 
-  const handleRefresh = () => {
-    fetchStockData()
-  }
-
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -142,26 +107,29 @@ export default function MarketDashboard() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 gap-8">
-      {/* Dashboard Title */}
-      <DashboardTitle
-        title="Market Dashboard"
-        subtitle="Track your stocks and get AI-powered insights"
-        onRefresh={handleRefresh}
-      />
-
+    <DashboardLayout
+      title="Market Dashboard"
+      subtitle="Track your stocks and get AI-powered insights"
+      showRefreshButton={true}
+    >
       {/* Stock Table Section */}
-      <StockTableSection
-        stocks={stockData}
-        loading={loading}
-        lastUpdated={lastUpdated}
-      />
+      <DashboardSection>
+        <StockTable
+          stocks={stockData}
+          loading={loading}
+          lastUpdated={lastUpdated}
+        />
+      </DashboardSection>
 
       {/* AI Oracle Section */}
-      <AIOracleSection />
+      <DashboardSection>
+        <AIOracle />
+      </DashboardSection>
 
       {/* Historical Notes Section */}
-      <HistoricalNotesSection notes={notes} onNotesChange={handleNotesChange} />
-    </div>
+      <DashboardSection>
+        <HistoricalNotes notes={notes} onNotesChange={handleNotesChange} />
+      </DashboardSection>
+    </DashboardLayout>
   )
 }

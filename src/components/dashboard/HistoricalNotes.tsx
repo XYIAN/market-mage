@@ -2,11 +2,12 @@
 
 import { useState } from 'react'
 import { Button } from 'primereact/button'
-import { Card } from 'primereact/card'
+import { Dialog } from 'primereact/dialog'
 import { InputText } from 'primereact/inputtext'
 import { InputTextarea } from 'primereact/inputtextarea'
-import { Dialog } from 'primereact/dialog'
 import { DataView } from 'primereact/dataview'
+import { Card } from 'primereact/card'
+import { Dropdown } from 'primereact/dropdown'
 import { HistoricalNote } from '@/types'
 import { storageUtils } from '@/utils/storage'
 import { dateUtils } from '@/utils/date'
@@ -23,30 +24,39 @@ export const HistoricalNotes = ({
   const [showAddDialog, setShowAddDialog] = useState(false)
   const [editingNote, setEditingNote] = useState<HistoricalNote | null>(null)
   const [formData, setFormData] = useState({
-    title: '',
-    content: '',
+    symbol: '',
+    note: '',
+    type: 'note' as 'buy' | 'sell' | 'hold' | 'note',
   })
 
+  const noteTypes = [
+    { label: 'Note', value: 'note' },
+    { label: 'Buy Signal', value: 'buy' },
+    { label: 'Sell Signal', value: 'sell' },
+    { label: 'Hold', value: 'hold' },
+  ]
+
   const handleAddNote = () => {
-    if (formData.title.trim() && formData.content.trim()) {
+    if (formData.symbol.trim() && formData.note.trim()) {
       storageUtils.addHistoricalNote(
-        formData.title.trim(),
-        formData.content.trim()
+        formData.symbol,
+        formData.note,
+        formData.type
       )
-      setFormData({ title: '', content: '' })
+      setFormData({ symbol: '', note: '', type: 'note' })
       setShowAddDialog(false)
       onNotesChange()
     }
   }
 
   const handleEditNote = () => {
-    if (editingNote && formData.title.trim() && formData.content.trim()) {
-      storageUtils.updateHistoricalNote(
-        editingNote.id,
-        formData.title.trim(),
-        formData.content.trim()
-      )
-      setFormData({ title: '', content: '' })
+    if (editingNote && formData.symbol.trim() && formData.note.trim()) {
+      storageUtils.updateHistoricalNote(editingNote.id, {
+        symbol: formData.symbol,
+        note: formData.note,
+        type: formData.type,
+      })
+      setFormData({ symbol: '', note: '', type: 'note' })
       setEditingNote(null)
       onNotesChange()
     }
@@ -60,21 +70,57 @@ export const HistoricalNotes = ({
   const openEditDialog = (note: HistoricalNote) => {
     setEditingNote(note)
     setFormData({
-      title: note.title,
-      content: note.content,
+      symbol: note.symbol,
+      note: note.note,
+      type: note.type,
     })
   }
 
   const closeEditDialog = () => {
     setEditingNote(null)
-    setFormData({ title: '', content: '' })
+    setFormData({ symbol: '', note: '', type: 'note' })
+  }
+
+  const getTypeSeverity = (type: string) => {
+    switch (type) {
+      case 'buy':
+        return 'success'
+      case 'sell':
+        return 'danger'
+      case 'hold':
+        return 'warning'
+      default:
+        return 'info'
+    }
+  }
+
+  const getTypeLabel = (type: string) => {
+    switch (type) {
+      case 'buy':
+        return 'Buy Signal'
+      case 'sell':
+        return 'Sell Signal'
+      case 'hold':
+        return 'Hold'
+      default:
+        return 'Note'
+    }
   }
 
   const itemTemplate = (note: HistoricalNote) => {
     return (
       <Card className="mb-4">
         <div className="flex justify-between items-start mb-3">
-          <h4 className="text-lg font-semibold">{note.title}</h4>
+          <div className="flex items-center gap-2">
+            <h4 className="text-lg font-semibold">{note.symbol}</h4>
+            <span
+              className={`px-2 py-1 text-xs rounded-full bg-${getTypeSeverity(
+                note.type
+              )}-100 text-${getTypeSeverity(note.type)}-800`}
+            >
+              {getTypeLabel(note.type)}
+            </span>
+          </div>
           <div className="flex gap-2">
             <Button
               icon="pi pi-pencil"
@@ -90,12 +136,9 @@ export const HistoricalNotes = ({
             />
           </div>
         </div>
-        <p className="text-sm mb-3 whitespace-pre-wrap">{note.content}</p>
+        <p className="text-sm mb-3 whitespace-pre-wrap">{note.note}</p>
         <div className="flex justify-between items-center text-xs">
-          <span>Created: {dateUtils.formatDate(note.createdAt)}</span>
-          {note.updatedAt !== note.createdAt && (
-            <span>Updated: {dateUtils.formatDate(note.updatedAt)}</span>
-          )}
+          <span>Created: {dateUtils.formatDate(note.timestamp)}</span>
         </div>
       </Card>
     )
@@ -155,28 +198,44 @@ export const HistoricalNotes = ({
       >
         <div className="flex flex-col gap-4">
           <div>
-            <label htmlFor="title" className="block text-sm font-medium mb-2">
-              Title
+            <label htmlFor="symbol" className="block text-sm font-medium mb-2">
+              Symbol
             </label>
             <InputText
-              id="title"
-              value={formData.title}
+              id="symbol"
+              value={formData.symbol}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setFormData({ ...formData, title: e.target.value })
+                setFormData({
+                  ...formData,
+                  symbol: e.target.value.toUpperCase(),
+                })
               }
-              placeholder="Enter note title"
+              placeholder="Enter stock symbol (e.g., AAPL)"
               className="w-full"
             />
           </div>
           <div>
-            <label htmlFor="content" className="block text-sm font-medium mb-2">
-              Content
+            <label htmlFor="type" className="block text-sm font-medium mb-2">
+              Type
+            </label>
+            <Dropdown
+              id="type"
+              value={formData.type}
+              options={noteTypes}
+              onChange={(e) => setFormData({ ...formData, type: e.value })}
+              placeholder="Select note type"
+              className="w-full"
+            />
+          </div>
+          <div>
+            <label htmlFor="note" className="block text-sm font-medium mb-2">
+              Note
             </label>
             <InputTextarea
-              id="content"
-              value={formData.content}
+              id="note"
+              value={formData.note}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setFormData({ ...formData, content: e.target.value })
+                setFormData({ ...formData, note: e.target.value })
               }
               placeholder="Enter your trading notes..."
               rows={6}
@@ -192,7 +251,7 @@ export const HistoricalNotes = ({
             <Button
               label="Add Note"
               onClick={handleAddNote}
-              disabled={!formData.title.trim() || !formData.content.trim()}
+              disabled={!formData.symbol.trim() || !formData.note.trim()}
             />
           </div>
         </div>
@@ -209,33 +268,52 @@ export const HistoricalNotes = ({
         <div className="flex flex-col gap-4">
           <div>
             <label
-              htmlFor="edit-title"
+              htmlFor="edit-symbol"
               className="block text-sm font-medium mb-2"
             >
-              Title
+              Symbol
             </label>
             <InputText
-              id="edit-title"
-              value={formData.title}
+              id="edit-symbol"
+              value={formData.symbol}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setFormData({ ...formData, title: e.target.value })
+                setFormData({
+                  ...formData,
+                  symbol: e.target.value.toUpperCase(),
+                })
               }
-              placeholder="Enter note title"
+              placeholder="Enter stock symbol (e.g., AAPL)"
               className="w-full"
             />
           </div>
           <div>
             <label
-              htmlFor="edit-content"
+              htmlFor="edit-type"
               className="block text-sm font-medium mb-2"
             >
-              Content
+              Type
+            </label>
+            <Dropdown
+              id="edit-type"
+              value={formData.type}
+              options={noteTypes}
+              onChange={(e) => setFormData({ ...formData, type: e.value })}
+              placeholder="Select note type"
+              className="w-full"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="edit-note"
+              className="block text-sm font-medium mb-2"
+            >
+              Note
             </label>
             <InputTextarea
-              id="edit-content"
-              value={formData.content}
+              id="edit-note"
+              value={formData.note}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setFormData({ ...formData, content: e.target.value })
+                setFormData({ ...formData, note: e.target.value })
               }
               placeholder="Enter your trading notes..."
               rows={6}
@@ -251,7 +329,7 @@ export const HistoricalNotes = ({
             <Button
               label="Update Note"
               onClick={handleEditNote}
-              disabled={!formData.title.trim() || !formData.content.trim()}
+              disabled={!formData.symbol.trim() || !formData.note.trim()}
             />
           </div>
         </div>
