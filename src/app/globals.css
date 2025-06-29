@@ -36,50 +36,13 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
   /* min-height: 100vh; */
+  /* Add transparency to background */
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 a {
   color: inherit;
   text-decoration: none;
-}
-
-/* Hero title rotating glow effect - Dark Blue Theme */
-.hero-title-glow {
-  background: linear-gradient(45deg, #3b82f6, #1d4ed8, #1e40af);
-  background-size: 200% 200%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: glowRotate 3s ease-in-out infinite;
-  text-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
-  font-size: 3rem;
-}
-
-@media (min-width: 768px) {
-  .hero-title-glow {
-    font-size: 4rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .hero-title-glow {
-    font-size: 5rem;
-  }
-}
-
-@keyframes glowRotate {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-/* Hero section padding */
-.hero-section {
-  padding: 3rem 0;
 }
 
 /* Custom scrollbar */
@@ -100,65 +63,12 @@ a {
   background: rgba(255, 255, 255, 0.5);
 }
 
-/* News ticker animation - much slower */
-@keyframes scroll {
-  0% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
-}
-
-.animate-scroll {
-  animation: scroll 120s linear infinite;
-}
-
-/* News ticker infinite scroll */
-.news-ticker {
-  overflow: hidden;
-  white-space: nowrap;
-  position: relative;
-}
-
-.news-ticker-content {
-  display: inline-block;
-  animation: ticker 60s linear infinite;
-}
-
-@keyframes ticker {
-  0% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
-}
-
 /* Parallax effect for background */
 .parallax-bg {
   background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-}
-
-/* Stock chart styling */
-.stock-chart .p-card {
-  transition: transform 0.2s ease-in-out;
-}
-
-.stock-chart .p-card:hover {
-  transform: translateY(-2px);
-}
-
-/* News item styling */
-.news-item .p-card {
-  transition: transform 0.2s ease-in-out;
-}
-
-.news-item .p-card:hover {
-  transform: translateY(-2px);
 }
 
 /* Responsive adjustments */

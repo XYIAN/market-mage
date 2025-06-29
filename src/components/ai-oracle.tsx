@@ -1,121 +1,115 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect } from 'react'
+import { Card } from 'primereact/card'
 import { Button } from 'primereact/button'
 import { ProgressSpinner } from 'primereact/progressspinner'
-import { Message } from 'primereact/message'
-import { AIInsight } from '@/types'
-import { dateUtils } from '@/utils/date'
+import { Toast } from 'primereact/toast'
+import { useRef } from 'react'
+import { useAIInsight } from '@/hooks/useAIInsight'
 
-interface AIOracleProps {
-  insight: AIInsight | null
-  loading: boolean
-  error: string | null
-  canGenerate: boolean
-  onGenerate: () => void
-}
+export const AIOracle = () => {
+  const {
+    insight,
+    loading,
+    error,
+    loadInsight,
+    generateInsight,
+    canGenerateInsight,
+  } = useAIInsight()
+  const toast = useRef<Toast>(null)
 
-export const AIOracle = ({
-  insight,
-  loading,
-  error,
-  canGenerate,
-  onGenerate,
-}: AIOracleProps) => {
-  const [showFullContent, setShowFullContent] = useState(false)
+  useEffect(() => {
+    loadInsight()
+  }, [loadInsight])
 
-  const formatContent = (content: string) => {
-    if (content.length <= 200 || showFullContent) {
-      return content
+  const handleGenerateInsight = async () => {
+    try {
+      await generateInsight()
+      toast.current?.show({
+        severity: 'success',
+        summary: 'AI Insight Generated',
+        detail: 'Your daily trading insight has been generated successfully!',
+        life: 3000,
+      })
+    } catch {
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to generate AI insight. Please try again.',
+        life: 5000,
+      })
     }
-    return content.substring(0, 200) + '...'
   }
 
-  const toggleContent = () => {
-    setShowFullContent(!showFullContent)
+  if (loading) {
+    return (
+      <Card className="mb-4">
+        <div className="flex items-center justify-center p-4">
+          <ProgressSpinner style={{ width: '50px', height: '50px' }} />
+          <span className="ml-3">Generating AI insight...</span>
+        </div>
+      </Card>
+    )
   }
 
   return (
-    <div className="h-full">
-      <div className="flex flex-col h-full">
+    <>
+      <Toast ref={toast} />
+      <Card className="mb-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <i className="pi pi-magic text-primary text-xl"></i>
-            <h3 className="text-lg font-bold">AI Oracle</h3>
+            <h3 className="text-xl font-semibold">AI Oracle</h3>
           </div>
-          {insight && (
-            <span className="text-xs text-muted-foreground">
-              Generated: {dateUtils.formatRelativeTime(insight.generatedAt)}
-            </span>
+          {canGenerateInsight() && (
+            <Button
+              label="Generate Insight"
+              icon="pi pi-refresh"
+              onClick={handleGenerateInsight}
+              loading={loading}
+              className="p-button-sm"
+            />
           )}
         </div>
 
-        {loading && (
-          <div className="flex flex-col items-center justify-center flex-1 py-8">
-            <ProgressSpinner style={{ width: '50px', height: '50px' }} />
-            <p className="mt-4 text-sm">Consulting the Oracle...</p>
+        {insight ? (
+          <div>
+            <div className="mb-3 p-3 bg-primary-50 border-round">
+              <p className="text-sm text-primary-700 mb-2">
+                Generated: {new Date(insight.generatedAt).toLocaleString()}
+              </p>
+              <p className="leading-relaxed">{insight.content}</p>
+            </div>
+            {!canGenerateInsight() && (
+              <p className="text-sm text-500">
+                <i className="pi pi-info-circle mr-1"></i>
+                New insights available daily at midnight
+              </p>
+            )}
           </div>
-        )}
-
-        {error && <Message severity="error" text={error} className="mb-4" />}
-
-        {!loading && !insight && !error && (
-          <div className="flex flex-col items-center justify-center flex-1 py-8 text-center">
-            <i className="pi pi-eye text-4xl mb-4"></i>
-            <h4 className="text-lg font-semibold mb-2">No Insight Available</h4>
-            <p className="text-sm mb-4">
-              Get your daily AI-powered trading insight to guide your investment
-              decisions.
-            </p>
+        ) : (
+          <div className="text-center p-4">
+            <i className="pi pi-lightbulb text-4xl text-500 mb-3"></i>
+            <p className="text-500 mb-3">No AI insight available</p>
             <Button
-              label="Generate Insight"
+              label="Generate First Insight"
               icon="pi pi-magic"
-              onClick={onGenerate}
-              className="p-button-primary"
+              onClick={handleGenerateInsight}
+              loading={loading}
             />
           </div>
         )}
 
-        {insight && !loading && (
-          <div className="flex-1">
-            <div className="bg-primary bg-opacity-10 border border-primary border-opacity-20 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <i className="pi pi-lightbulb text-primary text-lg mt-1"></i>
-                <div className="flex-1">
-                  <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                    {formatContent(insight.content)}
-                  </p>
-                  {insight.content.length > 200 && (
-                    <Button
-                      label={showFullContent ? 'Show Less' : 'Read More'}
-                      link
-                      className="p-0 mt-2 text-primary"
-                      onClick={toggleContent}
-                    />
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-4 flex flex-col sm:flex-row gap-2">
-              {canGenerate && (
-                <Button
-                  label="Generate New Insight"
-                  icon="pi pi-refresh"
-                  onClick={onGenerate}
-                  className="p-button-outlined p-button-sm"
-                />
-              )}
-              {!canGenerate && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <i className="pi pi-clock"></i>
-                  <span>Next insight available tomorrow</span>
-                </div>
-              )}
-            </div>
+        {error && (
+          <div className="mt-3 p-3 bg-red-50 border-round">
+            <p className="text-red-700 text-sm">
+              <i className="pi pi-exclamation-triangle mr-1"></i>
+              {error}
+            </p>
           </div>
         )}
-      </div>
-    </div>
+      </Card>
+    </>
   )
 }

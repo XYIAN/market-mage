@@ -1,0 +1,17 @@
+/* Stock chart styling */
+.stock-chart .p-card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.stock-chart .p-card:hover {
+  transform: translateY(-2px);
+}
+
+/* News item styling */
+.news-item .p-card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.news-item .p-card:hover {
+  transform: translateY(-2px);
+}

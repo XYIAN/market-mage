@@ -16,7 +16,7 @@ export default function NavDial() {
       },
     },
     {
-      label: 'Learn More',
+      label: 'FAQ',
       icon: 'pi pi-question-circle',
       command: () => {
         router.push('/faq')
@@ -28,7 +28,7 @@ export default function NavDial() {
     <SpeedDial
       model={items}
       direction="up"
-      showIcon="pi pi-bars"
+      showIcon="pi pi-magic"
       hideIcon="pi pi-times"
       className="fixed left-0 bottom-0 m-3 p-1 m-1rem"
     />

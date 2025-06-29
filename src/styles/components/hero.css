@@ -1,0 +1,45 @@
+/* Hero title rotating glow effect - Dark Blue Theme */
+.hero-title-glow {
+  background: linear-gradient(45deg, #3b82f6, #1d4ed8, #1e40af);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: glowRotate 3s ease-in-out infinite;
+  text-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
+  font-size: 3rem;
+}
+
+@media (min-width: 768px) {
+  .hero-title-glow {
+    font-size: 4rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-title-glow {
+    font-size: 5rem;
+  }
+}
+
+@keyframes glowRotate {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Hero section padding */
+.hero-section {
+  padding: 3rem 0;
+}
+
+/* Dark blue glowing icons */
+.dark-blue-glow {
+  color: #1e40af;
+  text-shadow: 0 0 15px rgba(30, 64, 175, 0.8);
+  filter: drop-shadow(0 0 8px rgba(30, 64, 175, 0.6));
+}

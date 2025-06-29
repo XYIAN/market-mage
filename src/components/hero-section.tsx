@@ -1,11 +1,10 @@
 'use client'
 
+import '@/styles/components/hero.css'
+
 export const HeroSection = () => {
   return (
-    <div
-      className="hero-section flex justify-center m-4"
-      style={{ marginTop: '100px', marginBottom: '100px' }}
-    >
+    <div className="hero-section flex justify-center mb-8">
       <div className="text-center max-w-4xl">
         <div className="mb-6">
           <i className="pi pi-magic text-primary text-6xl mb-4"></i>

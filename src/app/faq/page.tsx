@@ -2,10 +2,9 @@
 
 import { useState } from 'react'
 import { Card } from 'primereact/card'
-import { Accordion, AccordionTab } from 'primereact/accordion'
-import { TabView, TabPanel } from 'primereact/tabview'
+import { TabView } from 'primereact/tabview'
 import { Chip } from 'primereact/chip'
-import { getFAQsByCategory, type FAQItem } from '@/data/faq'
+import { FAQCategory } from '@/components/faq/faq-category'
 
 export default function FAQPage() {
   const [activeIndex, setActiveIndex] = useState(0)
@@ -16,10 +15,6 @@ export default function FAQPage() {
     { key: 'technical', label: 'Technical', icon: 'pi pi-cog' },
     { key: 'trading', label: 'Trading', icon: 'pi pi-chart-line' },
   ] as const
-
-  const getCategoryFAQs = (category: (typeof categories)[number]['key']) => {
-    return getFAQsByCategory(category)
-  }
 
   return (
     <div className="min-h-screen p-4">
@@ -43,37 +38,7 @@ export default function FAQPage() {
             onTabChange={(e) => setActiveIndex(e.index)}
           >
             {categories.map((category) => (
-              <TabPanel
-                key={category.key}
-                header={
-                  <div className="flex items-center gap-2">
-                    <i className={category.icon}></i>
-                    <span>{category.label}</span>
-                    <Chip
-                      label={getCategoryFAQs(category.key).length.toString()}
-                      className="text-xs"
-                    />
-                  </div>
-                }
-              >
-                <Accordion>
-                  {getCategoryFAQs(category.key).map((faq: FAQItem) => (
-                    <AccordionTab
-                      key={faq.id}
-                      header={
-                        <div className="flex items-center gap-2">
-                          <i className="pi pi-question-circle text-primary"></i>
-                          <span className="font-medium">{faq.question}</span>
-                        </div>
-                      }
-                    >
-                      <div className="p-4">
-                        <p className="leading-relaxed">{faq.answer}</p>
-                      </div>
-                    </AccordionTab>
-                  ))}
-                </Accordion>
-              </TabPanel>
+              <FAQCategory key={category.key} category={category} />
             ))}
           </TabView>
         </Card>

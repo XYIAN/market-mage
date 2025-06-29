@@ -1,8 +1,12 @@
+'use client'
+
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { PrimeReactProvider } from 'primereact/api'
 import NavDial from '@/components/layout/NavDial'
+import { NewsTicker } from '@/components/news-ticker'
+import { useNewsTicker } from '@/hooks/useNewsTicker'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -16,6 +20,18 @@ export const metadata: Metadata = {
   viewport: 'width=device-width, initial-scale=1',
 }
 
+function AppContent({ children }: { children: React.ReactNode }) {
+  const { news, loading } = useNewsTicker()
+
+  return (
+    <>
+      <NewsTicker news={news} loading={loading} />
+      {children}
+      <NavDial />
+    </>
+  )
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -25,8 +41,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <PrimeReactProvider>
-          {children}
-          <NavDial />
+          <AppContent>{children}</AppContent>
         </PrimeReactProvider>
       </body>
     </html>

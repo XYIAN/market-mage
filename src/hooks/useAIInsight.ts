@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { AIInsight } from '@/types'
 import { storageUtils } from '@/utils/storage'
 import { dateUtils } from '@/utils/date'
@@ -12,8 +12,10 @@ export const useAIInsight = () => {
   const [error, setError] = useState<string | null>(null)
 
   const loadInsight = useCallback(() => {
-    const stored = storageUtils.getAIInsight()
-    setInsight(stored)
+    const storedInsight = storageUtils.getAIInsight()
+    if (storedInsight) {
+      setInsight(storedInsight)
+    }
   }, [])
 
   const generateInsight = useCallback(async () => {
@@ -34,6 +36,8 @@ export const useAIInsight = () => {
 
       storageUtils.setAIInsight(newInsight)
       setInsight(newInsight)
+
+      // Toast will be handled by the component using this hook
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'Failed to generate AI insight'
@@ -44,40 +48,18 @@ export const useAIInsight = () => {
   }, [])
 
   const canGenerateInsight = useCallback(() => {
-    if (!insight) return true
+    const lastInsight = storageUtils.getAIInsight()
+    if (!lastInsight) return true
 
-    return dateUtils.isNewDay(insight.generatedAt)
-  }, [insight])
-
-  // Load insight on mount
-  useEffect(() => {
-    loadInsight()
-  }, [loadInsight])
-
-  // Check for new day at midnight
-  useEffect(() => {
-    const checkNewDay = () => {
-      if (insight && dateUtils.isNewDay(insight.generatedAt)) {
-        setInsight(null)
-        localStorage.removeItem('market-mage-ai-insight')
-      }
-    }
-
-    // Check immediately
-    checkNewDay()
-
-    // Set up interval to check every minute
-    const interval = setInterval(checkNewDay, 60 * 1000)
-
-    return () => clearInterval(interval)
-  }, [insight])
+    return dateUtils.isNewDay(lastInsight.generatedAt)
+  }, [])
 
   return {
     insight,
     loading,
     error,
-    canGenerate: canGenerateInsight(),
+    loadInsight,
     generateInsight,
-    refresh: loadInsight,
+    canGenerateInsight,
   }
 }

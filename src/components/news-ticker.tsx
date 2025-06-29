@@ -1,23 +1,23 @@
 'use client'
 
 import { NewsItem } from '@/types'
+import '@/styles/news/ticker.css'
 
 interface NewsTickerProps {
   news: NewsItem[]
+  loading?: boolean
 }
 
-export const NewsTicker = ({ news }: NewsTickerProps) => {
-  if (!news.length) {
+export const NewsTicker = ({ news, loading = false }: NewsTickerProps) => {
+  if (loading || !news.length) {
     return (
       <div
-        style={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 9999,
-          padding: '8px 16px',
-        }}
+        style={{ position: 'fixed', top: 0, zIndex: 9999, padding: '8px 16px' }}
       >
-        Loading market news...
+        <div className="flex items-center gap-2">
+          <i className="pi pi-spin pi-spinner"></i>
+          <span>Loading market news...</span>
+        </div>
       </div>
     )
   }
