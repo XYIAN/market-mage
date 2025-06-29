@@ -4,11 +4,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* PrimeFlex - must come after Tailwind */
+@import 'primeflex/primeflex.min.css';
+
 /* PrimeReact Theme */
 @import 'primereact/resources/themes/viva-dark/theme.css';
 @import 'primereact/resources/primereact.min.css';
 @import 'primeicons/primeicons.css';
-@import 'primeflex/primeflex.css';
 
 :root {
   --foreground-rgb: 255, 255, 255;

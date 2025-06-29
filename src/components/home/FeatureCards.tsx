@@ -5,10 +5,26 @@ import { FEATURE_CARDS } from '@/data/cards'
 
 export const FeatureCards = () => {
   return (
-    <div className="flex flex-wrap justify-center gap-4 mb-8">
+    <div className="flex  justify-center gap-3 mb-8">
       {FEATURE_CARDS.map((card) => (
-        <Card key={card.id} className="w-80 min-h-60">
-          <div className="flex flex-col h-full items-center justify-center text-center">
+        <Card
+          key={card.id}
+          className="w-80 h-60"
+          style={{
+            padding: '2rem',
+            height: '18rem',
+            width: '26rem',
+          }}
+        >
+          <div
+            className="text-center"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
             <div className="mb-4">
               <i className={`${card.icon} text-4xl dark-blue-glow`}></i>
             </div>

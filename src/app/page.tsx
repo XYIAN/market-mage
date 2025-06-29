@@ -9,21 +9,6 @@ import { FeatureCards } from '@/components/home/FeatureCards'
 import { StatsSection } from '@/components/home/StatsSection'
 import { AIInsightPreview } from '@/components/home/AIInsightPreview'
 import { CallToAction } from '@/components/home/CallToAction'
-import type { Metadata } from 'next'
-
-export const metadata: Metadata = {
-  title: 'Market-Mage - AI-Powered Trading Insights & Stock Dashboard',
-  description:
-    'Transform your trading with AI-powered insights, real-time market data, and portfolio management. Get started with Market-Mage today.',
-  keywords:
-    'AI trading, stock dashboard, trading insights, portfolio management, market analysis, cryptocurrency trading',
-  openGraph: {
-    title: 'Market-Mage - AI-Powered Trading Insights',
-    description:
-      'Transform your trading with AI-powered insights and real-time market data.',
-    type: 'website',
-  },
-}
 
 export default function HomePage() {
   const { news } = useNewsTicker()

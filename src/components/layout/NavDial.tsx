@@ -47,17 +47,22 @@ export default function NavDial() {
   ]
 
   return (
-    <SpeedDial
-      model={items}
-      direction="up"
-      showIcon={
-        <FaMagic
-          size={24}
-          style={{ color: '#1E40AF', filter: 'drop-shadow(0 0 8px #1E40AF)' }}
-        />
-      }
-      hideIcon="pi pi-times"
-      className="fixed left-0 bottom-0 m-3 p-1 m-1rem"
-    />
+    <div className="fixed bottom-0 left-0 m-3">
+      <SpeedDial
+        model={items}
+        direction="up"
+        showIcon={
+          <FaMagic
+            size={24}
+            style={{ color: '#1E40AF', filter: 'drop-shadow(0 0 8px #1E40AF)' }}
+          />
+        }
+        hideIcon="pi pi-times"
+        pt={{
+          menuitem: { className: 'gap-2' },
+          action: { className: 'gap-2' },
+        }}
+      />
+    </div>
   )
 }

@@ -15,4 +15,7 @@ module.exports = {
     },
   },
   plugins: [],
+  corePlugins: {
+    preflight: false, // Disable Tailwind's preflight to avoid conflicts with PrimeReact
+  },
 }
