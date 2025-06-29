@@ -32,6 +32,15 @@ All notable changes to this project will be documented in this file.
 - Enhanced TypeScript configuration and type checking
 - Improved development experience with cleaner imports
 
+## [1.2.1] - 2024-06-13
+
+### Added
+
+- Wizardly toast notifications for news, crypto, and stock API calls with themed messages
+- Global Toast context and utility for consistent notifications
+- Cookie consent banner with wizard/space theme and user preferences
+- Improved error handling and user feedback in all major API hooks
+
 ## [1.0.1] - 2024-12-19
 
 ### Added
