@@ -3,30 +3,36 @@
 import { useState, useEffect } from 'react'
 import { Button } from 'primereact/button'
 import { SpeedDial } from 'primereact/speeddial'
-import { AssetTracker } from './AssetTracker'
-import { CryptoAIOracle } from './CryptoAIOracle'
-import { CryptoInsights } from './CryptoInsights'
-import { MarketOverview } from './MarketOverview'
-import { DashboardStepper } from '../dashboard/DashboardStepper'
-import { DashboardEditDialog } from '../dashboard/DashboardEditDialog'
+import { StockTable } from './StockTable'
+import { AIOracle } from './AIOracle'
+import { HistoricalNotes } from './HistoricalNotes'
+import { DashboardStepper } from './DashboardStepper'
+import { DashboardEditDialog } from './DashboardEditDialog'
 import {
   DashboardConfig,
   DashboardSection,
-  CryptoDashboardConfig,
+  MarketDashboardConfig,
 } from '@/types/dashboard'
-import { CryptoAsset } from '@/types/crypto'
+import { WatchlistItem, StockData, HistoricalNote } from '@/types'
+import { storageUtils } from '@/utils/storage'
+import { stockService } from '@/services/stockService'
 
-const STORAGE_KEY = 'crypto-dashboard-config'
+const STORAGE_KEY = 'market-dashboard-config'
 
-export function CustomizableCryptoDashboard() {
+export function MarketDashboard() {
   const [config, setConfig] = useState<DashboardConfig | null>(null)
   const [showStepper, setShowStepper] = useState(false)
   const [showEditDialog, setShowEditDialog] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [stockData, setStockData] = useState<StockData[]>([])
+  const [notes, setNotes] = useState<HistoricalNote[]>([])
+  const [loading, setLoading] = useState(true)
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
 
   useEffect(() => {
     loadDashboardConfig()
+    loadInitialData()
   }, [])
 
   const loadDashboardConfig = () => {
@@ -41,6 +47,77 @@ export function CustomizableCryptoDashboard() {
     }
   }
 
+  const loadInitialData = () => {
+    const savedWatchlist = storageUtils.getWatchlist()
+    console.log('Saved watchlist:', savedWatchlist)
+
+    if (savedWatchlist.length === 0) {
+      // Add some default stocks if watchlist is empty
+      storageUtils.addToWatchlist('AAPL', 'Apple Inc.')
+      storageUtils.addToWatchlist('GOOGL', 'Alphabet Inc.')
+      storageUtils.addToWatchlist('MSFT', 'Microsoft Corporation')
+      storageUtils.addToWatchlist('TSLA', 'Tesla Inc.')
+      storageUtils.addToWatchlist('AMZN', 'Amazon.com Inc.')
+
+      const updatedWatchlist = storageUtils.getWatchlist()
+      fetchStockData(updatedWatchlist.map((item) => item.symbol))
+    } else {
+      fetchStockData(savedWatchlist.map((item) => item.symbol))
+    }
+
+    setNotes(storageUtils.getHistoricalNotes())
+  }
+
+  const fetchStockData = async (symbols: string[]) => {
+    setLoading(true)
+    console.log('Fetching stock data for:', symbols)
+
+    try {
+      const data = await stockService.getStockData(symbols)
+      console.log('Stock data received:', data)
+      setStockData(data)
+      setLastUpdated(new Date())
+    } catch (err) {
+      console.error('Error fetching stock data:', err)
+      // Set mock data if API fails
+      setStockData([
+        {
+          symbol: 'AAPL',
+          name: 'Apple Inc.',
+          price: 150.25 + Math.random() * 10,
+          change: (Math.random() - 0.5) * 5,
+          changePercent: (Math.random() - 0.5) * 3,
+          volume: Math.floor(Math.random() * 100000000),
+          marketCap: Math.floor(Math.random() * 1000000000),
+          lastUpdated: new Date().toISOString(),
+        },
+        {
+          symbol: 'GOOGL',
+          name: 'Alphabet Inc.',
+          price: 2800.5 + Math.random() * 50,
+          change: (Math.random() - 0.5) * 20,
+          changePercent: (Math.random() - 0.5) * 2,
+          volume: Math.floor(Math.random() * 50000000),
+          marketCap: Math.floor(Math.random() * 1000000000),
+          lastUpdated: new Date().toISOString(),
+        },
+        {
+          symbol: 'MSFT',
+          name: 'Microsoft Corporation',
+          price: 320.75 + Math.random() * 15,
+          change: (Math.random() - 0.5) * 8,
+          changePercent: (Math.random() - 0.5) * 2.5,
+          volume: Math.floor(Math.random() * 80000000),
+          marketCap: Math.floor(Math.random() * 1000000000),
+          lastUpdated: new Date().toISOString(),
+        },
+      ])
+      setLastUpdated(new Date())
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const saveDashboardConfig = (newConfig: DashboardConfig) => {
     if (typeof window === 'undefined') return
     try {
@@ -51,15 +128,17 @@ export function CustomizableCryptoDashboard() {
     }
   }
 
-  const handleAssetsChange = (assets: CryptoAsset[]) => {
-    if (config && config.type === 'crypto') {
-      const updatedConfig = { ...config, assets }
+  const handleStocksChange = (stocks: WatchlistItem[]) => {
+    if (config && config.type === 'market') {
+      const updatedConfig = { ...config, stocks }
       saveDashboardConfig(updatedConfig)
+      // Refresh stock data
+      fetchStockData(stocks.map((item) => item.symbol))
     }
   }
 
   const handleAIOracleRefresh = (refreshCount: number) => {
-    if (config && config.type === 'crypto') {
+    if (config && config.type === 'market') {
       const updatedConfig = {
         ...config,
         aiOracleRefreshCount: refreshCount,
@@ -67,6 +146,10 @@ export function CustomizableCryptoDashboard() {
       }
       saveDashboardConfig(updatedConfig)
     }
+  }
+
+  const handleNotesChange = () => {
+    setNotes(storageUtils.getHistoricalNotes())
   }
 
   const handleInitialSetup = () => {
@@ -99,38 +182,47 @@ export function CustomizableCryptoDashboard() {
   }
 
   const renderSection = (section: DashboardSection) => {
-    if (!section.enabled || config?.type !== 'crypto') return null
-    const cryptoConfig = config as CryptoDashboardConfig
+    if (!section.enabled || config?.type !== 'market') return null
+    const marketConfig = config as MarketDashboardConfig
 
     switch (section.type) {
-      case 'asset-tracker':
+      case 'stock-table':
         return (
-          <AssetTracker
+          <StockTable
             key={section.id}
-            assets={cryptoConfig.assets || []}
-            onAssetsChange={handleAssetsChange}
+            stocks={stockData}
+            loading={loading}
+            lastUpdated={lastUpdated}
           />
         )
       case 'ai-oracle':
+        return <AIOracle key={section.id} />
+      case 'historical-notes':
         return (
-          <CryptoAIOracle
+          <HistoricalNotes
             key={section.id}
-            assets={cryptoConfig.assets || []}
-            refreshCount={cryptoConfig.aiOracleRefreshCount || 0}
-            onRefreshCountChange={handleAIOracleRefresh}
-            lastRefresh={
-              cryptoConfig.lastAiOracleRefresh
-                ? new Date(cryptoConfig.lastAiOracleRefresh)
-                : undefined
-            }
+            notes={notes}
+            onNotesChange={handleNotesChange}
           />
         )
-      case 'insights':
+      case 'market-sentiment':
         return (
-          <CryptoInsights key={section.id} assets={cryptoConfig.assets || []} />
+          <div key={section.id} className="p-4">
+            <h3 className="text-lg font-semibold mb-4">Market Sentiment</h3>
+            <p className="text-gray-600">
+              Market sentiment analysis will be available here.
+            </p>
+          </div>
         )
-      case 'market-overview':
-        return <MarketOverview key={section.id} />
+      case 'portfolio-overview':
+        return (
+          <div key={section.id} className="p-4">
+            <h3 className="text-lg font-semibold mb-4">Portfolio Overview</h3>
+            <p className="text-gray-600">
+              Portfolio performance and allocation will be available here.
+            </p>
+          </div>
+        )
       default:
         return null
     }
@@ -142,14 +234,14 @@ export function CustomizableCryptoDashboard() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="w-full max-w-2xl text-center bg-transparent">
           <div className="py-12">
-            <i className="pi pi-bitcoin text-6xl text-orange-500 mb-6"></i>
+            <i className="pi pi-chart-bar text-6xl text-orange-500 mb-6"></i>
             <h1 className="text-3xl font-bold mb-4">
-              Welcome to Your Crypto Dashboard
+              Welcome to Your Market Dashboard
             </h1>
             <p className="text-gray-600 mb-8 max-w-md mx-auto">
-              Customize your dashboard by selecting features, charts, and
-              cryptocurrencies to track. Get AI-powered insights and monitor
-              your portfolio all in one place.
+              Customize your dashboard by selecting features, charts, and stocks
+              to track. Get AI-powered insights and monitor your portfolio all
+              in one place.
             </p>
             <Button
               label="Customize My Dashboard"
@@ -165,7 +257,7 @@ export function CustomizableCryptoDashboard() {
           visible={showStepper}
           onHide={() => setShowStepper(false)}
           onSave={handleStepperSave}
-          dashboardType="crypto"
+          dashboardType="market"
         />
 
         {/* Loading Overlay */}
@@ -181,9 +273,9 @@ export function CustomizableCryptoDashboard() {
   const enabledSections = config.sections
     .filter((s: DashboardSection) => s.enabled)
     .sort((a: DashboardSection, b: DashboardSection) => a.position - b.position)
-  const assetCount =
-    config.type === 'crypto'
-      ? (config as CryptoDashboardConfig).assets?.length || 0
+  const stockCount =
+    config.type === 'market'
+      ? (config as MarketDashboardConfig).stocks?.length || 0
       : 0
 
   return (
@@ -193,7 +285,7 @@ export function CustomizableCryptoDashboard() {
           <div>
             <h1 className="text-2xl font-bold">{config.name}</h1>
             <p className="text-gray-600">
-              {assetCount} assets • {enabledSections.length} features
+              {stockCount} stocks • {enabledSections.length} features
             </p>
           </div>
           <Button
@@ -236,7 +328,7 @@ export function CustomizableCryptoDashboard() {
             command: handleEditDashboard,
           },
           {
-            label: 'Add Asset',
+            label: 'Add Stock',
             icon: 'pi pi-plus',
             command: handleEditDashboard,
           },
@@ -253,7 +345,7 @@ export function CustomizableCryptoDashboard() {
         mode={editMode ? 'edit' : 'create'}
         initialConfig={editMode && config ? config : undefined}
         onSave={handleSaveConfig}
-        dashboardType="crypto"
+        dashboardType="market"
       />
 
       {/* Loading Overlay */}

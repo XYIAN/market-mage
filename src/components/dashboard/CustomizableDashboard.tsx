@@ -3,22 +3,32 @@
 import { useState, useEffect } from 'react'
 import { Button } from 'primereact/button'
 import { SpeedDial } from 'primereact/speeddial'
-import { AssetTracker } from './AssetTracker'
-import { CryptoAIOracle } from './CryptoAIOracle'
-import { CryptoInsights } from './CryptoInsights'
-import { MarketOverview } from './MarketOverview'
-import { DashboardStepper } from '../dashboard/DashboardStepper'
-import { DashboardEditDialog } from '../dashboard/DashboardEditDialog'
-import {
-  DashboardConfig,
-  DashboardSection,
-  CryptoDashboardConfig,
-} from '@/types/dashboard'
+import { DashboardConfig, DashboardType } from '@/types/dashboard'
+import { DashboardStepper } from './DashboardStepper'
+import { DashboardEditDialog } from './DashboardEditDialog'
 import { CryptoAsset } from '@/types/crypto'
+import { WatchlistItem } from '@/types'
 
-const STORAGE_KEY = 'crypto-dashboard-config'
+// Import section components
+import { AssetTracker } from '../crypto/AssetTracker'
+import { CryptoAIOracle } from '../crypto/CryptoAIOracle'
+import { CryptoInsights } from '../crypto/CryptoInsights'
+import { MarketOverview } from '../crypto/MarketOverview'
+import { StockTable } from './StockTable'
+import { AIOracle } from './AIOracle'
+import { HistoricalNotes } from './HistoricalNotes'
 
-export function CustomizableCryptoDashboard() {
+interface CustomizableDashboardProps {
+  dashboardType: DashboardType
+  storageKey: string
+  renderSection: (section: any, config: DashboardConfig) => React.ReactNode
+}
+
+export function CustomizableDashboard({
+  dashboardType,
+  storageKey,
+  renderSection,
+}: CustomizableDashboardProps) {
   const [config, setConfig] = useState<DashboardConfig | null>(null)
   const [showStepper, setShowStepper] = useState(false)
   const [showEditDialog, setShowEditDialog] = useState(false)
@@ -32,7 +42,7 @@ export function CustomizableCryptoDashboard() {
   const loadDashboardConfig = () => {
     if (typeof window === 'undefined') return
     try {
-      const savedConfig = localStorage.getItem(STORAGE_KEY)
+      const savedConfig = localStorage.getItem(storageKey)
       if (savedConfig) {
         setConfig(JSON.parse(savedConfig))
       }
@@ -44,28 +54,10 @@ export function CustomizableCryptoDashboard() {
   const saveDashboardConfig = (newConfig: DashboardConfig) => {
     if (typeof window === 'undefined') return
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newConfig))
+      localStorage.setItem(storageKey, JSON.stringify(newConfig))
       setConfig(newConfig)
     } catch (error) {
       console.error('Error saving dashboard config:', error)
-    }
-  }
-
-  const handleAssetsChange = (assets: CryptoAsset[]) => {
-    if (config && config.type === 'crypto') {
-      const updatedConfig = { ...config, assets }
-      saveDashboardConfig(updatedConfig)
-    }
-  }
-
-  const handleAIOracleRefresh = (refreshCount: number) => {
-    if (config && config.type === 'crypto') {
-      const updatedConfig = {
-        ...config,
-        aiOracleRefreshCount: refreshCount,
-        lastAiOracleRefresh: new Date().toISOString(),
-      }
-      saveDashboardConfig(updatedConfig)
     }
   }
 
@@ -98,42 +90,18 @@ export function CustomizableCryptoDashboard() {
     console.log('Stepper closed after initial setup')
   }
 
-  const renderSection = (section: DashboardSection) => {
-    if (!section.enabled || config?.type !== 'crypto') return null
-    const cryptoConfig = config as CryptoDashboardConfig
+  const getDashboardIcon = () => {
+    return dashboardType === 'crypto' ? 'pi-bitcoin' : 'pi-chart-bar'
+  }
 
-    switch (section.type) {
-      case 'asset-tracker':
-        return (
-          <AssetTracker
-            key={section.id}
-            assets={cryptoConfig.assets || []}
-            onAssetsChange={handleAssetsChange}
-          />
-        )
-      case 'ai-oracle':
-        return (
-          <CryptoAIOracle
-            key={section.id}
-            assets={cryptoConfig.assets || []}
-            refreshCount={cryptoConfig.aiOracleRefreshCount || 0}
-            onRefreshCountChange={handleAIOracleRefresh}
-            lastRefresh={
-              cryptoConfig.lastAiOracleRefresh
-                ? new Date(cryptoConfig.lastAiOracleRefresh)
-                : undefined
-            }
-          />
-        )
-      case 'insights':
-        return (
-          <CryptoInsights key={section.id} assets={cryptoConfig.assets || []} />
-        )
-      case 'market-overview':
-        return <MarketOverview key={section.id} />
-      default:
-        return null
-    }
+  const getDashboardTitle = () => {
+    return dashboardType === 'crypto' ? 'Crypto Dashboard' : 'Market Dashboard'
+  }
+
+  const getDashboardDescription = () => {
+    return dashboardType === 'crypto'
+      ? 'Customize your dashboard by selecting features, charts, and cryptocurrencies to track. Get AI-powered insights and monitor your portfolio all in one place.'
+      : 'Customize your dashboard by selecting features, charts, and stocks to track. Get AI-powered insights and monitor your portfolio all in one place.'
   }
 
   // If no configuration exists, show the initial setup
@@ -142,14 +110,14 @@ export function CustomizableCryptoDashboard() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="w-full max-w-2xl text-center bg-transparent">
           <div className="py-12">
-            <i className="pi pi-bitcoin text-6xl text-orange-500 mb-6"></i>
+            <i
+              className={`pi ${getDashboardIcon()} text-6xl text-orange-500 mb-6`}
+            ></i>
             <h1 className="text-3xl font-bold mb-4">
-              Welcome to Your Crypto Dashboard
+              Welcome to Your {getDashboardTitle()}
             </h1>
             <p className="text-gray-600 mb-8 max-w-md mx-auto">
-              Customize your dashboard by selecting features, charts, and
-              cryptocurrencies to track. Get AI-powered insights and monitor
-              your portfolio all in one place.
+              {getDashboardDescription()}
             </p>
             <Button
               label="Customize My Dashboard"
@@ -165,7 +133,7 @@ export function CustomizableCryptoDashboard() {
           visible={showStepper}
           onHide={() => setShowStepper(false)}
           onSave={handleStepperSave}
-          dashboardType="crypto"
+          dashboardType={dashboardType}
         />
 
         {/* Loading Overlay */}
@@ -179,12 +147,12 @@ export function CustomizableCryptoDashboard() {
   }
 
   const enabledSections = config.sections
-    .filter((s: DashboardSection) => s.enabled)
-    .sort((a: DashboardSection, b: DashboardSection) => a.position - b.position)
+    .filter((s) => s.enabled)
+    .sort((a, b) => a.position - b.position)
   const assetCount =
-    config.type === 'crypto'
-      ? (config as CryptoDashboardConfig).assets?.length || 0
-      : 0
+    dashboardType === 'crypto'
+      ? (config as any).assets?.length || 0
+      : (config as any).stocks?.length || 0
 
   return (
     <div className="min-h-screen p-4">
@@ -193,7 +161,8 @@ export function CustomizableCryptoDashboard() {
           <div>
             <h1 className="text-2xl font-bold">{config.name}</h1>
             <p className="text-gray-600">
-              {assetCount} assets • {enabledSections.length} features
+              {assetCount} {dashboardType === 'crypto' ? 'assets' : 'stocks'} •{' '}
+              {enabledSections.length} features
             </p>
           </div>
           <Button
@@ -220,9 +189,9 @@ export function CustomizableCryptoDashboard() {
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {enabledSections.map((section: DashboardSection) => (
+          {enabledSections.map((section) => (
             <div key={section.id} className="h-full">
-              {renderSection(section)}
+              {renderSection(section, config)}
             </div>
           ))}
         </div>
@@ -236,7 +205,7 @@ export function CustomizableCryptoDashboard() {
             command: handleEditDashboard,
           },
           {
-            label: 'Add Asset',
+            label: dashboardType === 'crypto' ? 'Add Asset' : 'Add Stock',
             icon: 'pi pi-plus',
             command: handleEditDashboard,
           },
@@ -253,7 +222,7 @@ export function CustomizableCryptoDashboard() {
         mode={editMode ? 'edit' : 'create'}
         initialConfig={editMode && config ? config : undefined}
         onSave={handleSaveConfig}
-        dashboardType="crypto"
+        dashboardType={dashboardType}
       />
 
       {/* Loading Overlay */}
