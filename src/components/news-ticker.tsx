@@ -9,36 +9,67 @@ interface NewsTickerProps {
 export const NewsTicker = ({ news }: NewsTickerProps) => {
   if (!news.length) {
     return (
-      <div className="bg-primary text-primary-foreground py-2 px-4 text-sm font-medium">
+      <div
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 9999,
+          padding: '8px 16px',
+        }}
+      >
         Loading market news...
       </div>
     )
   }
 
   return (
-    <div className="bg-primary text-primary-foreground py-2 relative overflow-hidden">
-      <div className="flex items-center">
-        <div className="bg-primary-foreground bg-opacity-20 px-3 py-1 text-xs font-bold uppercase tracking-wider rounded">
+    <div style={{ position: 'fixed', top: 0, zIndex: 9999, padding: '8px 0' }}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div
+          style={{
+            padding: '4px 12px',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            textTransform: 'uppercase',
+          }}
+        >
           Live News
         </div>
-        <div className="flex-1 overflow-hidden ml-4">
-          <div className="flex items-center space-x-8 animate-scroll">
+        <div style={{ flex: 1, overflow: 'hidden', marginLeft: '16px' }}>
+          <div
+            className="animate-scroll"
+            style={{ display: 'flex', alignItems: 'center' }}
+          >
             {/* Original items */}
             {news.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center space-x-4 min-w-max flex-shrink-0"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginRight: '32px',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                }}
               >
-                <span className="text-primary-foreground text-opacity-70 text-xs">
+                <span style={{ fontSize: '12px', marginRight: '16px' }}>
                   {new Date(item.publishedAt).toLocaleTimeString('en-US', {
                     hour: '2-digit',
                     minute: '2-digit',
                   })}
                 </span>
-                <span className="text-sm font-medium max-w-xs truncate">
+                <span
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    maxWidth: '200px',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
                   {item.title}
                 </span>
-                <span className="text-primary-foreground text-opacity-70 text-xs">
+                <span style={{ fontSize: '12px', marginLeft: '8px' }}>
                   • {item.source}
                 </span>
               </div>
@@ -47,18 +78,32 @@ export const NewsTicker = ({ news }: NewsTickerProps) => {
             {news.map((item) => (
               <div
                 key={`duplicate-${item.id}`}
-                className="flex items-center space-x-4 min-w-max flex-shrink-0"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginRight: '32px',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                }}
               >
-                <span className="text-primary-foreground text-opacity-70 text-xs">
+                <span style={{ fontSize: '12px', marginRight: '16px' }}>
                   {new Date(item.publishedAt).toLocaleTimeString('en-US', {
                     hour: '2-digit',
                     minute: '2-digit',
                   })}
                 </span>
-                <span className="text-sm font-medium max-w-xs truncate">
+                <span
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    maxWidth: '200px',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
                   {item.title}
                 </span>
-                <span className="text-primary-foreground text-opacity-70 text-xs">
+                <span style={{ fontSize: '12px', marginLeft: '8px' }}>
                   • {item.source}
                 </span>
               </div>

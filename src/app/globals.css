@@ -3,15 +3,15 @@
 @tailwind utilities;
 
 /* PrimeReact Theme */
-@use 'primereact/resources/themes/viva-dark/theme.css';
-@use 'primereact/resources/primereact.min.css';
-@use 'primeicons/primeicons.css';
-@use 'primeflex/primeflex.css';
+@import 'primereact/resources/themes/viva-dark/theme.css';
+@import 'primereact/resources/primereact.min.css';
+@import 'primeicons/primeicons.css';
+@import 'primeflex/primeflex.css';
 
 :root {
   --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 0, 0, 0;
-  --background-end-rgb: 0, 0, 0;
+  /* --background-start-rgb: 0, 0, 0;
+	--background-end-rgb: 0, 0, 0; */
 }
 
 * {
@@ -35,7 +35,7 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  min-height: 100vh;
+  /* min-height: 100vh; */
 }
 
 a {
@@ -114,56 +114,6 @@ a {
   animation: scroll 120s linear infinite;
 }
 
-/* Custom card styles */
-.card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-}
-
-/* Custom card elevation */
-.p-card {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-/* Custom card styles */
-.card,
-.p-card {
-  background: rgba(0, 0, 0, 0.85) !important;
-  background-image: url('/bg-circut-1.png') !important;
-  background-size: cover !important;
-  background-position: center !important;
-  background-repeat: no-repeat !important;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-}
-
-/* Main component backgrounds */
-.hero-section,
-.feature-cards,
-.stats-section,
-.ai-insight-preview,
-.call-to-action,
-.dashboard-content,
-.stock-table-container,
-.ai-oracle,
-.historical-notes {
-  background: rgba(0, 0, 0, 0.85) !important;
-  background-image: url('/bg-circut-1.png') !important;
-  background-size: cover !important;
-  background-position: center !important;
-  background-repeat: no-repeat !important;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 8px;
-  padding: 1.5rem;
-}
-
 /* News ticker infinite scroll */
 .news-ticker {
   overflow: hidden;
@@ -193,23 +143,6 @@ a {
   background-size: cover;
 }
 
-/* Custom carousel styling */
-.custom-carousel .p-carousel-indicators {
-  display: none;
-}
-
-.custom-carousel .p-carousel-prev,
-.custom-carousel .p-carousel-next {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  color: white !important;
-}
-
-.custom-carousel .p-carousel-prev:hover,
-.custom-carousel .p-carousel-next:hover {
-  background: rgba(255, 255, 255, 0.2) !important;
-}
-
 /* Stock chart styling */
 .stock-chart .p-card {
   transition: transform 0.2s ease-in-out;
@@ -233,128 +166,4 @@ a {
   body {
     padding: 0.5rem;
   }
-
-  .hero-section,
-  .feature-cards,
-  .stats-section,
-  .ai-insight-preview,
-  .call-to-action,
-  .dashboard-content,
-  .stock-table-container,
-  .ai-oracle,
-  .historical-notes {
-    padding: 1rem;
-  }
-
-  .p-datatable .p-datatable-thead > tr > th {
-    padding: 0.5rem;
-    font-size: 0.875rem;
-  }
-
-  .p-datatable .p-datatable-tbody > tr > td {
-    padding: 0.5rem;
-    font-size: 0.875rem;
-  }
-}
-
-/* Remove background from PrimeReact components */
-.p-component {
-  background: transparent !important;
-}
-
-.p-datatable {
-  background: transparent !important;
-}
-
-.p-datatable .p-datatable-header {
-  background: transparent !important;
-}
-
-.p-datatable .p-datatable-thead > tr > th {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-.p-datatable .p-datatable-tbody > tr {
-  background: transparent !important;
-}
-
-.p-datatable .p-datatable-tbody > tr:nth-child(even) {
-  background: rgba(255, 255, 255, 0.02) !important;
-}
-
-.p-datatable .p-datatable-tbody > tr > td {
-  border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-.p-tabview {
-  background: transparent !important;
-}
-
-.p-tabview .p-tabview-nav {
-  background: transparent !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-.p-tabview .p-tabview-nav li .p-tabview-nav-link {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-.p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
-  background: rgba(255, 255, 255, 0.1) !important;
-}
-
-.p-dialog {
-  background: rgba(0, 0, 0, 0.9) !important;
-  backdrop-filter: blur(10px);
-}
-
-.p-dialog .p-dialog-header {
-  background: transparent !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-.p-dialog .p-dialog-content {
-  background: transparent !important;
-}
-
-.p-inputtext {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
-}
-
-.p-inputtext:focus {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
-}
-
-/* Ensure button text is white */
-.p-button {
-  color: white !important;
-}
-
-.p-button .p-button-label {
-  color: white !important;
-}
-
-.p-button.p-button-text {
-  color: white !important;
-}
-
-.p-button.p-button-outlined {
-  color: white !important;
-}
-
-/* Custom border colors for better visibility */
-.p-inputtext,
-.p-dropdown,
-.p-multiselect {
-  border-color: rgba(255, 255, 255, 0.4) !important;
-}
-
-.p-inputtext:focus,
-.p-dropdown:focus,
-.p-multiselect:focus {
-  border-color: rgba(255, 255, 255, 0.4) !important;
 }

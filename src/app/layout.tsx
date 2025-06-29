@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { PrimeReactProvider } from 'primereact/api'
-import { NavigationSpeedDial } from '@/components/navigation-speed-dial'
+import NavDial from '@/components/layout/NavDial'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -26,7 +26,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <PrimeReactProvider>
           {children}
-          <NavigationSpeedDial />
+          <NavDial />
         </PrimeReactProvider>
       </body>
     </html>

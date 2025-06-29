@@ -116,7 +116,7 @@ export const HistoricalNotes = ({
           />
         </div>
 
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 ">
           {notes.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <i className="pi pi-book text-4xl mb-4"></i>
