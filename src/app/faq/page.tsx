@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Card } from 'primereact/card'
 import { TabView } from 'primereact/tabview'
 import { Chip } from 'primereact/chip'
-import { FAQCategory } from '@/components/faq/faq-category'
+import { FAQCategory } from '@/components/faq/FAQCategory'
 
 export default function FAQPage() {
   const [activeIndex, setActiveIndex] = useState(0)

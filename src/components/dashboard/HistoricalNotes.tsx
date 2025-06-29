@@ -29,10 +29,10 @@ export const HistoricalNotes = ({
 
   const handleAddNote = () => {
     if (formData.title.trim() && formData.content.trim()) {
-      storageUtils.addHistoricalNote({
-        title: formData.title.trim(),
-        content: formData.content.trim(),
-      })
+      storageUtils.addHistoricalNote(
+        formData.title.trim(),
+        formData.content.trim()
+      )
       setFormData({ title: '', content: '' })
       setShowAddDialog(false)
       onNotesChange()
@@ -41,10 +41,11 @@ export const HistoricalNotes = ({
 
   const handleEditNote = () => {
     if (editingNote && formData.title.trim() && formData.content.trim()) {
-      storageUtils.updateHistoricalNote(editingNote.id, {
-        title: formData.title.trim(),
-        content: formData.content.trim(),
-      })
+      storageUtils.updateHistoricalNote(
+        editingNote.id,
+        formData.title.trim(),
+        formData.content.trim()
+      )
       setFormData({ title: '', content: '' })
       setEditingNote(null)
       onNotesChange()
@@ -105,7 +106,7 @@ export const HistoricalNotes = ({
       <div className="flex flex-col h-full">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <i className="pi pi-book text-primary text-xl"></i>
+            <i className="pi pi-book text-xl dark-blue-glow"></i>
             <h3 className="text-lg font-bold">Historical Notes</h3>
           </div>
           <Button

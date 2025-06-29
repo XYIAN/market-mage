@@ -3,8 +3,8 @@
 import { TabPanel } from 'primereact/tabview'
 import { Accordion } from 'primereact/accordion'
 import { Chip } from 'primereact/chip'
-import { FAQItemComponent } from './faq-item'
-import { getFAQsByCategory, type FAQItem } from '@/data/faq'
+import { FAQItem } from './FAQItem'
+import { getFAQsByCategory, type FAQItem as FAQItemType } from '@/data/faq'
 
 interface FAQCategoryProps {
   category: {
@@ -29,8 +29,8 @@ export const FAQCategory = ({ category }: FAQCategoryProps) => {
       }
     >
       <Accordion>
-        {faqs.map((faq: FAQItem) => (
-          <FAQItemComponent key={faq.id} faq={faq} />
+        {faqs.map((faq: FAQItemType) => (
+          <FAQItem key={faq.id} faq={faq} />
         ))}
       </Accordion>
     </TabPanel>

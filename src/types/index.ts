@@ -9,6 +9,17 @@ export interface StockData {
   lastUpdated: string
 }
 
+export interface CryptoData {
+  symbol: string
+  name: string
+  price: number
+  change: number
+  changePercent: number
+  volume: number
+  marketCap: number
+  lastUpdated: string
+}
+
 export interface NewsItem {
   id: string
   title: string
@@ -31,6 +42,12 @@ export interface WatchlistItem {
   addedAt: string
 }
 
+export interface CryptoWatchlistItem {
+  symbol: string
+  name: string
+  addedAt: string
+}
+
 export interface HistoricalNote {
   id: string
   title: string
@@ -46,6 +63,15 @@ export interface StockApiResponse {
   changePercent: number
   volume: number
   marketCap?: number
+}
+
+export interface CryptoApiResponse {
+  symbol: string
+  price: number
+  change: number
+  changePercent: number
+  volume: number
+  marketCap: number
 }
 
 export interface NewsApiResponse {

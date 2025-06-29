@@ -59,7 +59,7 @@ export const AIOracle = () => {
       <Card className="mb-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <i className="pi pi-magic text-primary text-xl"></i>
+            <i className="pi pi-magic text-xl dark-blue-glow"></i>
             <h3 className="text-xl font-semibold">AI Oracle</h3>
           </div>
           {canGenerateInsight() && (

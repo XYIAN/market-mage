@@ -7,7 +7,7 @@ export const HeroSection = () => {
     <div className="hero-section flex justify-center mb-8">
       <div className="text-center max-w-4xl">
         <div className="mb-6">
-          <i className="pi pi-magic text-primary text-6xl mb-4"></i>
+          <i className="pi pi-magic text-6xl mb-4 dark-blue-glow"></i>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             <span className="hero-title-glow">Market</span>
             <span> </span>

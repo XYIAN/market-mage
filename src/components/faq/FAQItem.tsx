@@ -1,19 +1,19 @@
 'use client'
 
 import { AccordionTab } from 'primereact/accordion'
-import { FAQItem } from '@/data/faq'
+import { FAQItem as FAQItemType } from '@/data/faq'
 
 interface FAQItemProps {
-  faq: FAQItem
+  faq: FAQItemType
 }
 
-export const FAQItemComponent = ({ faq }: FAQItemProps) => {
+export const FAQItem = ({ faq }: FAQItemProps) => {
   return (
     <AccordionTab
       key={faq.id}
       header={
         <div className="flex items-center gap-2">
-          <i className="pi pi-question-circle text-primary"></i>
+          <i className="pi pi-question-circle dark-blue-glow"></i>
           <span className="font-medium">{faq.question}</span>
         </div>
       }

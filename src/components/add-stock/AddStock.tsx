@@ -21,7 +21,6 @@ import {
   searchStocks,
 } from '@/data/stock-search'
 import { storageUtils } from '@/utils/storage'
-import { WatchlistItem } from '@/types'
 
 interface AddStockProps {
   onStockAdded: () => void
@@ -70,12 +69,7 @@ export const AddStock = ({ onStockAdded }: AddStockProps) => {
   }
 
   const handleAddStock = (stock: StockSearchItem) => {
-    const watchlistItem: WatchlistItem = {
-      symbol: stock.symbol,
-      name: stock.name,
-      addedAt: new Date().toISOString(),
-    }
-    storageUtils.addToWatchlist(watchlistItem)
+    storageUtils.addToWatchlist(stock.symbol, stock.name)
     onStockAdded()
     setVisible(false)
     resetForm()
@@ -83,12 +77,10 @@ export const AddStock = ({ onStockAdded }: AddStockProps) => {
 
   const handleQuickAdd = () => {
     if (quickAddSymbol.trim() && quickAddName.trim()) {
-      const watchlistItem: WatchlistItem = {
-        symbol: quickAddSymbol.trim().toUpperCase(),
-        name: quickAddName.trim(),
-        addedAt: new Date().toISOString(),
-      }
-      storageUtils.addToWatchlist(watchlistItem)
+      storageUtils.addToWatchlist(
+        quickAddSymbol.trim().toUpperCase(),
+        quickAddName.trim()
+      )
       onStockAdded()
       setVisible(false)
       resetForm()
@@ -105,12 +97,7 @@ export const AddStock = ({ onStockAdded }: AddStockProps) => {
 
   const handleAddSelected = () => {
     targetStocks.forEach((stock) => {
-      const watchlistItem: WatchlistItem = {
-        symbol: stock.symbol,
-        name: stock.name,
-        addedAt: new Date().toISOString(),
-      }
-      storageUtils.addToWatchlist(watchlistItem)
+      storageUtils.addToWatchlist(stock.symbol, stock.name)
     })
     onStockAdded()
     setVisible(false)

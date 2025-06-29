@@ -1,12 +1,9 @@
-'use client'
-
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import '@/styles/components/hero.css'
 import { PrimeReactProvider } from 'primereact/api'
-import NavDial from '@/components/layout/NavDial'
-import { NewsTicker } from '@/components/news-ticker'
-import { useNewsTicker } from '@/hooks/useNewsTicker'
+import { AppContent } from '@/components/layout/AppContent'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,19 +14,11 @@ export const metadata: Metadata = {
   keywords:
     'stock dashboard, trading insights, AI trading, portfolio management, market data',
   authors: [{ name: 'Market-Mage Team' }],
-  viewport: 'width=device-width, initial-scale=1',
 }
 
-function AppContent({ children }: { children: React.ReactNode }) {
-  const { news, loading } = useNewsTicker()
-
-  return (
-    <>
-      <NewsTicker news={news} loading={loading} />
-      {children}
-      <NavDial />
-    </>
-  )
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
 }
 
 export default function RootLayout({

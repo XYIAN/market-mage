@@ -12,8 +12,8 @@ import { Toast } from 'primereact/toast'
 import { useRef } from 'react'
 import { StockData, HistoricalNote } from '@/types'
 import { useStockData } from '@/hooks/useStockData'
-import { AIOracle } from '@/components/ai-oracle'
-import { HistoricalNotes } from '@/components/historical-notes'
+import { AIOracle } from '@/components/dashboard/AIOracle'
+import { HistoricalNotes } from '@/components/dashboard/HistoricalNotes'
 import { storageUtils } from '@/utils/storage'
 import { apiUtils } from '@/utils/api'
 
@@ -37,11 +37,7 @@ export default function DashboardPage() {
       const stockData = await apiUtils.fetchStockData([newSymbol.toUpperCase()])
       if (stockData.length > 0) {
         const stock = stockData[0]
-        storageUtils.addToWatchlist({
-          symbol: stock.symbol,
-          name: stock.name,
-          addedAt: new Date().toISOString(),
-        })
+        storageUtils.addToWatchlist(stock.symbol, stock.name)
         setNewSymbol('')
         setShowAddDialog(false)
         refresh() // Refresh the stock data
