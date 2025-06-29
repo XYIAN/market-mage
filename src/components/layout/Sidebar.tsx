@@ -2,14 +2,14 @@
 
 import { useState, useRef } from 'react'
 import { Sidebar as PrimeSidebar } from 'primereact/sidebar'
-import { TieredMenu } from 'primereact/tieredmenu'
+import { PanelMenu } from 'primereact/panelmenu'
 import { useRouter } from 'next/navigation'
 import { HamburgerMenu } from './HamburgerMenu'
 import packageJson from '../../../package.json'
 
 export const Sidebar = () => {
   const [visible, setVisible] = useState(false)
-  const menu = useRef<TieredMenu>(null)
+  const menu = useRef<PanelMenu>(null)
   const router = useRouter()
 
   const menuItems = [
@@ -108,17 +108,17 @@ export const Sidebar = () => {
         }
       >
         <div className="relative h-full w-64 bg-surface-900 shadow-lg flex flex-col sidebar-neon-glow">
-          <div className="p-4">
-            <TieredMenu
+          <div className="p-4 flex flex-col h-full">
+            <PanelMenu
               ref={menu}
               model={menuItems}
-              className="w-full bg-transparent border-none"
-              popup={false}
+              className="w-full bg-transparent border-none flex-1"
+              multiple={false}
             />
 
             <div className="border-t border-blue-500/30 my-6"></div>
 
-            <div className="mt-auto w-full flex flex-col items-center pb-4">
+            <div className="w-full flex flex-col items-center pb-4">
               <p className="text-xs mt-1">Version {packageJson.version}</p>
               <p className="text-xs text-gray-400">Powered by AI Magic</p>
             </div>

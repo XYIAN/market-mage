@@ -40,10 +40,8 @@ export const useCryptoData = () => {
   const fetchCryptoData = async () => {
     setLoading(true)
     try {
-      // Using CoinGecko API for real crypto data
-      const response = await fetch(
-        'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false'
-      )
+      // Using our proxied CoinGecko API route
+      const response = await fetch('/api/crypto/coingecko')
       const data: CoinGeckoCoin[] = await response.json()
 
       // Transform the data

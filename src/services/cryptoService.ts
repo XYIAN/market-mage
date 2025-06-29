@@ -137,9 +137,7 @@ class CryptoService {
     return withCache(
       CACHE_KEYS.COINBASE_PRODUCTS,
       async () => {
-        const response = await fetch(
-          'https://api.exchange.coinbase.com/products'
-        )
+        const response = await fetch('/api/crypto/coinbase/products')
         if (!response.ok) {
           throw new Error(`Failed to fetch products: ${response.status}`)
         }
@@ -154,9 +152,7 @@ class CryptoService {
     return withCache(
       cacheKey,
       async () => {
-        const response = await fetch(
-          `https://api.exchange.coinbase.com/products/${productId}/ticker`
-        )
+        const response = await fetch(`/api/crypto/coinbase/ticker/${productId}`)
         if (!response.ok) {
           throw new Error(
             `Failed to fetch ticker for ${productId}: ${response.status}`
@@ -172,9 +168,7 @@ class CryptoService {
     return withCache(
       `${CACHE_KEYS.CRYPTO_DATA}_binance`,
       async () => {
-        const response = await fetch(
-          'https://api.binance.com/api/v3/ticker/24hr'
-        )
+        const response = await fetch('/api/crypto/binance')
         if (!response.ok) {
           throw new Error(`Failed to fetch Binance data: ${response.status}`)
         }
@@ -188,9 +182,7 @@ class CryptoService {
     return withCache(
       `${CACHE_KEYS.CRYPTO_DATA}_coingecko`,
       async () => {
-        const response = await fetch(
-          'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=1&sparkline=false'
-        )
+        const response = await fetch('/api/crypto/coingecko')
         if (!response.ok) {
           throw new Error(`Failed to fetch CoinGecko data: ${response.status}`)
         }
