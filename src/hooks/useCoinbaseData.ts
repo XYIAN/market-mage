@@ -18,7 +18,13 @@ export const useCoinbaseData = () => {
     setError(null)
 
     try {
-      const data = await apiUtils.fetchCryptoData()
+      const data = await apiUtils.fetchCryptoData([
+        'BTC',
+        'ETH',
+        'ADA',
+        'DOT',
+        'LINK',
+      ])
       setCryptoData(data)
 
       // Calculate market stats
