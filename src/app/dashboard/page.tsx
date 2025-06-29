@@ -44,18 +44,12 @@ export default function DashboardPage() {
           <Card className="w-full max-w-4xl">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-primary mb-2">
-                  <span className="bg-gradient-to-r from-primary to-primary-foreground bg-clip-text text-transparent">
-                    Market
-                  </span>
-                  <span className="text-primary-foreground">-</span>
-                  <span className="bg-gradient-to-r from-primary-foreground to-primary bg-clip-text text-transparent">
-                    Mage
-                  </span>
+                <h1 className="text-2xl md:text-3xl font-bold mb-2">
+                  <span className="text-primary">Market</span>
+                  <span>-</span>
+                  <span className="text-primary">Mage</span>
                 </h1>
-                <p className="text-muted-foreground">
-                  AI-powered trading insights and portfolio management
-                </p>
+                <p>AI-powered trading insights and portfolio management</p>
               </div>
               <AddStock onStockAdded={handleStockAdded} />
             </div>

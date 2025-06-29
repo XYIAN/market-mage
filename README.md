@@ -44,13 +44,13 @@ A modern, AI-powered stock dashboard built with Next.js 15, TypeScript, and Prim
 
    ```env
    # OpenAI API Key (required for AI insights)
-   OPENAI_API_KEY=your_openai_api_key_here
+   OPENAI_API_KEY=your_openai_api_key
 
    # Alpha Vantage API Key (optional, uses demo key if not provided)
-   NEXT_PUBLIC_ALPHA_VANTAGE_API_KEY=your_alpha_vantage_key_here
+   NEXT_PUBLIC_ALPHA_VANTAGE_API_KEY=your_alpha_vantage_key
 
    # News API Key (optional, uses mock data if not provided)
-   NEXT_PUBLIC_NEWS_API_KEY=your_news_api_key_here
+   NEXT_PUBLIC_NEWS_API_KEY=your_news_api_key
    ```
 
 4. **Run the development server**
@@ -113,26 +113,34 @@ A modern, AI-powered stock dashboard built with Next.js 15, TypeScript, and Prim
 
 ```
 src/
-├── app/                    # Next.js App Router
+├── app/                    # Next.js App Router pages
 │   ├── api/               # API routes
 │   ├── dashboard/         # Dashboard page
+│   ├── globals.css        # Global styles
+│   ├── layout.tsx         # Root layout
 │   └── page.tsx           # Homepage
-├── components/            # React components
-│   ├── ai-oracle.tsx      # AI insights component
+├── components/            # Reusable UI components
 │   ├── add-stock.tsx      # Add stock dialog
+│   ├── ai-oracle.tsx      # AI insights component
+│   ├── call-to-action.tsx # CTA section
+│   ├── feature-cards.tsx  # Feature cards grid
+│   ├── hero-section.tsx   # Hero section
 │   ├── historical-notes.tsx # Notes management
-│   ├── news-ticker.tsx    # News ticker
+│   ├── news-ticker.tsx    # Scrolling news ticker
+│   ├── stats-section.tsx  # Statistics display
 │   └── stock-table.tsx    # Stock data table
+├── data/                  # Static data files
+│   └── cards.ts           # Feature cards configuration
 ├── hooks/                 # Custom React hooks
-│   ├── useAIInsight.ts    # AI insight management
-│   ├── useNewsTicker.ts   # News data
-│   └── useStockData.ts    # Stock data management
+│   ├── useAIInsight.ts    # AI insights hook
+│   ├── useNewsTicker.ts   # News data hook
+│   └── useStockData.ts    # Stock data hook
 ├── lib/                   # Library configurations
-│   └── providers/         # Context providers
+│   └── providers/         # React providers
 ├── types/                 # TypeScript type definitions
 └── utils/                 # Utility functions
     ├── api.ts             # API utilities
-    ├── date.ts            # Date utilities
+    ├── date.ts            # Date formatting
     └── storage.ts         # Local storage utilities
 ```
 

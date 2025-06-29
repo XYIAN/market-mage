@@ -89,10 +89,8 @@ export const HistoricalNotes = ({
             />
           </div>
         </div>
-        <p className="text-sm text-muted-foreground mb-3 whitespace-pre-wrap">
-          {note.content}
-        </p>
-        <div className="flex justify-between items-center text-xs text-muted-foreground">
+        <p className="text-sm mb-3 whitespace-pre-wrap">{note.content}</p>
+        <div className="flex justify-between items-center text-xs">
           <span>Created: {dateUtils.formatDate(note.createdAt)}</span>
           {note.updatedAt !== note.createdAt && (
             <span>Updated: {dateUtils.formatDate(note.updatedAt)}</span>
@@ -121,9 +119,9 @@ export const HistoricalNotes = ({
         <div className="flex-1 overflow-auto">
           {notes.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-8 text-center">
-              <i className="pi pi-book text-4xl text-muted-foreground mb-4"></i>
+              <i className="pi pi-book text-4xl mb-4"></i>
               <h4 className="text-lg font-semibold mb-2">No Notes Yet</h4>
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="text-sm mb-4">
                 Start documenting your trading observations and insights.
               </p>
               <Button

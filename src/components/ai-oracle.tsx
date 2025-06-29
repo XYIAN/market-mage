@@ -53,9 +53,7 @@ export const AIOracle = ({
         {loading && (
           <div className="flex flex-col items-center justify-center flex-1 py-8">
             <ProgressSpinner style={{ width: '50px', height: '50px' }} />
-            <p className="mt-4 text-sm text-muted-foreground">
-              Consulting the Oracle...
-            </p>
+            <p className="mt-4 text-sm">Consulting the Oracle...</p>
           </div>
         )}
 
@@ -63,9 +61,9 @@ export const AIOracle = ({
 
         {!loading && !insight && !error && (
           <div className="flex flex-col items-center justify-center flex-1 py-8 text-center">
-            <i className="pi pi-eye text-4xl text-muted-foreground mb-4"></i>
+            <i className="pi pi-eye text-4xl mb-4"></i>
             <h4 className="text-lg font-semibold mb-2">No Insight Available</h4>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm mb-4">
               Get your daily AI-powered trading insight to guide your investment
               decisions.
             </p>

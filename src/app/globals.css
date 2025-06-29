@@ -18,7 +18,7 @@ body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-start-rgb));
   padding: 1rem;
-  background-image: url('/bg-1.png');
+  background-image: url('/bg-4.png');
   background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
@@ -44,17 +44,17 @@ body {
 }
 
 /* News ticker animation */
-@keyframes ticker {
+@keyframes scroll {
   0% {
-    transform: translateX(100%);
+    transform: translateX(0);
   }
   100% {
-    transform: translateX(-100%);
+    transform: translateX(-50%);
   }
 }
 
-.ticker-animation {
-  animation: ticker 30s linear infinite;
+.animate-scroll {
+  animation: scroll 30s linear infinite;
 }
 
 /* Custom card styles */
@@ -154,4 +154,21 @@ body {
     padding: 0.5rem;
     font-size: 0.875rem;
   }
+}
+
+/* Ensure button text is white */
+.p-button {
+  color: white !important;
+}
+
+.p-button .p-button-label {
+  color: white !important;
+}
+
+.p-button.p-button-text {
+  color: white !important;
+}
+
+.p-button.p-button-outlined {
+  color: white !important;
 }

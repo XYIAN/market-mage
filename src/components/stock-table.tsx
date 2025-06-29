@@ -111,7 +111,7 @@ export const StockTable = ({
       <div className="flex items-center gap-2">
         <h2 className="text-xl font-bold">Stock Watchlist</h2>
         {lastUpdated && (
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm">
             Last updated: {dateUtils.formatRelativeTime(lastUpdated)}
           </span>
         )}
@@ -134,13 +134,36 @@ export const StockTable = ({
     </div>
   )
 
+  const emptyMessage = (
+    <div className="flex flex-col items-center justify-center py-12 text-center">
+      <i className="pi pi-chart-line text-6xl mb-4"></i>
+      <h3 className="text-xl font-semibold mb-2">No Stocks Added Yet</h3>
+      <p className="mb-6 max-w-md">
+        Your watchlist is empty. Add some stocks to start tracking their
+        performance and get AI-powered insights.
+      </p>
+      <div className="flex flex-col sm:flex-row gap-2">
+        <Button
+          label="Add Your First Stock"
+          icon="pi pi-plus"
+          className="p-button-primary"
+        />
+        <Button
+          label="View Popular Stocks"
+          icon="pi pi-star"
+          className="p-button-outlined"
+        />
+      </div>
+    </div>
+  )
+
   return (
     <DataTable
       value={stocks}
       globalFilter={globalFilter}
       header={header}
       loading={loading}
-      emptyMessage="No stocks in watchlist. Add some stocks to get started!"
+      emptyMessage={emptyMessage}
       className="p-datatable-sm"
       stripedRows
       showGridlines
