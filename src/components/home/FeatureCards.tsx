@@ -1,10 +1,18 @@
 'use client'
 
 import { Card } from 'primereact/card'
+import { Button } from 'primereact/button'
 import { FEATURE_CARDS } from '@/data/cards'
+import { useRouter } from 'next/navigation'
 import '@/styles/home/feature-cards.css'
 
 export const FeatureCards = () => {
+  const router = useRouter()
+
+  const handleCardClick = (url: string) => {
+    router.push(url)
+  }
+
   return (
     <div
       style={{
@@ -16,7 +24,7 @@ export const FeatureCards = () => {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
           justifyItems: 'center',
           gap: '1.5rem',
           width: '85%',
@@ -32,62 +40,105 @@ export const FeatureCards = () => {
               backdropFilter: 'blur(10px)',
               border: '1px solid rgba(255, 255, 255, 0.1)',
               borderRadius: '16px',
-              height: '320px',
-              width: '300px',
-              minWidth: '260px',
+              height: '380px',
+              width: '320px',
+              minWidth: '280px',
               maxWidth: '90vw',
+              display: 'flex',
+              flexDirection: 'column',
             }}
           >
             <div
               style={{
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
                 height: '100%',
                 padding: '1rem',
               }}
             >
+              {/* Header with image/icon */}
               <div
                 style={{
-                  marginBottom: '1rem',
-                  padding: '0.75rem',
-                  borderRadius: '50%',
-                  background:
-                    'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(147, 51, 234, 0.2))',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  marginBottom: '1rem',
                 }}
               >
-                <i
-                  className={`${card.icon} text-3xl md:text-4xl pulse-glow`}
-                  style={{ color: '#1E40AF' }}
-                ></i>
+                {card.image ? (
+                  <img
+                    src={card.image}
+                    alt={card.title}
+                    style={{
+                      width: '60px',
+                      height: '60px',
+                      objectFit: 'cover',
+                      borderRadius: '12px',
+                    }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      width: '60px',
+                      height: '60px',
+                      borderRadius: '50%',
+                      background:
+                        'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(147, 51, 234, 0.2))',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <i
+                      className={`${card.icon} text-2xl pulse-glow`}
+                      style={{ color: '#1E40AF' }}
+                    ></i>
+                  </div>
+                )}
               </div>
+
+              {/* Title */}
               <h3
                 style={{
-                  fontSize: '1.125rem',
+                  fontSize: '1.25rem',
                   fontWeight: 'bold',
-                  marginBottom: '0.75rem',
                   color: 'white',
-                  width: '100%',
+                  textAlign: 'center',
+                  margin: '0 0 1rem 0',
                 }}
               >
                 {card.title}
               </h3>
+
+              {/* Description */}
               <p
                 style={{
                   color: '#D1D5DB',
                   lineHeight: '1.6',
+                  fontSize: '0.9rem',
+                  textAlign: 'center',
+                  margin: '0',
                   flex: '1',
-                  fontSize: '0.875rem',
-                  width: '100%',
                 }}
               >
                 {card.description}
               </p>
+
+              {/* Footer with button */}
+              <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                <Button
+                  label="Explore"
+                  icon="pi pi-arrow-right"
+                  className="p-button-primary p-button-sm"
+                  onClick={() => handleCardClick(card.url)}
+                  style={{
+                    background: 'linear-gradient(135deg, #3B82F6, #8B5CF6)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '0.5rem 1rem',
+                  }}
+                />
+              </div>
             </div>
           </Card>
         ))}

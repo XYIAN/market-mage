@@ -1,13 +1,42 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { NewsCarousel } from '@/components'
+import { NewsCarousel, PopularInsights, MarketSentiment } from '@/components'
 import { NewsItem } from '@/types'
 import { newsService } from '@/services/newsService'
 
+interface PopularInsight {
+  id: string
+  title: string
+  description: string
+  category: 'bullish' | 'bearish' | 'neutral'
+  confidence: number
+  impact: 'high' | 'medium' | 'low'
+  timestamp: string
+  tags: string[]
+}
+
+interface MarketSentiment {
+  overall: 'bullish' | 'bearish' | 'neutral'
+  score: number
+  volume: number
+  volatility: number
+  sectors: {
+    technology: number
+    healthcare: number
+    finance: number
+    energy: number
+    consumer: number
+  }
+}
+
 export default function MarketNewsPage() {
   const [news, setNews] = useState<NewsItem[]>([])
+  const [insights, setInsights] = useState<PopularInsight[]>([])
+  const [sentiment, setSentiment] = useState<MarketSentiment | null>(null)
   const [loading, setLoading] = useState(true)
+  const [insightsLoading, setInsightsLoading] = useState(true)
+  const [sentimentLoading, setSentimentLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const fetchNews = useCallback(async () => {
@@ -26,9 +55,35 @@ export default function MarketNewsPage() {
     }
   }, [])
 
+  const fetchInsights = useCallback(async () => {
+    setInsightsLoading(true)
+    try {
+      const data = await newsService.getPopularInsights()
+      setInsights(data)
+    } catch (err) {
+      console.error('Error fetching insights:', err)
+    } finally {
+      setInsightsLoading(false)
+    }
+  }, [])
+
+  const fetchSentiment = useCallback(async () => {
+    setSentimentLoading(true)
+    try {
+      const data = await newsService.getMarketSentiment()
+      setSentiment(data)
+    } catch (err) {
+      console.error('Error fetching sentiment:', err)
+    } finally {
+      setSentimentLoading(false)
+    }
+  }, [])
+
   useEffect(() => {
     fetchNews()
-  }, [fetchNews])
+    fetchInsights()
+    fetchSentiment()
+  }, [fetchNews, fetchInsights, fetchSentiment])
 
   if (error) {
     return (
@@ -45,19 +100,28 @@ export default function MarketNewsPage() {
 
   return (
     <div className="min-h-screen p-4">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">Market News & Insights</h1>
           <p className="text-gray-400">
             Stay updated with the latest stock market news, trends, and insights
           </p>
         </div>
+
         <div className="w-full">
           <NewsCarousel
             news={news}
             loading={loading}
             title="Latest Market News"
           />
+        </div>
+
+        <div className="w-full">
+          <MarketSentiment sentiment={sentiment!} loading={sentimentLoading} />
+        </div>
+
+        <div className="w-full">
+          <PopularInsights insights={insights} loading={insightsLoading} />
         </div>
       </div>
     </div>

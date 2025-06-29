@@ -3,7 +3,8 @@ export interface FeatureCard {
   title: string
   description: string
   icon: string
-  url?: string
+  url: string
+  image?: string
 }
 
 export interface StatCard {
@@ -16,22 +17,58 @@ export interface StatCard {
 
 export const FEATURE_CARDS: FeatureCard[] = [
   {
-    id: 'real-time-data',
-    title: 'Real-Time Data',
-    description: 'Live stock prices and market data updated every 5 minutes',
+    id: 'market-dashboard',
+    title: 'Market Dashboard',
+    description:
+      'Comprehensive stock market analysis with real-time data, AI insights, and portfolio tracking',
     icon: 'pi pi-chart-line',
+    url: '/market',
+    image: '/icon-mm-1.png',
+  },
+  {
+    id: 'crypto-dashboard',
+    title: 'Crypto Dashboard',
+    description:
+      'Cryptocurrency market overview with live prices, trends, and digital asset analytics',
+    icon: 'pi pi-bitcoin',
+    url: '/crypto',
+    image: '/icon-ph-1.png',
+  },
+  {
+    id: 'market-news',
+    title: 'Market News',
+    description:
+      'Latest stock market news, analysis, and insights from trusted financial sources',
+    icon: 'pi pi-globe',
+    url: '/news',
+    image: '/icon-mm-1.png',
+  },
+  {
+    id: 'crypto-news',
+    title: 'Crypto News',
+    description:
+      'Breaking cryptocurrency news, blockchain updates, and digital asset market trends',
+    icon: 'pi pi-bolt',
+    url: '/crypto/news',
+    image: '/icon-ph-1.png',
   },
   {
     id: 'ai-oracle',
     title: 'AI Oracle',
-    description: 'Daily AI-powered trading insights and market analysis',
-    icon: 'pi pi-star',
+    description:
+      'Daily AI-powered trading insights and market predictions using advanced algorithms',
+    icon: 'pi pi-robot',
+    url: '/market?view=oracle',
+    image: '/icon-mm-1.png',
   },
   {
-    id: 'portfolio-tracking',
-    title: 'Portfolio Tracking',
-    description: 'Manage your watchlist and track historical notes',
-    icon: 'pi pi-book',
+    id: 'faq',
+    title: 'FAQ & Help',
+    description:
+      'Frequently asked questions, tutorials, and support for using Market-Mage effectively',
+    icon: 'pi pi-question-circle',
+    url: '/faq',
+    image: '/icon-ph-1.png',
   },
 ]
 

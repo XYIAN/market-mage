@@ -21,7 +21,7 @@ export const AIInsightPreview = () => {
           <p className="mb-4 line-clamp-3">
             {insight.content.substring(0, 200)}...
           </p>
-          <Link href="/dashboard">
+          <Link href="/market">
             <Button
               label="Read Full Insight"
               icon="pi pi-arrow-right"

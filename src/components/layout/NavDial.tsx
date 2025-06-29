@@ -10,10 +10,10 @@ export default function NavDial() {
 
   const items: MenuItem[] = [
     {
-      label: 'Stock Dashboard',
+      label: 'Market Dashboard',
       icon: 'pi pi-chart-line',
       command: () => {
-        router.push('/dashboard')
+        router.push('/market')
       },
     },
     {
@@ -24,17 +24,10 @@ export default function NavDial() {
       },
     },
     {
-      label: 'Stock News',
+      label: 'News',
       icon: 'pi pi-globe',
       command: () => {
         router.push('/news')
-      },
-    },
-    {
-      label: 'Crypto News',
-      icon: 'pi pi-bolt',
-      command: () => {
-        router.push('/crypto/news')
       },
     },
     {

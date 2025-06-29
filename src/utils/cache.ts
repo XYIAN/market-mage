@@ -105,6 +105,8 @@ export const CACHE_KEYS = {
   STOCK_DATA: 'stock_data',
   AI_INSIGHTS: 'ai_insights',
   HISTORICAL_DATA: 'historical_data',
+  POPULAR_INSIGHTS: 'popular_insights',
+  MARKET_SENTIMENT: 'market_sentiment',
 } as const
 
 // Utility functions

@@ -1,6 +1,31 @@
 import { cacheManager, CACHE_KEYS, withCache } from '@/utils/cache'
 import { NewsItem } from '@/types'
 
+interface PopularInsight {
+  id: string
+  title: string
+  description: string
+  category: 'bullish' | 'bearish' | 'neutral'
+  confidence: number
+  impact: 'high' | 'medium' | 'low'
+  timestamp: string
+  tags: string[]
+}
+
+interface MarketSentiment {
+  overall: 'bullish' | 'bearish' | 'neutral'
+  score: number
+  volume: number
+  volatility: number
+  sectors: {
+    technology: number
+    healthcare: number
+    finance: number
+    energy: number
+    consumer: number
+  }
+}
+
 class NewsService {
   private readonly NEWS_CACHE_TTL = 10 * 60 * 1000 // 10 minutes
 
@@ -148,6 +173,111 @@ class NewsService {
             sentiment: 'positive',
           },
         ]
+      },
+      this.NEWS_CACHE_TTL
+    )
+  }
+
+  async getPopularInsights(): Promise<PopularInsight[]> {
+    return withCache(
+      `${CACHE_KEYS.POPULAR_INSIGHTS}`,
+      async () => {
+        // Simulate API call with delay
+        await new Promise((resolve) => setTimeout(resolve, 800))
+
+        return [
+          {
+            id: '1',
+            title: 'AI Sector Momentum Building',
+            description:
+              'Artificial intelligence companies showing strong technical indicators and institutional buying.',
+            category: 'bullish',
+            confidence: 85,
+            impact: 'high',
+            timestamp: new Date().toISOString(),
+            tags: ['AI', 'Technology', 'Growth'],
+          },
+          {
+            id: '2',
+            title: 'Energy Sector Under Pressure',
+            description:
+              'Traditional energy stocks facing headwinds from renewable energy adoption and policy changes.',
+            category: 'bearish',
+            confidence: 72,
+            impact: 'medium',
+            timestamp: new Date().toISOString(),
+            tags: ['Energy', 'Policy', 'Renewables'],
+          },
+          {
+            id: '3',
+            title: 'Financial Services Consolidation',
+            description:
+              'Merger and acquisition activity increasing in the financial services sector.',
+            category: 'neutral',
+            confidence: 68,
+            impact: 'medium',
+            timestamp: new Date().toISOString(),
+            tags: ['Finance', 'M&A', 'Consolidation'],
+          },
+          {
+            id: '4',
+            title: 'Healthcare Innovation Surge',
+            description:
+              'Biotech and pharmaceutical companies leading innovation in personalized medicine.',
+            category: 'bullish',
+            confidence: 78,
+            impact: 'high',
+            timestamp: new Date().toISOString(),
+            tags: ['Healthcare', 'Biotech', 'Innovation'],
+          },
+          {
+            id: '5',
+            title: 'Consumer Spending Patterns Shift',
+            description:
+              'E-commerce and digital services continuing to gain market share from traditional retail.',
+            category: 'bullish',
+            confidence: 81,
+            impact: 'medium',
+            timestamp: new Date().toISOString(),
+            tags: ['Consumer', 'E-commerce', 'Digital'],
+          },
+          {
+            id: '6',
+            title: 'Real Estate Market Cooling',
+            description:
+              'Residential real estate showing signs of stabilization after recent volatility.',
+            category: 'neutral',
+            confidence: 65,
+            impact: 'low',
+            timestamp: new Date().toISOString(),
+            tags: ['Real Estate', 'Housing', 'Stabilization'],
+          },
+        ]
+      },
+      this.NEWS_CACHE_TTL
+    )
+  }
+
+  async getMarketSentiment(): Promise<MarketSentiment> {
+    return withCache(
+      `${CACHE_KEYS.MARKET_SENTIMENT}`,
+      async () => {
+        // Simulate API call with delay
+        await new Promise((resolve) => setTimeout(resolve, 600))
+
+        return {
+          overall: 'bullish',
+          score: 72,
+          volume: 1250000000,
+          volatility: 18.5,
+          sectors: {
+            technology: 78,
+            healthcare: 65,
+            finance: 58,
+            energy: 42,
+            consumer: 71,
+          },
+        }
       },
       this.NEWS_CACHE_TTL
     )

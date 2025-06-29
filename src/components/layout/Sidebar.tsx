@@ -1,16 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Sidebar as PrimeSidebar } from 'primereact/sidebar'
-import { Button } from 'primereact/button'
+import { TieredMenu } from 'primereact/tieredmenu'
 import { useRouter } from 'next/navigation'
 import { HamburgerMenu } from './HamburgerMenu'
 
 export const Sidebar = () => {
   const [visible, setVisible] = useState(false)
+  const menu = useRef<TieredMenu>(null)
   const router = useRouter()
 
-  const navigationItems = [
+  const menuItems = [
     {
       label: '🏠 Home',
       icon: 'pi pi-home',
@@ -22,18 +23,86 @@ export const Sidebar = () => {
     {
       label: '📊 Dashboard',
       icon: 'pi pi-chart-line',
-      command: () => {
-        router.push('/dashboard')
-        setVisible(false)
-      },
+      items: [
+        {
+          label: '📈 Market Dashboard',
+          icon: 'pi pi-chart-line',
+          command: () => {
+            router.push('/market')
+            setVisible(false)
+          },
+        },
+        {
+          label: '⚡ Crypto Dashboard',
+          icon: 'pi pi-bitcoin',
+          command: () => {
+            router.push('/crypto')
+            setVisible(false)
+          },
+        },
+        {
+          label: '📊 Portfolio Overview',
+          icon: 'pi pi-briefcase',
+          command: () => {
+            router.push('/market?view=portfolio')
+            setVisible(false)
+          },
+        },
+        {
+          label: '🤖 AI Oracle',
+          icon: 'pi pi-robot',
+          command: () => {
+            router.push('/market?view=oracle')
+            setVisible(false)
+          },
+        },
+        {
+          label: '📜 Historical Notes',
+          icon: 'pi pi-book',
+          command: () => {
+            router.push('/market?view=notes')
+            setVisible(false)
+          },
+        },
+      ],
     },
     {
       label: '📰 News',
       icon: 'pi pi-globe',
-      command: () => {
-        router.push('/news')
-        setVisible(false)
-      },
+      items: [
+        {
+          label: '📰 General News',
+          icon: 'pi pi-globe',
+          command: () => {
+            router.push('/news')
+            setVisible(false)
+          },
+        },
+        {
+          label: '⚡ Crypto News',
+          icon: 'pi pi-bitcoin',
+          command: () => {
+            router.push('/crypto/news')
+            setVisible(false)
+          },
+        },
+        {
+          label: '📈 Stock News',
+          icon: 'pi pi-chart-bar',
+          command: () => {
+            router.push('/news?type=stocks')
+            setVisible(false)
+          },
+        },
+        {
+          label: '🌍 Market News',
+          icon: 'pi pi-globe',
+          command: () => {
+            router.push('/news?type=markets')
+            setVisible(false)
+          },
+        },
+      ],
     },
     {
       label: '⚡ Crypto',
@@ -77,22 +146,19 @@ export const Sidebar = () => {
           </div>
         }
       >
-        <div className="flex flex-col gap-2 p-4">
-          {navigationItems.map((item, index) => (
-            <Button
-              key={index}
-              label={item.label}
-              icon={item.icon}
-              className="p-button-text p-button-lg justify-start text-left h-12 bg-transparent hover:bg-blue-500/20 border border-transparent hover:border-blue-500/30"
-              onClick={item.command}
-            />
-          ))}
+        <div className="p-4">
+          <TieredMenu
+            ref={menu}
+            model={menuItems}
+            className="w-full bg-transparent border-none"
+            popup={false}
+          />
 
-          <div className="border-t border-blue-500/30 my-4"></div>
+          <div className="border-t border-blue-500/30 my-6"></div>
 
-          <div className="text-center text-sm text-gray-400 p-4">
+          <div className="text-center text-sm text-gray-400">
             <p>🧙 Powered by AI Magic</p>
-            <p className="text-xs mt-1">Version 1.2.1</p>
+            <p className="text-xs mt-1">Version 1.2.3</p>
           </div>
         </div>
       </PrimeSidebar>

@@ -61,6 +61,44 @@ All notable changes to this project will be documented in this file.
 - Sidebar navigation with PrimeReact Sidebar
 - Enhanced navigation UX with proper icons and labels
 
+## [1.2.3] - 2024-06-13
+
+### Enhanced
+
+- Replaced simple button navigation with PrimeReact TieredMenu
+- Added cascading sub-menus for better organization
+- Dashboard sub-menu: Main Dashboard, Portfolio Overview, AI Oracle, Historical Notes
+- News sub-menu: General News, Crypto News, Stock News, Market News
+- Improved navigation UX with hover effects and proper styling
+
+### Styling
+
+- Enhanced TieredMenu styling to match wizard theme
+- Added proper hover effects and transitions
+- Improved submenu appearance with backdrop blur
+- Better visual hierarchy in navigation
+
+## [1.2.4] - 2024-06-13
+
+### Fixed
+
+- Removed text truncation (ellipsis) from news ticker to show full text
+- Fixed news ticker text overflow issues for better readability
+
+### Changed
+
+- Removed old `/dashboard` route completely
+- Updated all dashboard references to use `/market` and `/crypto` routes
+- Updated navigation menu to point to correct dashboard routes
+- Updated "Initialize Dashboard" button to link to Market Dashboard
+- Updated AI Insight preview to link to Market Dashboard
+- Improved CallToAction component with separate Market and Crypto dashboard buttons
+
+### Removed
+
+- Deleted `/dashboard` page and route
+- Cleaned up old dashboard references throughout the app
+
 ## [1.0.1] - 2024-12-19
 
 ### Added
@@ -138,3 +176,27 @@ All notable changes to this project will be documented in this file.
 - API route for OpenAI Chat API integration
 - Environment variable support for API keys
 - README with setup and usage instructions
+
+## [1.2.5] - 2024-06-13
+
+### Enhanced
+
+- Updated feature cards to reflect actual app routes and functionality
+- Added navigation buttons to each feature card for direct access
+- Improved card layout with proper header, content, and footer sections
+
+### Added
+
+- Market Dashboard card with navigation to /market
+- Crypto Dashboard card with navigation to /crypto
+- Market News card with navigation to /news
+- Crypto News card with navigation to /crypto/news
+- AI Oracle card with navigation to /market?view=oracle
+- FAQ & Help card with navigation to /faq
+
+### Styling
+
+- Added support for card images (icon-mm-1.png, icon-ph-1.png)
+- Improved card dimensions and responsive layout
+- Enhanced button styling with gradient backgrounds
+- Better visual hierarchy in feature cards

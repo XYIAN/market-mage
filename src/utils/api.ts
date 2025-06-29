@@ -1,53 +1,45 @@
 import { StockData, CryptoData, NewsItem, NewsApiResponse } from '@/types'
 
-// Using Alpha Vantage API (free tier) for stock data
+// Using multiple APIs for better data coverage
 const ALPHA_VANTAGE_API_KEY =
   process.env.NEXT_PUBLIC_ALPHA_VANTAGE_API_KEY || 'demo'
+const POLYGON_API_KEY = process.env.NEXT_PUBLIC_POLYGON_API_KEY || 'demo'
+const FINNHUB_API_KEY = process.env.NEXT_PUBLIC_FINNHUB_API_KEY || 'demo'
 const NEWS_API_KEY = process.env.NEXT_PUBLIC_NEWS_API_KEY || 'demo'
 
 export const apiUtils = {
-  // Fetch stock data for multiple symbols
+  // Fetch stock data for multiple symbols using multiple APIs
   fetchStockData: async (symbols: string[]): Promise<StockData[]> => {
     try {
-      const promises = symbols.map(async (symbol) => {
-        const response = await fetch(
-          `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${ALPHA_VANTAGE_API_KEY}`
-        )
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch data for ${symbol}`)
+      // Try Polygon.io first (better rate limits)
+      if (POLYGON_API_KEY !== 'demo') {
+        const polygonData = await fetchFromPolygon(symbols)
+        if (polygonData.length > 0) {
+          return polygonData
         }
+      }
 
-        const data = await response.json()
-        const quote = data['Global Quote']
-
-        if (!quote || Object.keys(quote).length === 0) {
-          throw new Error(`No data available for ${symbol}`)
+      // Try Finnhub (good rate limits)
+      if (FINNHUB_API_KEY !== 'demo') {
+        const finnhubData = await fetchFromFinnhub(symbols)
+        if (finnhubData.length > 0) {
+          return finnhubData
         }
+      }
 
-        return {
-          symbol: quote['01. symbol'],
-          name: quote['01. symbol'], // Alpha Vantage doesn't provide company names in global quote
-          price: parseFloat(quote['05. price']),
-          change: parseFloat(quote['09. change']),
-          changePercent: parseFloat(
-            quote['10. change percent'].replace('%', '')
-          ),
-          volume: parseInt(quote['06. volume']),
-          lastUpdated: new Date().toISOString(),
+      // Fallback to Alpha Vantage (check for rate limits)
+      if (ALPHA_VANTAGE_API_KEY !== 'demo') {
+        const alphaData = await fetchFromAlphaVantage(symbols)
+        if (alphaData.length > 0) {
+          return alphaData
         }
-      })
+      }
 
-      const results = await Promise.allSettled(promises)
-      return results
-        .filter(
-          (result): result is PromiseFulfilledResult<StockData> =>
-            result.status === 'fulfilled'
-        )
-        .map((result) => result.value)
+      // Final fallback to mock data
+      return generateMockStockData(symbols)
     } catch (error) {
       console.error('Error fetching stock data:', error)
-      return []
+      return generateMockStockData(symbols)
     }
   },
 
@@ -198,60 +190,40 @@ export const apiUtils = {
           id: 'mock-5',
           title: 'Global Markets React to Economic Data Release',
           description:
-            'Investors digest latest employment and inflation figures, adjusting positions accordingly.',
+            'International markets respond to latest economic indicators and policy announcements.',
           url: '#',
           publishedAt: new Date().toISOString(),
-          source: 'Reuters',
+          source: 'Global Finance',
           sentiment: 'neutral',
         },
         {
           id: 'mock-6',
-          title: 'AI-Powered Trading Platforms Gain Traction',
+          title: 'Earnings Season Brings Mixed Results',
           description:
-            'Financial institutions increasingly adopt machine learning algorithms for market analysis.',
+            'Corporate earnings reports show varied performance across different market sectors.',
           url: '#',
           publishedAt: new Date().toISOString(),
-          source: 'Tech Finance',
+          source: 'Earnings Watch',
           sentiment: 'neutral',
         },
         {
           id: 'mock-7',
-          title: 'European Markets Open Higher on Positive Sentiment',
+          title: 'Green Energy Stocks Continue Momentum',
           description:
-            'European indices climb as investors remain optimistic about economic recovery prospects.',
+            'Renewable energy sector maintains strong performance amid climate policy developments.',
           url: '#',
           publishedAt: new Date().toISOString(),
-          source: 'Bloomberg',
+          source: 'Green Finance',
           sentiment: 'neutral',
         },
         {
           id: 'mock-8',
-          title: 'Sustainable Investing Trends Continue to Rise',
+          title: 'Retail Sector Adapts to Digital Transformation',
           description:
-            'ESG-focused funds attract record inflows as environmental concerns drive investment decisions.',
+            'Traditional retailers embrace e-commerce and digital technologies to meet changing consumer demands.',
           url: '#',
           publishedAt: new Date().toISOString(),
-          source: 'Sustainable Finance',
-          sentiment: 'neutral',
-        },
-        {
-          id: 'mock-9',
-          title: 'Asian Markets Show Mixed Performance',
-          description:
-            'Regional indices display varied results amid ongoing trade negotiations and policy uncertainty.',
-          url: '#',
-          publishedAt: new Date().toISOString(),
-          source: 'Asia Markets',
-          sentiment: 'neutral',
-        },
-        {
-          id: 'mock-10',
-          title: 'Bond Yields Fluctuate Amid Economic Uncertainty',
-          description:
-            'Treasury yields experience volatility as market participants assess inflation and growth outlook.',
-          url: '#',
-          publishedAt: new Date().toISOString(),
-          source: 'Bond Market Daily',
+          source: 'Retail Insights',
           sentiment: 'neutral',
         },
       ]
@@ -279,4 +251,169 @@ export const apiUtils = {
       return 'Unable to generate AI insight at this time. Please try again later.'
     }
   },
+}
+
+// Helper function to fetch from Polygon.io
+async function fetchFromPolygon(symbols: string[]): Promise<StockData[]> {
+  try {
+    const promises = symbols.map(async (symbol) => {
+      const response = await fetch(
+        `https://api.polygon.io/v2/aggs/ticker/${symbol}/prev?adjusted=true&apiKey=${POLYGON_API_KEY}`
+      )
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch Polygon data for ${symbol}`)
+      }
+
+      const data = await response.json()
+
+      if (!data.results || data.results.length === 0) {
+        throw new Error(`No Polygon data available for ${symbol}`)
+      }
+
+      const result = data.results[0]
+      const currentPrice = result.c // Close price
+      const previousPrice = result.o // Open price
+      const change = currentPrice - previousPrice
+      const changePercent = (change / previousPrice) * 100
+
+      return {
+        symbol: symbol,
+        name: symbol, // Polygon doesn't provide company names in this endpoint
+        price: currentPrice,
+        change: change,
+        changePercent: changePercent,
+        volume: result.v, // Volume
+        lastUpdated: new Date().toISOString(),
+      }
+    })
+
+    const results = await Promise.allSettled(promises)
+    return results
+      .filter(
+        (result): result is PromiseFulfilledResult<StockData> =>
+          result.status === 'fulfilled'
+      )
+      .map((result) => result.value)
+  } catch (error) {
+    console.error('Error fetching from Polygon:', error)
+    return []
+  }
+}
+
+// Helper function to fetch from Alpha Vantage
+async function fetchFromAlphaVantage(symbols: string[]): Promise<StockData[]> {
+  try {
+    const promises = symbols.map(async (symbol) => {
+      const response = await fetch(
+        `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${ALPHA_VANTAGE_API_KEY}`
+      )
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch data for ${symbol}`)
+      }
+
+      const data = await response.json()
+      const quote = data['Global Quote']
+
+      if (!quote || Object.keys(quote).length === 0) {
+        throw new Error(`No data available for ${symbol}`)
+      }
+
+      return {
+        symbol: quote['01. symbol'],
+        name: quote['01. symbol'], // Alpha Vantage doesn't provide company names in global quote
+        price: parseFloat(quote['05. price']),
+        change: parseFloat(quote['09. change']),
+        changePercent: parseFloat(quote['10. change percent'].replace('%', '')),
+        volume: parseInt(quote['06. volume']),
+        lastUpdated: new Date().toISOString(),
+      }
+    })
+
+    const results = await Promise.allSettled(promises)
+    return results
+      .filter(
+        (result): result is PromiseFulfilledResult<StockData> =>
+          result.status === 'fulfilled'
+      )
+      .map((result) => result.value)
+  } catch (error) {
+    console.error('Error fetching from Alpha Vantage:', error)
+    return []
+  }
+}
+
+// Helper function to generate mock stock data
+function generateMockStockData(symbols: string[]): StockData[] {
+  return symbols.map((symbol) => {
+    const basePrice = getBasePrice(symbol)
+    const changePercent = (Math.random() - 0.5) * 8 // -4% to +4%
+    const change = basePrice * (changePercent / 100)
+    const volume = Math.floor(Math.random() * 5000000) + 500000
+
+    return {
+      symbol,
+      name: getCompanyName(symbol),
+      price: basePrice + change,
+      change,
+      changePercent,
+      volume,
+      lastUpdated: new Date().toISOString(),
+    }
+  })
+}
+
+// Helper function to get base price for symbols
+function getBasePrice(symbol: string): number {
+  const basePrices: Record<string, number> = {
+    AAPL: 150,
+    GOOGL: 2800,
+    MSFT: 300,
+    AMZN: 3300,
+    TSLA: 800,
+    META: 300,
+    NVDA: 500,
+    NFLX: 500,
+    AMD: 100,
+    INTC: 50,
+    CRM: 200,
+    ORCL: 80,
+    IBM: 140,
+    CSCO: 50,
+    ADBE: 400,
+    PYPL: 200,
+    NKE: 150,
+    DIS: 180,
+    WMT: 140,
+    JPM: 150,
+  }
+  return basePrices[symbol] || 100
+}
+
+// Helper function to get company names
+function getCompanyName(symbol: string): string {
+  const companyNames: Record<string, string> = {
+    AAPL: 'Apple Inc.',
+    GOOGL: 'Alphabet Inc.',
+    MSFT: 'Microsoft Corporation',
+    AMZN: 'Amazon.com Inc.',
+    TSLA: 'Tesla Inc.',
+    META: 'Meta Platforms Inc.',
+    NVDA: 'NVIDIA Corporation',
+    NFLX: 'Netflix Inc.',
+    AMD: 'Advanced Micro Devices',
+    INTC: 'Intel Corporation',
+    CRM: 'Salesforce Inc.',
+    ORCL: 'Oracle Corporation',
+    IBM: 'International Business Machines',
+    CSCO: 'Cisco Systems Inc.',
+    ADBE: 'Adobe Inc.',
+    PYPL: 'PayPal Holdings Inc.',
+    NKE: 'Nike Inc.',
+    DIS: 'The Walt Disney Company',
+    WMT: 'Walmart Inc.',
+    JPM: 'JPMorgan Chase & Co.',
+  }
+  return companyNames[symbol] || symbol
 }

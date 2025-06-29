@@ -62,9 +62,6 @@ export const NewsTicker = ({ news, loading = false }: NewsTickerProps) => {
                   style={{
                     fontSize: '14px',
                     fontWeight: '500',
-                    maxWidth: '200px',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
                   }}
                 >
                   {item.title}
@@ -96,9 +93,6 @@ export const NewsTicker = ({ news, loading = false }: NewsTickerProps) => {
                   style={{
                     fontSize: '14px',
                     fontWeight: '500',
-                    maxWidth: '200px',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
                   }}
                 >
                   {item.title}
