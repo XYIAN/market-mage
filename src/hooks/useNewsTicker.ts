@@ -3,11 +3,14 @@
 import { useState, useEffect, useCallback } from 'react'
 import { NewsItem } from '@/types'
 import { apiUtils } from '@/utils/api'
+import { useWizardToast } from '@/components/layout/AppContent'
+import { createWizardToast } from '@/utils/toast'
 
 export const useNewsTicker = () => {
   const [news, setNews] = useState<NewsItem[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const { show } = useWizardToast()
 
   const fetchNews = useCallback(async () => {
     setLoading(true)
@@ -18,9 +21,11 @@ export const useNewsTicker = () => {
       const newsData = await apiUtils.fetchNews()
       console.log('News data received:', newsData)
       setNews(newsData)
+      show(createWizardToast({ action: 'news', success: true }))
     } catch (err) {
       console.error('Error fetching news:', err)
       setError(err instanceof Error ? err.message : 'Failed to fetch news')
+      show(createWizardToast({ action: 'news', success: false }))
 
       // Set mock news data if API fails
       const mockNews: NewsItem[] = [
@@ -79,7 +84,7 @@ export const useNewsTicker = () => {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [show])
 
   // Initial fetch
   useEffect(() => {
