@@ -9,13 +9,13 @@ import { TabView, TabPanel } from 'primereact/tabview'
 import { Card } from 'primereact/card'
 import { Checkbox } from 'primereact/checkbox'
 import { OrderList } from 'primereact/orderlist'
-import { MultiSelect } from 'primereact/multiselect'
 import { ScrollPanel } from 'primereact/scrollpanel'
 import {
   DashboardConfig,
   DashboardType,
   DASHBOARD_SECTIONS,
   DashboardSection,
+  DashboardSectionType,
 } from '@/types/dashboard'
 import { CryptoAsset } from '@/types/crypto'
 import { WatchlistItem } from '@/types'
@@ -90,7 +90,7 @@ export function DashboardEditDialog({
       const sectionInfo = DASHBOARD_SECTIONS.find((s) => s.type === sectionType)
       const newSection: DashboardSection = {
         id: `${sectionType}-${Date.now()}`,
-        type: sectionType as any,
+        type: sectionType as DashboardSectionType,
         name: sectionInfo?.name || sectionType,
         description: sectionInfo?.description || '',
         enabled: true,
@@ -105,7 +105,7 @@ export function DashboardEditDialog({
     setValue('selectedSections', currentSections)
   }
 
-  const handleSectionReorder = (event: any) => {
+  const handleSectionReorder = (event: { value: DashboardSection[] }) => {
     const reorderedSections = event.value.map(
       (section: DashboardSection, index: number) => ({
         ...section,
@@ -120,20 +120,36 @@ export function DashboardEditDialog({
 
     try {
       const now = new Date().toISOString()
-      const updatedConfig: DashboardConfig = {
-        ...(initialConfig || {}),
-        id: initialConfig?.id || `dashboard-${Date.now()}`,
-        name: data.dashboardName,
-        type: dashboardType,
-        updatedAt: now,
-        sections: data.selectedSections,
-        ...(dashboardType === 'crypto'
-          ? { assets: data.assets as CryptoAsset[] }
-          : { stocks: data.assets as WatchlistItem[] }),
-      }
 
-      await new Promise((resolve) => setTimeout(resolve, 900)) // Simulate save delay
-      onSave(updatedConfig)
+      if (dashboardType === 'crypto') {
+        const updatedConfig: DashboardConfig = {
+          ...(initialConfig || {}),
+          id: initialConfig?.id || `dashboard-${Date.now()}`,
+          name: data.dashboardName,
+          type: 'crypto',
+          createdAt: initialConfig?.createdAt || now,
+          updatedAt: now,
+          sections: data.selectedSections,
+          assets: data.assets as CryptoAsset[],
+          aiOracleRefreshCount: 0,
+        }
+        await new Promise((resolve) => setTimeout(resolve, 900)) // Simulate save delay
+        onSave(updatedConfig)
+      } else {
+        const updatedConfig: DashboardConfig = {
+          ...(initialConfig || {}),
+          id: initialConfig?.id || `dashboard-${Date.now()}`,
+          name: data.dashboardName,
+          type: 'market',
+          createdAt: initialConfig?.createdAt || now,
+          updatedAt: now,
+          sections: data.selectedSections,
+          stocks: data.assets as WatchlistItem[],
+          aiOracleRefreshCount: 0,
+        }
+        await new Promise((resolve) => setTimeout(resolve, 900)) // Simulate save delay
+        onSave(updatedConfig)
+      }
     } catch (error) {
       console.error('Error saving dashboard:', error)
     } finally {

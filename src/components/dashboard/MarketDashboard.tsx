@@ -13,7 +13,7 @@ import {
   DashboardSection,
   MarketDashboardConfig,
 } from '@/types/dashboard'
-import { WatchlistItem, StockData, HistoricalNote } from '@/types'
+import { StockData, HistoricalNote } from '@/types'
 import { storageUtils } from '@/utils/storage'
 import { stockService } from '@/services/stockService'
 
@@ -128,26 +128,6 @@ export function MarketDashboard() {
     }
   }
 
-  const handleStocksChange = (stocks: WatchlistItem[]) => {
-    if (config && config.type === 'market') {
-      const updatedConfig = { ...config, stocks }
-      saveDashboardConfig(updatedConfig)
-      // Refresh stock data
-      fetchStockData(stocks.map((item) => item.symbol))
-    }
-  }
-
-  const handleAIOracleRefresh = (refreshCount: number) => {
-    if (config && config.type === 'market') {
-      const updatedConfig = {
-        ...config,
-        aiOracleRefreshCount: refreshCount,
-        lastAiOracleRefresh: new Date().toISOString(),
-      }
-      saveDashboardConfig(updatedConfig)
-    }
-  }
-
   const handleNotesChange = () => {
     setNotes(storageUtils.getHistoricalNotes())
   }
@@ -183,7 +163,6 @@ export function MarketDashboard() {
 
   const renderSection = (section: DashboardSection) => {
     if (!section.enabled || config?.type !== 'market') return null
-    const marketConfig = config as MarketDashboardConfig
 
     switch (section.type) {
       case 'stock-table':

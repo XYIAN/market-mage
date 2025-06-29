@@ -18,6 +18,7 @@ import {
   DASHBOARD_SECTIONS,
   DASHBOARD_PRESETS,
   DashboardPreset,
+  DashboardSectionType,
 } from '@/types/dashboard'
 import { CryptoAsset } from '@/types/crypto'
 import { WatchlistItem } from '@/types'
@@ -106,7 +107,7 @@ export function DashboardStepper({
         )
         return {
           id: `${sectionType}-${index}`,
-          type: sectionType,
+          type: sectionType as DashboardSectionType,
           name: sectionInfo?.name || sectionType,
           description: sectionInfo?.description || '',
           enabled: true,
