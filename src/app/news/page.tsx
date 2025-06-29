@@ -117,7 +117,24 @@ export default function MarketNewsPage() {
         </div>
 
         <div className="w-full">
-          <MarketSentiment sentiment={sentiment!} loading={sentimentLoading} />
+          <MarketSentiment
+            sentiment={
+              sentiment || {
+                overall: 'neutral',
+                score: 0,
+                volume: 0,
+                volatility: 0,
+                sectors: {
+                  technology: 0,
+                  healthcare: 0,
+                  finance: 0,
+                  energy: 0,
+                  consumer: 0,
+                },
+              }
+            }
+            loading={sentimentLoading}
+          />
         </div>
 
         <div className="w-full">

@@ -106,73 +106,65 @@ class NewsService {
 
   async getStockNews(): Promise<NewsItem[]> {
     return withCache(
-      `${CACHE_KEYS.NEWS_DATA}_stock`,
+      `${CACHE_KEYS.NEWS_DATA}_stock_yahoo`,
       async () => {
-        // Simulate API call with delay
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-
-        return [
-          {
-            id: '1',
-            title: 'Tech Stocks Rally as AI Innovation Drives Market Growth',
-            description:
-              'Major technology companies are leading the market rally with breakthrough developments in artificial intelligence.',
-            source: 'MarketWatch',
-            publishedAt: '2024-01-15T10:30:00Z',
-            url: '#',
-            sentiment: 'positive',
-          },
-          {
-            id: '2',
-            title: 'Federal Reserve Signals Potential Rate Cuts',
-            description:
-              'The Federal Reserve indicates possible interest rate reductions in response to improving economic indicators.',
-            source: 'Bloomberg',
-            publishedAt: '2024-01-15T09:15:00Z',
-            url: '#',
-            sentiment: 'positive',
-          },
-          {
-            id: '3',
-            title: 'Earnings Season Kicks Off with Mixed Results',
-            description:
-              'Corporate earnings reports show varied performance across different sectors of the economy.',
-            source: 'Reuters',
-            publishedAt: '2024-01-15T08:45:00Z',
-            url: '#',
-            sentiment: 'neutral',
-          },
-          {
-            id: '4',
-            title: 'Green Energy Stocks Surge on Climate Policy',
-            description:
-              'Renewable energy companies are experiencing significant growth following new environmental regulations.',
-            source: 'CNBC',
-            publishedAt: '2024-01-15T07:30:00Z',
-            url: '#',
-            sentiment: 'positive',
-          },
-          {
-            id: '5',
-            title: 'Healthcare Sector Faces Regulatory Challenges',
-            description:
-              'Pharmaceutical companies are navigating new regulatory requirements while maintaining innovation.',
-            source: 'Yahoo Finance',
-            publishedAt: '2024-01-15T06:20:00Z',
-            url: '#',
-            sentiment: 'neutral',
-          },
-          {
-            id: '6',
-            title: 'Retail Sector Adapts to Changing Consumer Behavior',
-            description:
-              'Traditional retailers are embracing digital transformation to meet evolving customer expectations.',
-            source: 'Forbes',
-            publishedAt: '2024-01-15T05:10:00Z',
-            url: '#',
-            sentiment: 'positive',
-          },
-        ]
+        // Yahoo Finance unofficial API (public endpoint)
+        try {
+          type YahooNewsItem = {
+            id: string
+            title: string
+            summary?: string
+            pubDate?: number
+            link: string
+          }
+          const response = await fetch(
+            'https://query1.finance.yahoo.com/v2/finance/news?category=general&region=US&lang=en-US'
+          )
+          if (!response.ok) {
+            throw new Error('Failed to fetch Yahoo Finance news')
+          }
+          const data = await response.json()
+          // Yahoo's news format is a bit nested
+          const items = (data?.data?.main?.stream || []).map(
+            (item: YahooNewsItem, idx: number) => ({
+              id: item.id || `yahoo-${idx}`,
+              title: item.title,
+              description: item.summary || 'No description available',
+              source: 'Yahoo Finance',
+              publishedAt: item.pubDate
+                ? new Date(item.pubDate * 1000).toISOString()
+                : new Date().toISOString(),
+              url: item.link,
+              sentiment: 'neutral',
+            })
+          )
+          return items
+        } catch (error) {
+          console.error('Error fetching Yahoo Finance news:', error)
+          // Fallback to previous mock data
+          return [
+            {
+              id: 'mock-1',
+              title: 'Market Update: Tech Stocks Rally on Strong Earnings',
+              description:
+                'Major technology companies report better-than-expected quarterly results, driving market optimism.',
+              url: '#',
+              publishedAt: new Date().toISOString(),
+              source: 'Market News',
+              sentiment: 'neutral',
+            },
+            {
+              id: 'mock-2',
+              title: 'Federal Reserve Signals Potential Rate Changes',
+              description:
+                'Central bank officials hint at possible adjustments to monetary policy in upcoming meetings.',
+              url: '#',
+              publishedAt: new Date().toISOString(),
+              source: 'Financial Times',
+              sentiment: 'neutral',
+            },
+          ]
+        }
       },
       this.NEWS_CACHE_TTL
     )

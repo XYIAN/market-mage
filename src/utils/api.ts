@@ -1,14 +1,12 @@
 import { StockData, CryptoData, NewsItem, NewsApiResponse } from '@/types'
 
 // Using multiple APIs for better data coverage
-const ALPHA_VANTAGE_API_KEY =
-  process.env.NEXT_PUBLIC_ALPHA_VANTAGE_API_KEY || 'demo'
 const POLYGON_API_KEY = process.env.NEXT_PUBLIC_POLYGON_API_KEY || 'demo'
 const FINNHUB_API_KEY = process.env.NEXT_PUBLIC_FINNHUB_API_KEY || 'demo'
 const NEWS_API_KEY = process.env.NEXT_PUBLIC_NEWS_API_KEY || 'demo'
 
 export const apiUtils = {
-  // Fetch stock data for multiple symbols using multiple APIs
+  // Fetch stock data for multiple symbols using Finnhub and Polygon only
   fetchStockData: async (symbols: string[]): Promise<StockData[]> => {
     try {
       // Try Polygon.io first (better rate limits)
@@ -19,19 +17,11 @@ export const apiUtils = {
         }
       }
 
-      // Try Finnhub (good rate limits)
+      // Fallback to Finnhub
       if (FINNHUB_API_KEY !== 'demo') {
         const finnhubData = await fetchFromFinnhub(symbols)
         if (finnhubData.length > 0) {
           return finnhubData
-        }
-      }
-
-      // Fallback to Alpha Vantage (check for rate limits)
-      if (ALPHA_VANTAGE_API_KEY !== 'demo') {
-        const alphaData = await fetchFromAlphaVantage(symbols)
-        if (alphaData.length > 0) {
-          return alphaData
         }
       }
 
@@ -43,48 +33,27 @@ export const apiUtils = {
     }
   },
 
-  // Fetch crypto data for multiple symbols
+  // Fetch crypto data for multiple symbols (using only free APIs)
   fetchCryptoData: async (symbols: string[]): Promise<CryptoData[]> => {
     try {
-      const promises = symbols.map(async (symbol) => {
-        const response = await fetch(
-          `https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=${symbol}&to_currency=USD&apikey=${ALPHA_VANTAGE_API_KEY}`
-        )
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch crypto data for ${symbol}`)
-        }
-
-        const data = await response.json()
-        const rate = data['Realtime Currency Exchange Rate']
-
-        if (!rate || Object.keys(rate).length === 0) {
-          throw new Error(`No crypto data available for ${symbol}`)
-        }
-
-        // For demo purposes, we'll generate some mock change data
-        const price = parseFloat(rate['5. Exchange Rate'])
+      // Use only free APIs for crypto data - no Alpha Vantage
+      const mockData = symbols.map((symbol) => {
+        const basePrice = getCryptoBasePrice(symbol)
         const changePercent = (Math.random() - 0.5) * 10 // Random change between -5% and +5%
-        const change = price * (changePercent / 100)
+        const change = basePrice * (changePercent / 100)
 
         return {
-          symbol: rate['1. From_Currency Code'],
-          name: rate['2. From_Currency Name'],
-          price: price.toFixed(2),
+          symbol: symbol,
+          name: getCryptoName(symbol),
+          price: (basePrice + change).toFixed(2),
           change: change.toFixed(2),
-          volume: Math.floor(Math.random() * 1000000000), // Mock volume
+          volume: Math.floor(Math.random() * 1000000000).toLocaleString(), // Mock volume as string
           marketCap: Math.floor(Math.random() * 1000000000000), // Mock market cap
           lastUpdated: new Date().toISOString(),
         }
       })
 
-      const results = await Promise.allSettled(promises)
-      return results
-        .filter(
-          (result): result is PromiseFulfilledResult<CryptoData> =>
-            result.status === 'fulfilled'
-        )
-        .map((result) => result.value)
+      return mockData
     } catch (error) {
       console.error('Error fetching crypto data:', error)
       // Return mock crypto data if API fails
@@ -95,7 +64,7 @@ export const apiUtils = {
           price: (45000 + Math.random() * 5000).toFixed(2),
           change: ((Math.random() - 0.5) * 2000).toFixed(2),
           marketCap: Math.floor(800000000000 + Math.random() * 100000000000),
-          volume: Math.floor(Math.random() * 1000000000),
+          volume: Math.floor(Math.random() * 1000000000).toLocaleString(),
           lastUpdated: new Date().toISOString(),
         },
         {
@@ -104,7 +73,7 @@ export const apiUtils = {
           price: (3000 + Math.random() * 500).toFixed(2),
           change: ((Math.random() - 0.5) * 200).toFixed(2),
           marketCap: Math.floor(350000000000 + Math.random() * 50000000000),
-          volume: Math.floor(Math.random() * 500000000),
+          volume: Math.floor(Math.random() * 500000000).toLocaleString(),
           lastUpdated: new Date().toISOString(),
         },
         {
@@ -113,7 +82,7 @@ export const apiUtils = {
           price: (1.5 + Math.random() * 0.5).toFixed(4),
           change: ((Math.random() - 0.5) * 0.2).toFixed(4),
           marketCap: Math.floor(50000000000 + Math.random() * 10000000000),
-          volume: Math.floor(Math.random() * 100000000),
+          volume: Math.floor(Math.random() * 100000000).toLocaleString(),
           lastUpdated: new Date().toISOString(),
         },
       ]
@@ -301,32 +270,36 @@ async function fetchFromPolygon(symbols: string[]): Promise<StockData[]> {
   }
 }
 
-// Helper function to fetch from Alpha Vantage
-async function fetchFromAlphaVantage(symbols: string[]): Promise<StockData[]> {
+// Helper function to fetch from Finnhub
+async function fetchFromFinnhub(symbols: string[]): Promise<StockData[]> {
   try {
     const promises = symbols.map(async (symbol) => {
       const response = await fetch(
-        `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${ALPHA_VANTAGE_API_KEY}`
+        `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${FINNHUB_API_KEY}`
       )
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch data for ${symbol}`)
+        throw new Error(`Failed to fetch Finnhub data for ${symbol}`)
       }
 
       const data = await response.json()
-      const quote = data['Global Quote']
 
-      if (!quote || Object.keys(quote).length === 0) {
-        throw new Error(`No data available for ${symbol}`)
+      if (!data || data.error) {
+        throw new Error(`No Finnhub data available for ${symbol}`)
       }
 
+      const currentPrice = data.c // Current price
+      const previousPrice = data.pc // Previous close price
+      const change = currentPrice - previousPrice
+      const changePercent = (change / previousPrice) * 100
+
       return {
-        symbol: quote['01. symbol'],
-        name: quote['01. symbol'], // Alpha Vantage doesn't provide company names in global quote
-        price: parseFloat(quote['05. price']),
-        change: parseFloat(quote['09. change']),
-        changePercent: parseFloat(quote['10. change percent'].replace('%', '')),
-        volume: parseInt(quote['06. volume']),
+        symbol: symbol,
+        name: symbol, // Finnhub doesn't provide company names in quote endpoint
+        price: currentPrice,
+        change: change,
+        changePercent: changePercent,
+        volume: data.v || 0, // Volume
         lastUpdated: new Date().toISOString(),
       }
     })
@@ -339,7 +312,7 @@ async function fetchFromAlphaVantage(symbols: string[]): Promise<StockData[]> {
       )
       .map((result) => result.value)
   } catch (error) {
-    console.error('Error fetching from Alpha Vantage:', error)
+    console.error('Error fetching from Finnhub:', error)
     return []
   }
 }
@@ -350,7 +323,7 @@ function generateMockStockData(symbols: string[]): StockData[] {
     const basePrice = getBasePrice(symbol)
     const changePercent = (Math.random() - 0.5) * 8 // -4% to +4%
     const change = basePrice * (changePercent / 100)
-    const volume = Math.floor(Math.random() * 5000000) + 500000
+    const volume = Math.floor(Math.random() * 500000) + 500000
 
     return {
       symbol,
@@ -359,6 +332,7 @@ function generateMockStockData(symbols: string[]): StockData[] {
       change,
       changePercent,
       volume,
+      marketCap: (basePrice + change) * volume * (Math.random() * 5 + 1),
       lastUpdated: new Date().toISOString(),
     }
   })
@@ -416,4 +390,24 @@ function getCompanyName(symbol: string): string {
     JPM: 'JPMorgan Chase & Co.',
   }
   return companyNames[symbol] || symbol
+}
+
+// Helper function to get crypto base price
+function getCryptoBasePrice(symbol: string): number {
+  const basePrices: Record<string, number> = {
+    BTC: 45000,
+    ETH: 3000,
+    ADA: 1.5,
+  }
+  return basePrices[symbol] || 100
+}
+
+// Helper function to get crypto name
+function getCryptoName(symbol: string): string {
+  const cryptoNames: Record<string, string> = {
+    BTC: 'Bitcoin',
+    ETH: 'Ethereum',
+    ADA: 'Cardano',
+  }
+  return cryptoNames[symbol] || symbol
 }

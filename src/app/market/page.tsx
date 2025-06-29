@@ -9,7 +9,7 @@ import {
   DashboardSection,
 } from '@/components/dashboard/DashboardLayout'
 import { storageUtils } from '@/utils/storage'
-import { apiUtils } from '@/utils/api'
+import { stockService } from '@/services/stockService'
 
 export default function MarketDashboard() {
   const [watchlist, setWatchlist] = useState<string[]>([])
@@ -52,7 +52,7 @@ export default function MarketDashboard() {
     console.log('Fetching stock data for:', watchlist)
 
     try {
-      const data = await apiUtils.fetchStockData(watchlist)
+      const data = await stockService.getStockData(watchlist)
       console.log('Stock data received:', data)
       setStockData(data)
       setLastUpdated(new Date())
@@ -67,6 +67,7 @@ export default function MarketDashboard() {
           change: (Math.random() - 0.5) * 5,
           changePercent: (Math.random() - 0.5) * 3,
           volume: Math.floor(Math.random() * 100000000),
+          marketCap: Math.floor(Math.random() * 1000000000),
           lastUpdated: new Date().toISOString(),
         },
         {
@@ -76,6 +77,7 @@ export default function MarketDashboard() {
           change: (Math.random() - 0.5) * 20,
           changePercent: (Math.random() - 0.5) * 2,
           volume: Math.floor(Math.random() * 50000000),
+          marketCap: Math.floor(Math.random() * 1000000000),
           lastUpdated: new Date().toISOString(),
         },
         {
@@ -85,6 +87,7 @@ export default function MarketDashboard() {
           change: (Math.random() - 0.5) * 8,
           changePercent: (Math.random() - 0.5) * 2.5,
           volume: Math.floor(Math.random() * 80000000),
+          marketCap: Math.floor(Math.random() * 1000000000),
           lastUpdated: new Date().toISOString(),
         },
       ])

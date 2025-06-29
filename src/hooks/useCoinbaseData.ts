@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { CryptoData, MarketStats } from '@/types'
-import { apiUtils } from '@/utils/api'
+import { cryptoService } from '@/services/cryptoService'
 import { useWizardToast } from '@/components/layout/WizardToastProvider'
 import { createWizardToast } from '@/utils/toast'
 
@@ -18,13 +18,7 @@ export const useCoinbaseData = () => {
     setError(null)
 
     try {
-      const data = await apiUtils.fetchCryptoData([
-        'BTC',
-        'ETH',
-        'ADA',
-        'DOT',
-        'LINK',
-      ])
+      const data = await cryptoService.getCryptoData()
       setCryptoData(data)
 
       // Calculate market stats
@@ -33,7 +27,10 @@ export const useCoinbaseData = () => {
           (sum, crypto) => sum + crypto.marketCap,
           0
         )
-        const totalVolume = data.reduce((sum, crypto) => sum + crypto.volume, 0)
+        const totalVolume = data.reduce(
+          (sum, crypto) => sum + parseFloat(crypto.volume.replace(/,/g, '')),
+          0
+        )
         const averagePrice =
           data.reduce((sum, crypto) => sum + parseFloat(crypto.price), 0) /
           data.length
@@ -83,11 +80,11 @@ export const useCoinbaseData = () => {
     fetchData()
   }, [fetchData])
 
-  // Refresh data every 5 minutes
+  // Refresh data every 10 minutes (matches crypto service cache)
   useEffect(() => {
     const interval = setInterval(() => {
       fetchData()
-    }, 5 * 60 * 1000) // 5 minutes
+    }, 10 * 60 * 1000) // 10 minutes
 
     return () => clearInterval(interval)
   }, [fetchData])

@@ -205,32 +205,16 @@ class CryptoService {
       CACHE_KEYS.CRYPTO_DATA,
       async () => {
         try {
-          // Try multiple APIs in parallel
-          const [coinbaseData, binanceData, coinGeckoData] =
-            await Promise.allSettled([
-              this.getCoinbaseData(),
-              this.getBinanceData(),
-              this.getCoinGeckoData(),
-            ])
+          // Fetch from Coinbase and Binance in parallel
+          const [coinbaseData, binanceData] = await Promise.all([
+            this.getCoinbaseData(),
+            this.getBinanceData(),
+          ])
 
-          // Combine and deduplicate data
-          const allData: CryptoData[] = []
-
-          if (coinbaseData.status === 'fulfilled') {
-            allData.push(...coinbaseData.value)
-          }
-
-          if (binanceData.status === 'fulfilled') {
-            allData.push(...binanceData.value)
-          }
-
-          if (coinGeckoData.status === 'fulfilled') {
-            allData.push(...coinGeckoData.value)
-          }
-
-          // Remove duplicates and take top 15
+          // Combine and deduplicate
+          const allData: CryptoData[] = [...coinbaseData, ...binanceData]
           const uniqueData = this.removeDuplicates(allData)
-          return uniqueData.slice(0, 15)
+          return uniqueData.slice(0, 20)
         } catch (error) {
           console.error('Error fetching crypto data:', error)
           return this.getFallbackCryptoData()

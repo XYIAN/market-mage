@@ -5,6 +5,7 @@ export interface StockData {
   change: number
   changePercent: number
   volume: number
+  marketCap: number
   lastUpdated: string
 }
 
@@ -13,8 +14,8 @@ export interface CryptoData {
   name: string
   price: string
   change: string
+  volume: string
   marketCap: number
-  volume: number
   lastUpdated: string
 }
 
@@ -102,3 +103,6 @@ export interface MarketStats {
     change: string
   }
 }
+
+// Export crypto types
+export * from './crypto'
