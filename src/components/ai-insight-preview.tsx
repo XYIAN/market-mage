@@ -3,13 +3,11 @@
 import Link from 'next/link'
 import { Button } from 'primereact/button'
 import { Card } from 'primereact/card'
-import { AIInsight } from '@/types'
+import { useAIInsight } from '@/hooks/useAIInsight'
 
-interface AIInsightPreviewProps {
-  insight: AIInsight | null
-}
+export const AIInsightPreview = () => {
+  const { insight } = useAIInsight()
 
-export const AIInsightPreview = ({ insight }: AIInsightPreviewProps) => {
   if (!insight) return null
 
   return (

@@ -211,34 +211,6 @@ export const AddStock = ({ onStockAdded }: AddStockProps) => {
     )
   }
 
-  const header = (
-    <div className="flex align-items-center gap-2">
-      <i className="pi pi-plus-circle text-primary"></i>
-      <span className="font-bold">Add Stocks to Watchlist</span>
-    </div>
-  )
-
-  const footer = (
-    <div className="flex justify-end gap-2">
-      <Button
-        label="Cancel"
-        icon="pi pi-times"
-        onClick={() => setVisible(false)}
-        className="p-button-text"
-      />
-      {activeTab === 2 && targetStocks.length > 0 && (
-        <Button
-          label={`Add ${targetStocks.length} Stock${
-            targetStocks.length > 1 ? 's' : ''
-          }`}
-          icon="pi pi-check"
-          onClick={handleAddSelected}
-          className="p-button-primary"
-        />
-      )}
-    </div>
-  )
-
   return (
     <>
       <Button
@@ -249,12 +221,12 @@ export const AddStock = ({ onStockAdded }: AddStockProps) => {
       />
 
       <Dialog
-        header={header}
+        header="Add Stock to Watchlist"
         visible={visible}
         onHide={() => setVisible(false)}
         style={{ width: '90vw', maxWidth: '800px' }}
+        maximizable
         modal
-        footer={footer}
         className="p-fluid"
       >
         <TabView
@@ -333,14 +305,14 @@ export const AddStock = ({ onStockAdded }: AddStockProps) => {
                       />
                     </div>
                     {selectedStock && (
-                      <Card className="bg-primary-50">
+                      <Card>
                         <div className="flex justify-between align-items-center">
                           <div>
-                            <h3 className="m-0">{selectedStock?.symbol}</h3>
-                            <p className="m-0 text-sm">{selectedStock?.name}</p>
+                            <h3 className="m-0">{selectedStock.symbol}</h3>
+                            <p className="m-0 text-sm">{selectedStock.name}</p>
                             <div className="flex gap-2 mt-2">
-                              <Chip label={selectedStock?.exchange} />
-                              {selectedStock?.sector && (
+                              <Chip label={selectedStock.exchange} />
+                              {selectedStock.sector && (
                                 <Chip label={selectedStock.sector} />
                               )}
                             </div>
@@ -348,9 +320,7 @@ export const AddStock = ({ onStockAdded }: AddStockProps) => {
                           <Button
                             label="Add to Watchlist"
                             icon="pi pi-plus"
-                            onClick={() =>
-                              selectedStock && handleAddStock(selectedStock)
-                            }
+                            onClick={() => handleAddStock(selectedStock)}
                             className="p-button-primary"
                           />
                         </div>
@@ -425,6 +395,19 @@ export const AddStock = ({ onStockAdded }: AddStockProps) => {
                   sourceFilterPlaceholder="Search stocks..."
                   targetFilterPlaceholder="Search selected..."
                 />
+
+                {targetStocks.length > 0 && (
+                  <div className="flex justify-end mt-4">
+                    <Button
+                      label={`Add ${targetStocks.length} Stock${
+                        targetStocks.length > 1 ? 's' : ''
+                      }`}
+                      icon="pi pi-check"
+                      onClick={handleAddSelected}
+                      className="p-button-primary"
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </TabPanel>
@@ -432,15 +415,54 @@ export const AddStock = ({ onStockAdded }: AddStockProps) => {
           <TabPanel header="Browse Popular">
             <div className="grid">
               <div className="col-12">
-                <ScrollPanel style={{ height: '400px' }}>
-                  <DataView
-                    value={getFilteredStocks()}
-                    itemTemplate={stockItemTemplate}
-                    layout="list"
-                    paginator
-                    rows={10}
-                  />
-                </ScrollPanel>
+                <div className="flex flex-column gap-4">
+                  {/* Filters */}
+                  <div className="grid">
+                    <div className="col-12 md:col-4">
+                      <label className="font-medium mb-2 block">Sector</label>
+                      <MultiSelect
+                        value={selectedSectors}
+                        onChange={(e) => setSelectedSectors(e.value)}
+                        options={getSectors()}
+                        placeholder="Select sectors"
+                        className="w-full"
+                      />
+                    </div>
+                    <div className="col-12 md:col-4">
+                      <label className="font-medium mb-2 block">Exchange</label>
+                      <MultiSelect
+                        value={selectedExchanges}
+                        onChange={(e) => setSelectedExchanges(e.value)}
+                        options={getExchanges()}
+                        placeholder="Select exchanges"
+                        className="w-full"
+                      />
+                    </div>
+                    <div className="col-12 md:col-4">
+                      <label className="font-medium mb-2 block">
+                        Market Cap
+                      </label>
+                      <Dropdown
+                        value={marketCapFilter}
+                        onChange={(e) => setMarketCapFilter(e.value)}
+                        options={getMarketCapOptions()}
+                        placeholder="Select market cap"
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Stock List */}
+                  <ScrollPanel style={{ height: '400px' }}>
+                    <DataView
+                      value={getFilteredStocks()}
+                      itemTemplate={stockItemTemplate}
+                      layout="list"
+                      paginator
+                      rows={10}
+                    />
+                  </ScrollPanel>
+                </div>
               </div>
             </div>
           </TabPanel>

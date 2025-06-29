@@ -9,8 +9,8 @@ import { HistoricalNotes } from '@/components/historical-notes'
 import { AddStock } from '@/components/add-stock'
 import { useStockData } from '@/hooks/useStockData'
 import { useAIInsight } from '@/hooks/useAIInsight'
-import { storageUtils } from '@/utils/storage'
 import { HistoricalNote } from '@/types'
+import { storageUtils } from '@/utils/storage'
 
 export default function DashboardPage() {
   const { stocks, loading, lastUpdated, refresh } = useStockData()

@@ -1,13 +1,11 @@
 'use client'
 
 import { Card } from 'primereact/card'
-import { StockData } from '@/types'
+import { useStockData } from '@/hooks/useStockData'
 
-interface StatsSectionProps {
-  stocks: StockData[]
-}
+export const StatsSection = () => {
+  const { stocks } = useStockData()
 
-export const StatsSection = ({ stocks }: StatsSectionProps) => {
   // Calculate summary stats
   const totalStocks = stocks.length
   const positiveStocks = stocks.filter((s) => s.change >= 0).length
