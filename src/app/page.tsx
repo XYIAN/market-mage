@@ -1,12 +1,12 @@
 'use client'
 
 import { Card } from 'primereact/card'
-import { Button } from 'primereact/button'
 import { NewsTicker } from '@/components/news-ticker'
+import { HeroSection } from '@/components/hero-section'
+import { FeatureCards } from '@/components/feature-cards'
 import { useNewsTicker } from '@/hooks/useNewsTicker'
 import { useStockData } from '@/hooks/useStockData'
 import { useAIInsight } from '@/hooks/useAIInsight'
-import { FEATURE_CARDS } from '@/data/cards'
 
 export default function HomePage() {
   const { news } = useNewsTicker()
@@ -23,39 +23,10 @@ export default function HomePage() {
       {/* Main Content */}
       <div className="max-w-6xl mx-auto py-6">
         {/* Hero Section */}
-        <Card className="mb-8 text-center">
-          <div className="mb-6">
-            <i className="pi pi-magic text-primary text-6xl mb-4"></i>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="text-primary">Market</span>
-              <span>-</span>
-              <span className="text-primary">Mage</span>
-            </h1>
-            <p className="text-xl mb-6">
-              AI-powered trading insights and portfolio management
-            </p>
-            <Button
-              label="Get Started"
-              icon="pi pi-arrow-right"
-              size="large"
-              className="p-button-primary"
-              onClick={() => (window.location.href = '/dashboard')}
-            />
-          </div>
-        </Card>
+        <HeroSection />
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 justify-items-center">
-          {FEATURE_CARDS.map((card) => (
-            <Card key={card.id} className="w-full max-w-sm text-center">
-              <div className="mb-4">
-                <i className={`${card.icon} text-4xl text-primary`}></i>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">{card.title}</h3>
-              <p>{card.description}</p>
-            </Card>
-          ))}
-        </div>
+        <FeatureCards />
 
         {/* Quick Stats */}
         {stocks.length > 0 && (
@@ -117,12 +88,6 @@ export default function HomePage() {
               <p className="mb-4 line-clamp-3">
                 {insight.content.substring(0, 200)}...
               </p>
-              <Button
-                label="Read Full Insight"
-                icon="pi pi-arrow-right"
-                className="p-button-text"
-                onClick={() => (window.location.href = '/dashboard')}
-              />
             </Card>
           </div>
         )}
@@ -136,21 +101,6 @@ export default function HomePage() {
             Join thousands of traders who are already using AI-powered insights
             to make better investment decisions.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              label="View Dashboard"
-              icon="pi pi-chart-line"
-              size="large"
-              className="p-button-primary"
-              onClick={() => (window.location.href = '/dashboard')}
-            />
-            <Button
-              label="Learn More"
-              icon="pi pi-info-circle"
-              size="large"
-              className="p-button-outlined"
-            />
-          </div>
         </Card>
       </div>
     </div>

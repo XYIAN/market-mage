@@ -1,26 +1,18 @@
 'use client'
 
 import { SpeedDial } from 'primereact/speeddial'
-import { useRouter } from 'next/navigation'
 
 export const NavigationSpeedDial = () => {
-  const router = useRouter()
-
   const items = [
     {
       label: 'Dashboard',
       icon: 'pi pi-chart-line',
-      command: () => router.push('/dashboard'),
+      command: () => (window.location.href = '/dashboard'),
     },
     {
-      label: 'News',
-      icon: 'pi pi-globe',
-      command: () => router.push('/news'),
-    },
-    {
-      label: 'Home',
-      icon: 'pi pi-home',
-      command: () => router.push('/'),
+      label: 'Learn More',
+      icon: 'pi pi-question-circle',
+      command: () => console.log('Learn More clicked'),
     },
   ]
 
@@ -28,7 +20,7 @@ export const NavigationSpeedDial = () => {
     <SpeedDial
       model={items}
       direction="up"
-      style={{ right: '2rem', bottom: '2rem' }}
+      className="fixed bottom-4 right-4 z-50"
       buttonClassName="p-button-primary"
       showIcon="pi pi-bars"
       hideIcon="pi pi-times"

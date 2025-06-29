@@ -1,224 +1,167 @@
 # Market-Mage 🧙‍♂️
 
-A modern, AI-powered stock dashboard built with Next.js 15, TypeScript, and PrimeReact. Get real-time market data, AI-generated trading insights, and portfolio management tools.
+**AI-Powered Stock Dashboard with Real-Time Market Insights**
+
+Market-Mage is a modern, responsive stock dashboard that combines real-time market data with AI-powered trading insights. Built with a focus on user experience and professional design, it provides traders and investors with the tools they need to make informed decisions.
+
+![Market-Mage Dashboard](https://img.shields.io/badge/Version-1.0.1-blue) ![Next.js](https://img.shields.io/badge/Next.js-15.3.4-black) ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue) ![PrimeReact](https://img.shields.io/badge/PrimeReact-10.7.0-purple)
 
 ## ✨ Features
 
-- **📊 Real-Time Stock Data**: Live prices updated every 5 minutes
-- **🤖 AI Oracle**: Daily AI-powered trading insights (1 per day limit)
-- **📰 Live News Ticker**: Scrolling financial news banner
-- **📝 Historical Notes**: Track your trading observations
-- **📱 Mobile-First Design**: Fully responsive interface
-- **🎨 Viva Dark Theme**: Beautiful PrimeReact Viva Dark theme
-- **💾 Local Storage**: All data stored locally for privacy
-- **📈 CSV Export**: Export your portfolio data
+### 📊 **Real-Time Dashboard**
 
-## 🚀 Tech Stack
+- Live stock data with price updates and percentage changes
+- Interactive stock table with sorting and filtering
+- Portfolio overview with gain/loss tracking
+- Responsive design that works on all devices
 
-- **Framework**: Next.js 15+ (App Router)
-- **Language**: TypeScript
-- **Styling**: TailwindCSS + PrimeReact
-- **UI Components**: PrimeReact (Viva Dark theme)
-- **AI**: OpenAI GPT-3.5/4 API
-- **Stock Data**: Alpha Vantage API (free tier)
-- **News**: NewsAPI (free tier)
-- **Deployment**: Netlify ready
+### 🤖 **AI-Powered Insights**
 
-## 📦 Installation
+- Daily AI trading suggestions powered by OpenAI
+- Market analysis and trend predictions
+- Historical notes tracking for learning from past decisions
+- AI Oracle for strategic trading advice
 
-1. **Clone the repository**
+### 📰 **Live News Ticker**
 
-   ```bash
-   git clone <your-repo-url>
-   cd market-mage
-   ```
+- Real-time financial news updates
+- Infinite scrolling ticker with smooth animations
+- Source attribution and timestamp display
+- Sticky positioning for constant visibility
 
-2. **Install dependencies**
+### 📈 **Advanced Analytics**
 
-   ```bash
-   npm install
-   ```
+- Chart.js integration for data visualization
+- Stock performance charts and trends
+- Technical analysis indicators
+- Historical data tracking
 
-3. **Set up environment variables**
-   Create a `.env.local` file in the root directory:
+### 🎯 **Smart Navigation**
 
-   ```env
-   # OpenAI API Key (required for AI insights)
-   OPENAI_API_KEY=your_openai_api_key
+- SpeedDial navigation for quick access
+- Sticky positioning for easy reach
+- Intuitive icons and labels
+- Seamless page transitions
 
-   # Alpha Vantage API Key (optional, uses demo key if not provided)
-   NEXT_PUBLIC_ALPHA_VANTAGE_API_KEY=your_alpha_vantage_key
+## 🚀 Getting Started
 
-   # News API Key (optional, uses mock data if not provided)
-   NEXT_PUBLIC_NEWS_API_KEY=your_news_api_key
-   ```
+### Quick Start
 
-4. **Run the development server**
+1. **Add Stocks**: Use the SpeedDial (bottom-right) to access the dashboard
+2. **View Data**: Browse real-time stock information in the main table
+3. **Get Insights**: Check the AI Oracle for daily trading suggestions
+4. **Track News**: Monitor the live news ticker for market updates
+5. **Analyze**: Use charts and historical data for informed decisions
 
-   ```bash
-   npm run dev
-   ```
+### Navigation Guide
 
-5. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
+- **🏠 Home**: Landing page with feature overview
+- **📊 Dashboard**: Main stock tracking interface
+- **📰 News**: Detailed news page with charts
+- **❓ Learn More**: Access help and information
 
-## 🔧 API Keys Setup
+## 🎨 User Interface
 
-### OpenAI API Key (Required for AI Insights)
+### Design Philosophy
 
-1. Go to [OpenAI Platform](https://platform.openai.com/)
-2. Create an account and get your API key
-3. Add it to `.env.local` as `OPENAI_API_KEY`
+- **Dark Theme**: Professional Viva Dark theme for reduced eye strain
+- **Mobile-First**: Responsive design that works on all screen sizes
+- **Accessibility**: High contrast and keyboard navigation support
+- **Performance**: Optimized for fast loading and smooth interactions
 
-### Alpha Vantage API Key (Optional)
+### Key Components
 
-1. Go to [Alpha Vantage](https://www.alphavantage.co/)
-2. Get a free API key
-3. Add it to `.env.local` as `NEXT_PUBLIC_ALPHA_VANTAGE_API_KEY`
+- **Hero Section**: Eye-catching title with animated glow effects
+- **Feature Cards**: Modular display of app capabilities
+- **Stock Table**: Comprehensive data presentation with sorting
+- **News Ticker**: Live updates with smooth scrolling
+- **SpeedDial**: Quick access navigation system
 
-### News API Key (Optional)
+## 🔧 Technical Stack
 
-1. Go to [NewsAPI](https://newsapi.org/)
-2. Get a free API key
-3. Add it to `.env.local` as `NEXT_PUBLIC_NEWS_API_KEY`
+### Frontend
 
-## 📱 Usage
+- **Next.js 15.3.4** - React framework with App Router
+- **TypeScript 5** - Type-safe development
+- **PrimeReact 10.7.0** - Professional UI components
+- **Tailwind CSS** - Utility-first styling
+- **Chart.js** - Data visualization
 
-### Homepage (`/`)
+### Backend & APIs
 
-- Sticky news ticker with live financial news
-- Quick stats overview of your portfolio
-- Navigation to the main dashboard
+- **OpenAI API** - AI-powered insights
+- **Alpha Vantage** - Real-time stock data
+- **Next.js API Routes** - Server-side functionality
 
-### Dashboard (`/dashboard`)
+### Development Tools
 
-- **Watchlist Tab**: View and manage your stock portfolio
-- **AI Oracle Tab**: Get daily AI-generated trading insights
-- **Historical Notes Tab**: Track your trading observations
+- **ESLint** - Code quality and consistency
+- **PostCSS** - CSS processing
+- **Turbopack** - Fast development builds
 
-### Adding Stocks
+## 📱 Responsive Design
 
-1. Click "Add Stock" button
-2. Enter stock symbol (e.g., AAPL, MSFT)
-3. Enter company name
-4. Stock will be added to your watchlist
+Market-Mage is built with mobile-first principles:
 
-### AI Insights
+- **Mobile**: Optimized touch interactions and compact layouts
+- **Tablet**: Enhanced navigation and larger touch targets
+- **Desktop**: Full-featured interface with advanced controls
+- **Large Screens**: Maximized data display and multi-column layouts
 
-- Generate one insight per day
-- Insights reset at midnight
-- Manual refresh available after daily limit
+## 🎯 Use Cases
 
-## 🏗️ Project Structure
+### For Individual Traders
 
-```
-src/
-├── app/                    # Next.js App Router pages
-│   ├── api/               # API routes
-│   ├── dashboard/         # Dashboard page
-│   ├── globals.css        # Global styles
-│   ├── layout.tsx         # Root layout
-│   └── page.tsx           # Homepage
-├── components/            # Reusable UI components
-│   ├── add-stock.tsx      # Add stock dialog
-│   ├── ai-oracle.tsx      # AI insights component
-│   ├── call-to-action.tsx # CTA section
-│   ├── feature-cards.tsx  # Feature cards grid
-│   ├── hero-section.tsx   # Hero section
-│   ├── historical-notes.tsx # Notes management
-│   ├── news-ticker.tsx    # Scrolling news ticker
-│   ├── stats-section.tsx  # Statistics display
-│   └── stock-table.tsx    # Stock data table
-├── data/                  # Static data files
-│   └── cards.ts           # Feature cards configuration
-├── hooks/                 # Custom React hooks
-│   ├── useAIInsight.ts    # AI insights hook
-│   ├── useNewsTicker.ts   # News data hook
-│   └── useStockData.ts    # Stock data hook
-├── lib/                   # Library configurations
-│   └── providers/         # React providers
-├── types/                 # TypeScript type definitions
-└── utils/                 # Utility functions
-    ├── api.ts             # API utilities
-    ├── date.ts            # Date formatting
-    └── storage.ts         # Local storage utilities
-```
+- Track personal stock portfolios
+- Get AI-powered trading suggestions
+- Monitor market news and trends
+- Analyze historical performance
 
-## 🎨 Customization
+### For Investors
 
-### Theme
+- Research potential investments
+- Monitor market conditions
+- Track portfolio performance
+- Access professional insights
 
-The app uses PrimeReact's Viva Dark theme. To customize:
+### For Financial Analysts
 
-1. Modify `src/app/globals.css`
-2. Update theme imports
-3. Adjust Tailwind classes
+- Real-time market data access
+- Technical analysis tools
+- News aggregation and filtering
+- Performance tracking
 
-### Styling
+## 🔮 Future Roadmap
 
-- Uses TailwindCSS for utility-first styling
-- PrimeReact components for UI elements
-- Custom CSS for animations and scrollbars
-
-## 🚀 Deployment
-
-### Netlify (Recommended)
-
-1. Connect your GitHub repository to Netlify
-2. Set environment variables in Netlify dashboard
-3. Deploy automatically on push to main branch
-
-### Vercel
-
-1. Connect your GitHub repository to Vercel
-2. Set environment variables in Vercel dashboard
-3. Deploy automatically on push to main branch
-
-## 📊 Data Storage
-
-All data is stored in the browser's localStorage:
-
-- **Watchlist**: Stock symbols and company names
-- **AI Insights**: Daily generated insights with expiration
-- **Historical Notes**: Trading observations and notes
-
-## 🔒 Privacy
-
-- No data is sent to external servers except for API calls
-- All personal data stays in your browser
-- No user accounts or authentication required
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
-## 🆘 Support
-
-If you encounter any issues:
-
-1. Check the browser console for errors
-2. Verify your API keys are correct
-3. Ensure all dependencies are installed
-4. Create an issue on GitHub
-
-## 🔮 Future Features
-
-- [ ] Real-time price alerts
-- [ ] Technical indicators
-- [ ] Portfolio performance charts
+- [ ] Real-time portfolio alerts
+- [ ] Advanced charting tools
 - [ ] Social trading features
-- [ ] Multiple watchlists
-- [ ] Advanced AI insights
-- [ ] Market sentiment analysis
+- [ ] Mobile app development
+- [ ] API rate limit optimization
+- [ ] Enhanced AI insights
+
+## 👨‍💻 Developer
+
+**Kyle** - Full-Stack Developer & Financial Technology Enthusiast
+
+### Connect With Me
+
+- 🌐 **Website**: [Your Website URL]
+- 💼 **LinkedIn**: [Your LinkedIn Profile]
+- 🐙 **GitHub**: [Your GitHub Profile]
+- 📧 **Email**: [Your Email]
+
+### Support
+
+If you find Market-Mage helpful, consider:
+
+- ⭐ Starring this repository
+- 🐛 Reporting bugs or issues
+- 💡 Suggesting new features
+- 🤝 Contributing to the project
 
 ---
 
-**Built with ❤️ using Next.js, TypeScript, and PrimeReact**
+**Disclaimer**: Market-Mage is for educational and informational purposes only. It does not constitute financial advice. Always conduct your own research and consult with financial professionals before making investment decisions.
+
+_Built with ❤️ using modern web technologies_
