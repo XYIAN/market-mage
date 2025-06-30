@@ -2,6 +2,63 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.2.0] - 2024-12-30
+
+### Added
+
+- **Wizard Trading Academy**: Complete educational game system with quest-based learning
+- **Interactive Stock Trading Game**: Real-time stock trading simulation with buy/sell mechanics
+- **Comprehensive Achievement System**: 50+ achievements across 6 categories (dashboard, trading, streak, exploration, mastery, social)
+- **Mage Level Progression**: 15+ levels from Apprentice to Archmage with point-based progression
+- **Quest System**: 2 basic quests (stocks/crypto) + 6 advanced quests requiring login
+- **Avatar Unlock System**: New avatars unlocked every 2 mage levels
+- **Dynamic Theme System**: Accent colors and themes change with mage level progression
+- **Login Streak Tracking**: Automatic tracking of consecutive login days
+- **Game Database Schema**: Complete Supabase tables for user progress, achievements, and quests
+
+### Game Features
+
+- **Basic Quests**: Stock Market Apprentice & Cryptocurrency Initiate (available to all users)
+- **Advanced Quests**: Technical Analysis, Fundamental Analysis, DeFi Master, Options Trading, NFT Specialist, Portfolio Management
+- **Achievement Categories**: Bronze (10 pts), Silver (25 pts), Gold (55 pts) difficulty levels
+- **Mage Titles**: Apprentice → Sorcerer → Junior Mage → Master Mage → Grandmaster Mage → Battlemage → Grand Battlemage → Archmage
+- **Interactive Trading Simulation**: Real-time stock price movements, portfolio management, and performance tracking
+- **Quest Rewards**: Points, titles, and special unlocks for completing quests
+
+### Technical Implementation
+
+- **Game Types**: Comprehensive TypeScript interfaces for quests, achievements, mage levels, and themes
+- **Game Data**: Centralized game configuration with quests, achievements, and progression data
+- **Game Hooks**: useGame hook for managing game state, achievements, and user progress
+- **Database Integration**: Supabase tables with RLS policies for secure user data
+- **Achievement System Component**: Modal-based achievement tracking with progress indicators
+- **Stock Trading Game Component**: Interactive simulation with charts, portfolio management, and scoring
+
+### User Experience
+
+- **Quest Selection**: Visual quest cards with difficulty indicators and login requirements
+- **Progress Tracking**: Real-time progress bars and achievement completion tracking
+- **Login Prompts**: Elegant dialogs for advanced quests requiring authentication
+- **Game Navigation**: Integrated game access through sidebar navigation
+- **Responsive Design**: Mobile-first design for all game components
+- **Toast Notifications**: User feedback for game actions and achievements
+
+### Database Schema
+
+- **user_game_progress**: User level, points, title, avatars, achievements, quests, login streak
+- **game_achievements**: Individual achievement tracking with progress and unlock dates
+- **game_quests**: Quest progress tracking with step completion
+- **game_sessions**: Game play session data for analytics
+- **Automatic Triggers**: Login streak tracking and user progress initialization
+
+### Security & Performance
+
+- **Row Level Security**: All game tables protected with RLS policies
+- **User Isolation**: Users can only access their own game data
+- **Automatic Initialization**: New users automatically get game progress records
+- **Optimized Queries**: Indexed database tables for fast game data access
+- **Error Handling**: Comprehensive error handling for all game operations
+
 ## [2.1.2] - 2024-12-30
 
 ### Added

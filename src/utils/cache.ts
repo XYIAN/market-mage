@@ -4,6 +4,10 @@ interface CacheItem<T> {
   ttl: number
 }
 
+// Check if we're in a browser environment
+const isBrowser =
+  typeof window !== 'undefined' && typeof localStorage !== 'undefined'
+
 class CacheManager {
   private memoryCache = new Map<string, CacheItem<unknown>>()
   private readonly DEFAULT_TTL = 5 * 60 * 1000 // 5 minutes
@@ -18,11 +22,13 @@ class CacheManager {
     // Set in memory cache
     this.memoryCache.set(key, item)
 
-    // Set in localStorage
-    try {
-      localStorage.setItem(key, JSON.stringify(item))
-    } catch (error) {
-      console.warn('Failed to save to localStorage:', error)
+    // Set in localStorage only in browser environment
+    if (isBrowser) {
+      try {
+        localStorage.setItem(key, JSON.stringify(item))
+      } catch (error) {
+        console.warn('Failed to save to localStorage:', error)
+      }
     }
   }
 
@@ -33,23 +39,25 @@ class CacheManager {
       return memoryItem.data as T
     }
 
-    // Try localStorage
-    try {
-      const stored = localStorage.getItem(key)
-      if (stored) {
-        const item: CacheItem<T> = JSON.parse(stored)
-        if (!this.isExpired(item)) {
-          // Update memory cache
-          this.memoryCache.set(key, item)
-          return item.data
-        } else {
-          // Remove expired item
-          localStorage.removeItem(key)
-          this.memoryCache.delete(key)
+    // Try localStorage only in browser environment
+    if (isBrowser) {
+      try {
+        const stored = localStorage.getItem(key)
+        if (stored) {
+          const item: CacheItem<T> = JSON.parse(stored)
+          if (!this.isExpired(item)) {
+            // Update memory cache
+            this.memoryCache.set(key, item)
+            return item.data
+          } else {
+            // Remove expired item
+            localStorage.removeItem(key)
+            this.memoryCache.delete(key)
+          }
         }
+      } catch (error) {
+        console.warn('Failed to read from localStorage:', error)
       }
-    } catch (error) {
-      console.warn('Failed to read from localStorage:', error)
     }
 
     return null
@@ -61,19 +69,23 @@ class CacheManager {
 
   invalidate(key: string): void {
     this.memoryCache.delete(key)
-    try {
-      localStorage.removeItem(key)
-    } catch (error) {
-      console.warn('Failed to remove from localStorage:', error)
+    if (isBrowser) {
+      try {
+        localStorage.removeItem(key)
+      } catch (error) {
+        console.warn('Failed to remove from localStorage:', error)
+      }
     }
   }
 
   clear(): void {
     this.memoryCache.clear()
-    try {
-      localStorage.clear()
-    } catch (error) {
-      console.warn('Failed to clear localStorage:', error)
+    if (isBrowser) {
+      try {
+        localStorage.clear()
+      } catch (error) {
+        console.warn('Failed to clear localStorage:', error)
+      }
     }
   }
 
@@ -86,6 +98,7 @@ class CacheManager {
   }
 
   private getLocalStorageSize(): number {
+    if (!isBrowser) return 0
     try {
       return Object.keys(localStorage).length
     } catch {

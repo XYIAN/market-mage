@@ -73,7 +73,37 @@ export const Sidebar = () => {
         show({
           severity: 'info',
           summary: 'Navigation',
-          detail: 'Welcome to Market-Mage Home!',
+          detail: 'Returning to Home...',
+          life: 3000,
+          closable: true,
+        })
+      },
+    },
+    {
+      label: 'Dashboard',
+      icon: 'pi pi-chart-line',
+      command: () => {
+        router.push('/dashboard')
+        setVisible(false)
+        show({
+          severity: 'info',
+          summary: 'Navigation',
+          detail: 'Opening Dashboard...',
+          life: 3000,
+          closable: true,
+        })
+      },
+    },
+    {
+      label: 'Trading Academy',
+      icon: 'pi pi-graduation-cap',
+      command: () => {
+        router.push('/game')
+        setVisible(false)
+        show({
+          severity: 'info',
+          summary: 'Navigation',
+          detail: 'Opening Trading Academy...',
           life: 3000,
           closable: true,
         })

@@ -1,13 +1,14 @@
 {
   "name": "market-mage",
-  "version": "2.1.2",
-  "description": "AI-powered stock dashboard with real-time market data and trading insights",
+  "version": "2.2.0",
+  "description": "AI-powered stock dashboard with customizable features, real-time data, and educational trading game",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
