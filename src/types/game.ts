@@ -61,6 +61,7 @@ export interface Achievement {
   unlockedAt?: string
   progress?: number
   maxProgress?: number
+  requiresLogin?: boolean
 }
 
 export type AchievementCategory =

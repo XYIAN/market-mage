@@ -9,6 +9,7 @@ import { AIOracle } from './AIOracle'
 import { HistoricalNotes } from './HistoricalNotes'
 import { DashboardStepper } from './DashboardStepper'
 import { DashboardEditDialog } from './DashboardEditDialog'
+import { UserProfile } from './UserProfile'
 import {
   DashboardConfig,
   DashboardSection,
@@ -298,12 +299,15 @@ export function MarketDashboard() {
                 {stockCount} stocks • {enabledSections.length} features
               </p>
             </div>
-            <Button
-              label="Edit Dashboard"
-              icon="pi pi-pencil"
-              onClick={handleEditDashboard}
-              className="p-button-outlined"
-            />
+            <div className="flex gap-4 items-center">
+              <UserProfile />
+              <Button
+                label="Edit Dashboard"
+                icon="pi pi-pencil"
+                onClick={handleEditDashboard}
+                className="p-button-outlined"
+              />
+            </div>
           </div>
         </div>
 

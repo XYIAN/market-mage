@@ -188,12 +188,57 @@ export const useGame = () => {
       const existingAchievement = userProgress.achievements.find(
         (a) => a.id === achievementId
       )
-      if (existingAchievement?.unlocked) return
+
+      // For daily achievements, check if already unlocked today
+      if (achievementId.startsWith('daily-')) {
+        if (existingAchievement?.unlocked) {
+          const lastUnlocked = new Date(existingAchievement.unlockedAt || '')
+          const today = new Date()
+          const isToday = lastUnlocked.toDateString() === today.toDateString()
+
+          if (isToday) {
+            // Already unlocked today, just update progress
+            const updatedProgress = (existingAchievement.progress || 0) + 1
+            const updatedAchievement = {
+              ...existingAchievement,
+              progress: updatedProgress,
+            }
+
+            // Check if achievement should be unlocked
+            if (
+              achievement.maxProgress &&
+              updatedProgress >= achievement.maxProgress
+            ) {
+              // Achievement completed, keep it unlocked
+              return existingAchievement
+            }
+
+            const updatedAchievements = userProgress.achievements.map((a) =>
+              a.id === achievementId ? updatedAchievement : a
+            )
+
+            const updatedProgressData = {
+              ...userProgress,
+              achievements: updatedAchievements,
+              updatedAt: new Date().toISOString(),
+            }
+
+            setUserProgress(updatedProgressData)
+            setAchievements(updatedAchievements)
+            await saveUserProgress(updatedProgressData)
+            return existingAchievement
+          }
+        }
+      } else {
+        // For regular achievements, don't unlock if already unlocked
+        if (existingAchievement?.unlocked) return existingAchievement
+      }
 
       const unlockedAchievement = {
         ...achievement,
         unlocked: true,
         unlockedAt: new Date().toISOString(),
+        progress: achievementId.startsWith('daily-') ? 1 : undefined,
       }
 
       const updatedAchievements = [
@@ -210,8 +255,10 @@ export const useGame = () => {
       setAchievements(updatedAchievements)
       await saveUserProgress(updatedProgress)
 
-      // Add points for achievement
-      await addPoints(achievement.points)
+      // Add points for achievement (only for first-time unlocks)
+      if (!existingAchievement?.unlocked) {
+        await addPoints(achievement.points)
+      }
 
       return unlockedAchievement
     },

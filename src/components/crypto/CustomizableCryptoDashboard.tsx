@@ -9,6 +9,7 @@ import { CryptoInsights } from './CryptoInsights'
 import { MarketOverview } from './MarketOverview'
 import { DashboardStepper } from '../dashboard/DashboardStepper'
 import { DashboardEditDialog } from '../dashboard/DashboardEditDialog'
+import { UserProfile } from '../dashboard/UserProfile'
 import {
   DashboardConfig,
   DashboardSection,
@@ -196,12 +197,15 @@ export function CustomizableCryptoDashboard() {
               {assetCount} assets • {enabledSections.length} features
             </p>
           </div>
-          <Button
-            label="Edit Dashboard"
-            icon="pi pi-pencil"
-            onClick={handleEditDashboard}
-            className="p-button-outlined"
-          />
+          <div className="flex gap-4 items-center">
+            <UserProfile />
+            <Button
+              label="Edit Dashboard"
+              icon="pi pi-pencil"
+              onClick={handleEditDashboard}
+              className="p-button-outlined"
+            />
+          </div>
         </div>
       </div>
 
