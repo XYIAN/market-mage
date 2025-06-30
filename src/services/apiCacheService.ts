@@ -48,13 +48,45 @@ class ApiCacheService {
       const expiresAt = new Date()
       expiresAt.setMinutes(expiresAt.getMinutes() + expirationMinutes)
 
-      const { error } = await this.supabase.from('api_cache').upsert({
-        cache_key: cacheKey,
-        data: data,
-        expires_at: expiresAt.toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-
+      // Try upsert with onConflict if supported
+      let error = null
+      try {
+        const result = await this.supabase.from('api_cache').upsert(
+          {
+            cache_key: cacheKey,
+            data: data,
+            expires_at: expiresAt.toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'cache_key' }
+        )
+        error = result.error
+      } catch (e) {
+        // Fallback for older clients or if onConflict is not supported
+        try {
+          // Try update first
+          const updateResult = await this.supabase
+            .from('api_cache')
+            .update({
+              data: data,
+              expires_at: expiresAt.toISOString(),
+              updated_at: new Date().toISOString(),
+            })
+            .eq('cache_key', cacheKey)
+          if (updateResult.error || updateResult.count === 0) {
+            // If update fails, try insert
+            const insertResult = await this.supabase.from('api_cache').insert({
+              cache_key: cacheKey,
+              data: data,
+              expires_at: expiresAt.toISOString(),
+              updated_at: new Date().toISOString(),
+            })
+            error = insertResult.error
+          }
+        } catch (err) {
+          error = err
+        }
+      }
       if (error) {
         console.error('Error setting cached data:', error)
       }

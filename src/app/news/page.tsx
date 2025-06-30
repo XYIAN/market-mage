@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { NewsCarousel, PopularInsights, MarketSentiment } from '@/components'
 import { NewsItem } from '@/types'
 import { newsService } from '@/services/newsService'
+import { useGlobalData } from '@/providers/GlobalDataProvider'
 
 interface PopularInsight {
   id: string
@@ -31,29 +32,12 @@ interface MarketSentiment {
 }
 
 export default function MarketNewsPage() {
-  const [news, setNews] = useState<NewsItem[]>([])
+  const { stockNews, newsLoading, refreshNews } = useGlobalData()
   const [insights, setInsights] = useState<PopularInsight[]>([])
   const [sentiment, setSentiment] = useState<MarketSentiment | null>(null)
-  const [loading, setLoading] = useState(true)
   const [insightsLoading, setInsightsLoading] = useState(true)
   const [sentimentLoading, setSentimentLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-
-  const fetchNews = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const data = await newsService.getStockNews()
-      setNews(data)
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Failed to fetch market news'
-      setError(errorMessage)
-      console.error('Error fetching market news:', err)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
 
   const fetchInsights = useCallback(async () => {
     setInsightsLoading(true)
@@ -80,16 +64,15 @@ export default function MarketNewsPage() {
   }, [])
 
   useEffect(() => {
-    fetchNews()
     fetchInsights()
     fetchSentiment()
-  }, [fetchNews, fetchInsights, fetchSentiment])
+  }, [fetchInsights, fetchSentiment])
 
   if (error) {
     return (
-      <div className="w-full">
-        <div className="text-center mb-4">
-          <h2 className="text-xl font-semibold">Market News</h2>
+      <div className="w-full min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+        <div className="text-center mb-4 p-8">
+          <h2 className="text-xl font-semibold text-blue-200">Market News</h2>
         </div>
         <div className="text-center py-8">
           <p className="text-gray-400">Error loading news: {error}</p>
@@ -99,24 +82,40 @@ export default function MarketNewsPage() {
   }
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 p-4">
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">Market News & Insights</h1>
-          <p className="text-gray-400">
+          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 via-purple-500 to-cyan-400 bg-clip-text text-transparent">
+            Market News & Insights
+          </h1>
+          <p className="text-gray-300 text-lg">
             Stay updated with the latest stock market news, trends, and insights
           </p>
+          <div className="mt-4 flex justify-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-sm text-gray-400">Live Updates</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+              <span className="text-sm text-gray-400">AI Analysis</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>
+              <span className="text-sm text-gray-400">Market Sentiment</span>
+            </div>
+          </div>
         </div>
 
-        <div className="w-full">
+        <div className="w-full backdrop-blur-sm bg-black/20 rounded-xl border border-blue-500/20 p-6">
           <NewsCarousel
-            news={news}
-            loading={loading}
+            news={stockNews}
+            loading={newsLoading}
             title="Latest Market News"
           />
         </div>
 
-        <div className="w-full">
+        <div className="w-full backdrop-blur-sm bg-black/20 rounded-xl border border-purple-500/20 p-6">
           <MarketSentiment
             sentiment={
               sentiment || {
@@ -137,7 +136,7 @@ export default function MarketNewsPage() {
           />
         </div>
 
-        <div className="w-full">
+        <div className="w-full backdrop-blur-sm bg-black/20 rounded-xl border border-cyan-500/20 p-6">
           <PopularInsights insights={insights} loading={insightsLoading} />
         </div>
       </div>

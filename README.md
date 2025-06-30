@@ -4,7 +4,7 @@
 
 Market-Mage is a modern, responsive stock dashboard that combines real-time market data with AI-powered trading insights. Built with a focus on user experience and professional design, it provides traders and investors with the tools they need to make informed decisions.
 
-![Market-Mage Dashboard](https://img.shields.io/badge/Version-2.1.0-blue) ![Next.js](https://img.shields.io/badge/Next.js-15.3.4-black) ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue) ![PrimeReact](https://img.shields.io/badge/PrimeReact-10.7.0-purple) ![Supabase](https://img.shields.io/badge/Supabase-Auth%20%26%20DB-green)
+![Market-Mage Dashboard](https://img.shields.io/badge/Version-2.3.0-blue) ![Next.js](https://img.shields.io/badge/Next.js-15.3.4-black) ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue) ![PrimeReact](https://img.shields.io/badge/PrimeReact-10.7.0-purple) ![Supabase](https://img.shields.io/badge/Supabase-Auth%20%26%20DB-green)
 
 **🌐 Live Demo**: [https://market-mage.netlify.app/](https://market-mage.netlify.app/)
 
@@ -20,6 +20,9 @@ Market-Mage transforms how you interact with financial markets by providing:
 - **User authentication** with persistent watchlists and preferences
 - **Personalized dashboards** that save your customizations
 - **Centralized API caching** for optimal performance across all users
+- **Username system** with unique profile management
+- **Achievement points display** with 5-minute welcome timer
+- **Games section** with Trading Academy and Achievements
 
 ## 🚀 Getting Started
 
@@ -84,7 +87,14 @@ Market-Mage transforms how you interact with financial markets by providing:
 
    **Option B: Manual setup in Supabase Dashboard**
 
-   In your Supabase SQL editor, run:
+   In your Supabase SQL editor, run the complete setup script:
+
+   ```sql
+   -- Run the complete database setup script
+   -- Copy and paste the contents of scripts/fix-database.sql
+   ```
+
+   **Or run the individual commands:**
 
    ```sql
    -- Create watchlists table
@@ -98,7 +108,8 @@ Market-Mage transforms how you interact with financial markets by providing:
 
    -- Create API cache table for shared caching
    CREATE TABLE api_cache (
-     cache_key TEXT PRIMARY KEY,
+     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+     cache_key TEXT UNIQUE NOT NULL,
      data JSONB NOT NULL,
      expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -107,8 +118,20 @@ Market-Mage transforms how you interact with financial markets by providing:
 
    -- Create user metrics table
    CREATE TABLE user_metrics (
-     metric_key TEXT PRIMARY KEY,
-     metric_value BIGINT DEFAULT 0,
+     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+     metric_key TEXT UNIQUE NOT NULL,
+     metric_value INTEGER NOT NULL DEFAULT 0,
+     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+   );
+
+   -- Create user profiles table for username management
+   CREATE TABLE user_profiles (
+     id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
+     username TEXT UNIQUE,
+     display_name TEXT,
+     avatar_url TEXT,
+     bio TEXT,
+     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
    );
 
@@ -116,6 +139,7 @@ Market-Mage transforms how you interact with financial markets by providing:
    ALTER TABLE watchlists ENABLE ROW LEVEL SECURITY;
    ALTER TABLE api_cache ENABLE ROW LEVEL SECURITY;
    ALTER TABLE user_metrics ENABLE ROW LEVEL SECURITY;
+   ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
 
    -- Create policies for watchlists
    CREATE POLICY "Users can view their own watchlist" ON watchlists
@@ -127,32 +151,49 @@ Market-Mage transforms how you interact with financial markets by providing:
    CREATE POLICY "Users can delete from their own watchlist" ON watchlists
      FOR DELETE USING (auth.uid() = user_id);
 
-   -- Create policies for API cache (read-only for all authenticated users)
-   CREATE POLICY "Authenticated users can read cache" ON api_cache
-     FOR SELECT USING (auth.role() = 'authenticated');
+   -- Create policies for API cache
+   CREATE POLICY "Allow read access to api_cache" ON api_cache
+     FOR SELECT USING (true);
 
-   CREATE POLICY "Service role can manage cache" ON api_cache
+   CREATE POLICY "Allow insert/update to api_cache" ON api_cache
      FOR ALL USING (auth.role() = 'service_role');
 
-   -- Create policies for user metrics (read-only for all authenticated users)
-   CREATE POLICY "Authenticated users can read metrics" ON user_metrics
-     FOR SELECT USING (auth.role() = 'authenticated');
+   -- Create policies for user metrics
+   CREATE POLICY "Allow read access to user_metrics" ON user_metrics
+     FOR SELECT USING (true);
 
-   CREATE POLICY "Service role can manage metrics" ON user_metrics
-     FOR ALL USING (auth.role() = 'service_role');
+   CREATE POLICY "Allow update to user_metrics" ON user_metrics
+     FOR UPDATE USING (auth.role() = 'service_role');
 
-   -- Create function to increment metrics
-   CREATE OR REPLACE FUNCTION increment_metric(metric_key TEXT)
-   RETURNS void AS $$
+   -- Create policies for user profiles
+   CREATE POLICY "Users can view their own profile" ON user_profiles
+     FOR SELECT USING (auth.uid() = id);
+
+   CREATE POLICY "Users can update their own profile" ON user_profiles
+     FOR UPDATE USING (auth.uid() = id);
+
+   CREATE POLICY "Users can insert their own profile" ON user_profiles
+     FOR INSERT WITH CHECK (auth.uid() = id);
+
+   -- Create function to automatically create profile on user signup
+   CREATE OR REPLACE FUNCTION public.handle_new_user()
+   RETURNS TRIGGER AS $$
    BEGIN
-     INSERT INTO user_metrics (metric_key, metric_value)
-     VALUES (metric_key, 1)
-     ON CONFLICT (metric_key)
-     DO UPDATE SET
-       metric_value = user_metrics.metric_value + 1,
-       updated_at = NOW();
+     INSERT INTO public.user_profiles (id, username, display_name)
+     VALUES (
+       NEW.id,
+       NEW.raw_user_meta_data->>'username',
+       COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.email)
+     );
+     RETURN NEW;
    END;
-   $$ LANGUAGE plpgsql;
+   $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+   -- Create trigger for new user signup
+   DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+   CREATE TRIGGER on_auth_user_created
+     AFTER INSERT ON auth.users
+     FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
    -- Insert initial metrics
    INSERT INTO user_metrics (metric_key, metric_value) VALUES

@@ -1,10 +1,10 @@
 {
   "name": "market-mage",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "AI-powered stock dashboard with customizable features, real-time data, and educational trading game",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

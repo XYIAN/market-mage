@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
 import { UserGameProgress, Achievement } from '@/types/game'
@@ -9,6 +9,8 @@ import {
   ADVANCED_QUESTS,
 } from '@/data/game-data'
 
+const hasUpdatedLoginStreak = { current: false }
+
 export const useGame = () => {
   const [userProgress, setUserProgress] = useState<UserGameProgress | null>(
     null
@@ -17,6 +19,8 @@ export const useGame = () => {
   const [achievements, setAchievements] = useState<Achievement[]>([])
   const { user } = useAuth()
   const supabase = createClient()
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const isSavingRef = useRef(false)
 
   // Load user progress
   const loadUserProgress = useCallback(async () => {
@@ -69,63 +73,79 @@ export const useGame = () => {
     }
   }, [user, supabase])
 
-  // Save user progress
+  // Save user progress with debouncing
   const saveUserProgress = async (progress: UserGameProgress) => {
-    if (!user) return
+    if (!user || isSavingRef.current) return
 
-    try {
-      const { error } = await supabase.from('user_game_progress').upsert({
-        user_id: user.id,
-        level: progress.level,
-        points: progress.points,
-        title: progress.title,
-        current_avatar: progress.currentAvatar,
-        unlocked_avatars: progress.unlockedAvatars,
-        achievements: progress.achievements,
-        completed_quests: progress.completedQuests,
-        current_quest: progress.currentQuest,
-        login_streak: progress.loginStreak,
-        last_login_date: progress.lastLoginDate,
-        total_logins: progress.totalLogins,
-        updated_at: new Date().toISOString(),
-      })
+    // Clear any existing timeout
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current)
+    }
 
-      if (error) {
+    // Set a timeout to debounce the save
+    saveTimeoutRef.current = setTimeout(async () => {
+      isSavingRef.current = true
+
+      try {
+        // First check if the user progress already exists
+        const { data: existingProgress } = await supabase
+          .from('user_game_progress')
+          .select('id')
+          .eq('user_id', user.id)
+          .single()
+
+        if (existingProgress) {
+          // Update existing record
+          const { error } = await supabase
+            .from('user_game_progress')
+            .update({
+              level: progress.level,
+              points: progress.points,
+              title: progress.title,
+              current_avatar: progress.currentAvatar,
+              unlocked_avatars: progress.unlockedAvatars,
+              achievements: progress.achievements,
+              completed_quests: progress.completedQuests,
+              current_quest: progress.currentQuest,
+              login_streak: progress.loginStreak,
+              last_login_date: progress.lastLoginDate,
+              total_logins: progress.totalLogins,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('user_id', user.id)
+
+          if (error) {
+            console.error('Error updating user progress:', error)
+          }
+        } else {
+          // Insert new record
+          const { error } = await supabase.from('user_game_progress').insert({
+            user_id: user.id,
+            level: progress.level,
+            points: progress.points,
+            title: progress.title,
+            current_avatar: progress.currentAvatar,
+            unlocked_avatars: progress.unlockedAvatars,
+            achievements: progress.achievements,
+            completed_quests: progress.completedQuests,
+            current_quest: progress.currentQuest,
+            login_streak: progress.loginStreak,
+            last_login_date: progress.lastLoginDate,
+            total_logins: progress.totalLogins,
+            updated_at: new Date().toISOString(),
+          })
+
+          if (error) {
+            console.error('Error inserting user progress:', error)
+          }
+        }
+      } catch (error) {
         console.error('Error saving user progress:', error)
+      } finally {
+        isSavingRef.current = false
       }
-    } catch (error) {
-      console.error('Error saving user progress:', error)
-    }
+    }, 100) // 100ms debounce
   }
-
-  // Update login streak
-  const updateLoginStreak = useCallback(async () => {
-    if (!userProgress || !user) return
-
-    const today = new Date().toISOString().split('T')[0]
-    const lastLogin = userProgress.lastLoginDate.split('T')[0]
-    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000)
-      .toISOString()
-      .split('T')[0]
-
-    let newStreak = userProgress.loginStreak
-    if (lastLogin === yesterday) {
-      newStreak += 1
-    } else if (lastLogin !== today) {
-      newStreak = 1
-    }
-
-    const updatedProgress = {
-      ...userProgress,
-      loginStreak: newStreak,
-      lastLoginDate: new Date().toISOString(),
-      totalLogins: userProgress.totalLogins + 1,
-      updatedAt: new Date().toISOString(),
-    }
-
-    setUserProgress(updatedProgress)
-    await saveUserProgress(updatedProgress)
-  }, [userProgress, user, saveUserProgress])
 
   // Add points and check level up
   const addPoints = useCallback(
@@ -192,7 +212,9 @@ export const useGame = () => {
       // For daily achievements, check if already unlocked today
       if (achievementId.startsWith('daily-')) {
         if (existingAchievement?.unlocked) {
-          const lastUnlocked = new Date(existingAchievement.unlockedAt || '')
+          const lastUnlocked = new Date(
+            existingAchievement.unlockedAt || new Date().toISOString()
+          )
           const today = new Date()
           const isToday = lastUnlocked.toDateString() === today.toDateString()
 
@@ -365,14 +387,14 @@ export const useGame = () => {
   // Initialize
   useEffect(() => {
     loadUserProgress()
-  }, [loadUserProgress])
 
-  // Update login streak on mount
-  useEffect(() => {
-    if (userProgress && user) {
-      updateLoginStreak()
+    // Cleanup function to clear timeout on unmount
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current)
+      }
     }
-  }, [userProgress, user, updateLoginStreak])
+  }, [loadUserProgress])
 
   return {
     userProgress,
@@ -384,7 +406,6 @@ export const useGame = () => {
     completeQuest,
     getCurrentTheme,
     getNextLevelInfo,
-    updateLoginStreak,
     saveUserProgress,
   }
 }

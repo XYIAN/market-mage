@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Sidebar as PrimeSidebar } from 'primereact/sidebar'
 import { PanelMenu } from 'primereact/panelmenu'
 import { Button } from 'primereact/button'
@@ -10,14 +10,30 @@ import { HamburgerMenu } from './HamburgerMenu'
 import { useSupabase } from '@/lib/providers/SupabaseProvider'
 import { createClient } from '@/lib/supabase/client'
 import { useWizardToast } from './WizardToastProvider'
+import { useGame } from '@/hooks/useGame'
+import { useUsername } from '@/hooks/useUsername'
 
 export const Sidebar = () => {
   const [visible, setVisible] = useState(false)
+  const [showWelcome, setShowWelcome] = useState(true)
   const menu = useRef<PanelMenu>(null)
   const router = useRouter()
   const { user } = useSupabase()
+  const { userProgress } = useGame()
+  const { username } = useUsername()
   const supabase = createClient()
   const { show } = useWizardToast()
+
+  // Timer to hide welcome message after 5 minutes
+  useEffect(() => {
+    if (user) {
+      const timer = setTimeout(() => {
+        setShowWelcome(false)
+      }, 5 * 60 * 1000) // 5 minutes
+
+      return () => clearTimeout(timer)
+    }
+  }, [user])
 
   const handleLogout = async () => {
     try {
@@ -26,7 +42,7 @@ export const Sidebar = () => {
         severity: 'success',
         summary: 'Logged Out',
         detail: `Goodbye, ${
-          user?.user_metadata?.full_name || user?.email
+          username || user?.user_metadata?.full_name || user?.email
         }! You have been successfully logged out.`,
         life: 4000,
         closable: true,
@@ -95,19 +111,40 @@ export const Sidebar = () => {
       },
     },
     {
-      label: 'Trading Academy',
-      icon: 'pi pi-graduation-cap',
-      command: () => {
-        router.push('/game')
-        setVisible(false)
-        show({
-          severity: 'info',
-          summary: 'Navigation',
-          detail: 'Opening Trading Academy...',
-          life: 3000,
-          closable: true,
-        })
-      },
+      label: 'Games',
+      icon: 'pi pi-gamepad',
+      items: [
+        {
+          label: 'Trading Academy',
+          icon: 'pi pi-graduation-cap',
+          command: () => {
+            router.push('/game')
+            setVisible(false)
+            show({
+              severity: 'info',
+              summary: 'Navigation',
+              detail: 'Opening Trading Academy...',
+              life: 3000,
+              closable: true,
+            })
+          },
+        },
+        {
+          label: 'Achievements',
+          icon: 'pi pi-trophy',
+          command: () => {
+            router.push('/game?tab=achievements')
+            setVisible(false)
+            show({
+              severity: 'info',
+              summary: 'Navigation',
+              detail: 'Opening Achievements...',
+              life: 3000,
+              closable: true,
+            })
+          },
+        },
+      ],
     },
     {
       label: 'Markets',
@@ -239,20 +276,43 @@ export const Sidebar = () => {
         onHide={() => setVisible(false)}
         className="w-80 bg-black/95 backdrop-blur-xl border-r border-blue-500/30"
         header={
-          <div className="flex items-center gap-3 p-4">
+          <div className="flex items-center gap-3 p-3">
             <span className="text-2xl">🧙</span>
-            <h2 className="text-xl font-bold text-blue-200">Market-Mage</h2>
+            <div className="flex flex-col">
+              <h2 className="text-xl font-bold text-blue-200">Market-Mage</h2>
+              {username && (
+                <p className="text-sm text-blue-300 leading-tight">
+                  @{username}
+                </p>
+              )}
+            </div>
           </div>
         }
       >
         <div className="relative h-screen w-64 bg-surface-900 shadow-lg flex flex-col sidebar-neon-glow overflow-hidden">
-          <div className="p-4 flex flex-col h-full">
+          <div className="p-3 flex flex-col h-full">
             {user && (
-              <div className="mb-4 p-3 bg-surface-800 rounded-lg">
-                <p className="text-sm text-gray-400">Welcome back,</p>
-                <p className="text-sm font-medium truncate">
-                  {user.user_metadata?.full_name || user.email}
-                </p>
+              <div className="mb-3 p-2 bg-surface-800 rounded-lg">
+                {showWelcome ? (
+                  <>
+                    <p className="text-xs text-gray-400 leading-tight">
+                      Welcome back,
+                    </p>
+                    <p className="text-xs font-medium truncate leading-tight">
+                      {username || user.user_metadata?.full_name || user.email}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-xs text-gray-400 leading-tight">
+                      Achievement Points
+                    </p>
+                    <p className="text-xs font-medium leading-tight">
+                      {userProgress?.points || 0} pts • Level{' '}
+                      {userProgress?.level || 1}
+                    </p>
+                  </>
+                )}
               </div>
             )}
 
@@ -263,9 +323,9 @@ export const Sidebar = () => {
               multiple={false}
             />
 
-            <div className="border-t border-blue-500/30 my-6"></div>
+            <div className="border-t border-blue-500/30 my-3"></div>
 
-            <div className="w-full flex flex-col items-center pb-4 space-y-3">
+            <div className="w-full flex flex-col items-center pb-2 space-y-2">
               {user ? (
                 <Button
                   label="Sign Out"
@@ -294,7 +354,7 @@ export const Sidebar = () => {
                   size="small"
                 />
               )}
-              <p className="text-xs mt-1">Version 2.1.2</p>
+              <p className="text-xs">Version 2.3.0</p>
               <p className="text-xs text-gray-400">Powered by AI Magic</p>
             </div>
           </div>

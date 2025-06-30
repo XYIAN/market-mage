@@ -29,6 +29,7 @@ export function UserProfile() {
   const { user } = useAuth()
   const { userProgress, achievements } = useGame()
   const [showAchievements, setShowAchievements] = useState(false)
+  const [avatarError, setAvatarError] = useState(false)
 
   if (!user || !userProgress) {
     return null
@@ -57,6 +58,19 @@ export function UserProfile() {
 
   const levelProgress = getLevelProgress()
 
+  // Handle avatar loading error
+  const handleAvatarError = () => {
+    setAvatarError(true)
+  }
+
+  // Get avatar source with fallback
+  const getAvatarSource = () => {
+    if (avatarError || !currentAvatar) {
+      return undefined // Use default PrimeReact avatar
+    }
+    return `/avatars/${currentAvatar}.png`
+  }
+
   return (
     <>
       <Card className="user-profile-card">
@@ -64,10 +78,12 @@ export function UserProfile() {
           {/* User Avatar and Basic Info */}
           <div className="flex align-items-center gap-3">
             <Avatar
-              image={`/avatars/${currentAvatar}.png`}
+              image={getAvatarSource()}
+              icon={avatarError || !currentAvatar ? 'pi pi-user' : undefined}
               size="xlarge"
               shape="circle"
               className="border-2 border-primary"
+              onError={handleAvatarError}
             />
             <div className="flex flex-column">
               <h3 className="m-0 text-primary font-bold">{currentTitle}</h3>

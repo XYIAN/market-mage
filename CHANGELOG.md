@@ -2,6 +2,43 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.3.0] - 2024-12-30
+
+### Added
+
+- **Username System**: Unique username support with automatic profile creation
+- **Games Section in Sidebar**: Dedicated navigation section for Trading Academy and Achievements
+- **Achievement Points Display**: Shows user points and level after welcome message expires
+- **5-Minute Welcome Timer**: Welcome message automatically changes to achievement display after 5 minutes
+- **Username Hook**: useUsername hook for managing username functionality and availability checking
+- **User Profile Database**: New user_profiles table with username and profile management
+- **Database Migration Script**: Manual SQL script for fixing database issues
+
+### Changed
+
+- **Sidebar Layout**: Reduced padding and spacing for better content visibility
+- **Welcome Message**: Smaller text size and tighter line height for compact design
+- **Header Design**: Added username display under Market-Mage title when available
+- **Navigation Structure**: Reorganized menu items with dedicated Games section
+- **Achievement Integration**: Sidebar now shows real-time achievement points and level
+- **Version Display**: Fixed visibility of version number and "Powered by AI Magic" text
+
+### Fixed
+
+- **Database Errors**: Fixed missing api_cache table causing 404 errors
+- **Sidebar Padding**: Reduced excessive padding that was hiding footer content
+- **Username Management**: Proper username validation and uniqueness checking
+- **Game Integration**: Fixed sidebar to properly display game-related navigation
+- **Layout Issues**: Improved spacing and visibility of all sidebar elements
+
+### Technical
+
+- **Database Schema**: Added user_profiles table with proper RLS policies
+- **Username Validation**: Real-time username availability checking
+- **Profile Management**: Automatic profile creation on user signup
+- **Cache System**: Fixed API cache table and policies
+- **Type Safety**: Added comprehensive username-related TypeScript types
+
 ## [2.2.0] - 2024-12-30
 
 ### Added

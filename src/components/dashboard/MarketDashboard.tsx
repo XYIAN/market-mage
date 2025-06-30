@@ -292,22 +292,25 @@ export function MarketDashboard() {
       <Toast ref={toast} />
       <div className="min-h-screen p-4 flex flex-col items-center">
         <div className="mb-6 w-full max-w-4xl">
-          <div className="flex justify-between items-center">
-            <div>
+          {/* Title and Edit Button Row */}
+          <div className="flex justify-between items-start mb-4">
+            <div className="flex-1">
               <h1 className="text-2xl font-bold">{config.name}</h1>
               <p className="text-gray-600">
                 {stockCount} stocks • {enabledSections.length} features
               </p>
             </div>
-            <div className="flex gap-4 items-center">
-              <UserProfile />
-              <Button
-                label="Edit Dashboard"
-                icon="pi pi-pencil"
-                onClick={handleEditDashboard}
-                className="p-button-outlined"
-              />
-            </div>
+            <Button
+              label="Edit Dashboard"
+              icon="pi pi-pencil"
+              onClick={handleEditDashboard}
+              className="p-button-outlined flex-shrink-0"
+            />
+          </div>
+
+          {/* User Profile Card - Responsive Layout */}
+          <div className="flex justify-center md:justify-start">
+            <UserProfile />
           </div>
         </div>
 

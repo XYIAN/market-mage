@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, IBM_Plex_Mono } from 'next/font/google'
+import { Inter } from 'next/font/google'
 import './globals.css'
 import '@/styles/components/hero.css'
 import { PrimeReactProvider } from 'primereact/api'
@@ -7,14 +7,9 @@ import { AppContent } from '@/components/layout/AppContent'
 import { WizardToastProvider } from '@/components/layout/WizardToastProvider'
 import LayoutShell from '@/components/layout/LayoutShell'
 import { SupabaseProvider } from '@/lib/providers/SupabaseProvider'
+import { GlobalDataProvider } from '@/providers/GlobalDataProvider'
 
 const inter = Inter({ subsets: ['latin'] })
-
-const ibmPlexMono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500', '700'],
-  variable: '--font-ibm-plex-mono',
-})
 
 export const metadata: Metadata = {
   title: {
@@ -109,9 +104,11 @@ export default function RootLayout({
         <SupabaseProvider>
           <PrimeReactProvider>
             <WizardToastProvider>
-              <LayoutShell>
-                <AppContent>{children}</AppContent>
-              </LayoutShell>
+              <GlobalDataProvider>
+                <LayoutShell>
+                  <AppContent>{children}</AppContent>
+                </LayoutShell>
+              </GlobalDataProvider>
             </WizardToastProvider>
           </PrimeReactProvider>
         </SupabaseProvider>
