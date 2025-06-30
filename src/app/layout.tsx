@@ -6,6 +6,7 @@ import { PrimeReactProvider } from 'primereact/api'
 import { AppContent } from '@/components/layout/AppContent'
 import { WizardToastProvider } from '@/components/layout/WizardToastProvider'
 import LayoutShell from '@/components/layout/LayoutShell'
+import { SupabaseProvider } from '@/lib/providers/SupabaseProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -31,13 +32,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <PrimeReactProvider>
-          <WizardToastProvider>
-            <LayoutShell>
-              <AppContent>{children}</AppContent>
-            </LayoutShell>
-          </WizardToastProvider>
-        </PrimeReactProvider>
+        <SupabaseProvider>
+          <PrimeReactProvider>
+            <WizardToastProvider>
+              <LayoutShell>
+                <AppContent>{children}</AppContent>
+              </LayoutShell>
+            </WizardToastProvider>
+          </PrimeReactProvider>
+        </SupabaseProvider>
       </body>
     </html>
   )

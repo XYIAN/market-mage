@@ -3,14 +3,25 @@
 import { useState, useRef } from 'react'
 import { Sidebar as PrimeSidebar } from 'primereact/sidebar'
 import { PanelMenu } from 'primereact/panelmenu'
+import { Button } from 'primereact/button'
 import { useRouter } from 'next/navigation'
 import { HamburgerMenu } from './HamburgerMenu'
+import { useSupabase } from '@/lib/providers/SupabaseProvider'
+import { createClient } from '@/lib/supabase/client'
 import packageJson from '../../../package.json'
 
 export const Sidebar = () => {
   const [visible, setVisible] = useState(false)
   const menu = useRef<PanelMenu>(null)
   const router = useRouter()
+  const { user } = useSupabase()
+  const supabase = createClient()
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push('/')
+    setVisible(false)
+  }
 
   const menuItems = [
     {
@@ -21,8 +32,20 @@ export const Sidebar = () => {
         setVisible(false)
       },
     },
+    ...(user
+      ? [
+          {
+            label: '📊 Dashboard',
+            icon: 'pi pi-chart-line',
+            command: () => {
+              router.push('/dashboard')
+              setVisible(false)
+            },
+          },
+        ]
+      : []),
     {
-      label: '📊 Dashboards',
+      label: '📊 Markets',
       icon: 'pi pi-chart-line',
       items: [
         {
@@ -109,6 +132,13 @@ export const Sidebar = () => {
       >
         <div className="relative h-full w-64 bg-surface-900 shadow-lg flex flex-col sidebar-neon-glow">
           <div className="p-4 flex flex-col h-full">
+            {user && (
+              <div className="mb-4 p-3 bg-surface-800 rounded-lg">
+                <p className="text-sm text-gray-400">Welcome back,</p>
+                <p className="text-sm font-medium truncate">{user.email}</p>
+              </div>
+            )}
+
             <PanelMenu
               ref={menu}
               model={menuItems}
@@ -118,7 +148,28 @@ export const Sidebar = () => {
 
             <div className="border-t border-blue-500/30 my-6"></div>
 
-            <div className="w-full flex flex-col items-center pb-4">
+            <div className="w-full flex flex-col items-center pb-4 space-y-3">
+              {user ? (
+                <Button
+                  label="Sign Out"
+                  icon="pi pi-sign-out"
+                  onClick={handleLogout}
+                  className="w-full"
+                  severity="secondary"
+                  size="small"
+                />
+              ) : (
+                <Button
+                  label="Sign In"
+                  icon="pi pi-sign-in"
+                  onClick={() => {
+                    router.push('/login')
+                    setVisible(false)
+                  }}
+                  className="w-full"
+                  size="small"
+                />
+              )}
               <p className="text-xs mt-1">Version {packageJson.version}</p>
               <p className="text-xs text-gray-400">Powered by AI Magic</p>
             </div>
