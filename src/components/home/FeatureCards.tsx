@@ -51,8 +51,8 @@ export const FeatureCards = () => {
   return (
     <div className="mb-12 w-full">
       <h2 className="text-3xl font-bold text-center mb-8">Features</h2>
-      <div className="flex justify-center">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl">
+      <div className="flex justify-center items-center w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl w-full">
           {features.map((feature, index) => (
             <div
               key={index}

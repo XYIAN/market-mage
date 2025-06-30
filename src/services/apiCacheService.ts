@@ -148,6 +148,24 @@ class ApiCacheService {
 
     return `${baseKey}:${paramString}`
   }
+
+  /**
+   * Invalidate cache for a specific key
+   */
+  async invalidateCache(cacheKey: string): Promise<void> {
+    try {
+      const { error } = await this.supabase
+        .from('api_cache')
+        .delete()
+        .eq('cache_key', cacheKey)
+
+      if (error) {
+        console.error('Error invalidating cache:', error)
+      }
+    } catch (error) {
+      console.error('Error invalidating cache:', error)
+    }
+  }
 }
 
 // Create singleton instance

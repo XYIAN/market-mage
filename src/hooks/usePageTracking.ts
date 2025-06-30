@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { useGame } from '@/hooks/useGame'
@@ -37,9 +37,16 @@ export const usePageTracking = () => {
   const pathname = usePathname()
   const { user } = useAuth()
   const { unlockAchievement, addPoints } = useGame()
+  const processedPages = useRef<Set<string>>(new Set())
 
   useEffect(() => {
     if (!user || !pathname) return
+
+    // Create a unique key for this page visit
+    const pageKey = `${pathname}-${new Date().toDateString()}`
+
+    // Skip if we've already processed this page today
+    if (processedPages.current.has(pageKey)) return
 
     const trackPageVisit = async () => {
       const achievementId =
@@ -65,8 +72,11 @@ export const usePageTracking = () => {
 
       // Check for "daily all pages" achievement
       await unlockAchievement('daily-all-pages')
+
+      // Mark this page as processed for today
+      processedPages.current.add(pageKey)
     }
 
     trackPageVisit()
-  }, [pathname, user, unlockAchievement, addPoints])
+  }, [pathname, user]) // Removed unlockAchievement and addPoints from dependencies
 }

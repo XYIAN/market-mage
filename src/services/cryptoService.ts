@@ -9,6 +9,18 @@ interface TickerData {
 }
 
 class CryptoService {
+  constructor() {
+    // Auto-refresh data every 30 seconds (only in browser)
+    if (typeof window !== 'undefined') {
+      setInterval(() => {
+        console.log('Auto-refreshing crypto data...')
+        this.invalidateCache('crypto_data')
+        this.invalidateCache('coinbase_products')
+        this.invalidateCache('coinbase_tickers')
+      }, 30000)
+    }
+  }
+
   /**
    * Format currency values
    */
@@ -187,6 +199,15 @@ class CryptoService {
     } catch (error) {
       console.error('Error fetching CoinGecko data:', error)
       throw error
+    }
+  }
+
+  /**
+   * Invalidate cache for a specific key
+   */
+  async invalidateCache(key: string): Promise<void> {
+    if (typeof window !== 'undefined') {
+      await apiCacheService.invalidateCache(key)
     }
   }
 }
