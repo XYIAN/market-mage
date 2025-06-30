@@ -6,22 +6,14 @@ import { SpeedDial } from 'primereact/speeddial'
 import { DashboardConfig, DashboardType } from '@/types/dashboard'
 import { DashboardStepper } from './DashboardStepper'
 import { DashboardEditDialog } from './DashboardEditDialog'
-import { CryptoAsset } from '@/types/crypto'
-import { WatchlistItem } from '@/types'
-
-// Import section components
-import { AssetTracker } from '../crypto/AssetTracker'
-import { CryptoAIOracle } from '../crypto/CryptoAIOracle'
-import { CryptoInsights } from '../crypto/CryptoInsights'
-import { MarketOverview } from '../crypto/MarketOverview'
-import { StockTable } from './StockTable'
-import { AIOracle } from './AIOracle'
-import { HistoricalNotes } from './HistoricalNotes'
 
 interface CustomizableDashboardProps {
   dashboardType: DashboardType
   storageKey: string
-  renderSection: (section: any, config: DashboardConfig) => React.ReactNode
+  renderSection: (
+    section: DashboardConfig['sections'][number],
+    config: DashboardConfig
+  ) => React.ReactNode
 }
 
 export function CustomizableDashboard({
@@ -149,14 +141,22 @@ export function CustomizableDashboard({
   const enabledSections = config.sections
     .filter((s) => s.enabled)
     .sort((a, b) => a.position - b.position)
-  const assetCount =
-    dashboardType === 'crypto'
-      ? (config as any).assets?.length || 0
-      : (config as any).stocks?.length || 0
+  const assetCount = (() => {
+    if (dashboardType === 'crypto' && 'assets' in config!) {
+      return (
+        (config as DashboardConfig & { assets?: unknown[] }).assets?.length || 0
+      )
+    } else if (dashboardType === 'market' && 'stocks' in config!) {
+      return (
+        (config as DashboardConfig & { stocks?: unknown[] }).stocks?.length || 0
+      )
+    }
+    return 0
+  })()
 
   return (
-    <div className="min-h-screen p-4">
-      <div className="mb-6">
+    <div className="min-h-screen p-4 flex flex-col items-center">
+      <div className="mb-6 w-full max-w-4xl">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold">{config.name}</h1>
@@ -175,7 +175,7 @@ export function CustomizableDashboard({
       </div>
 
       {enabledSections.length === 0 ? (
-        <div className="text-center py-12">
+        <div className="text-center py-12 w-full max-w-2xl">
           <i className="pi pi-exclamation-triangle text-4xl text-gray-400 mb-4"></i>
           <h2 className="text-xl font-semibold mb-2">No Features Enabled</h2>
           <p className="text-gray-600 mb-4">
@@ -188,10 +188,15 @@ export function CustomizableDashboard({
           />
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="flex flex-col items-center gap-8 w-full">
           {enabledSections.map((section) => (
-            <div key={section.id} className="h-full">
-              {renderSection(section, config)}
+            <div
+              key={section.id}
+              className="w-full max-w-3xl flex justify-center"
+            >
+              <div className="w-full flex flex-col items-center">
+                {renderSection(section, config)}
+              </div>
             </div>
           ))}
         </div>

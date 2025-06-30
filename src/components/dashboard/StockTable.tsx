@@ -8,6 +8,8 @@ import { InputText } from 'primereact/inputtext'
 import { StockData } from '@/types'
 import { storageUtils } from '@/utils/storage'
 import { dateUtils } from '@/utils/date'
+import { useWizardToast } from '../layout/WizardToastProvider'
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog'
 
 interface StockTableProps {
   stocks: StockData[]
@@ -21,6 +23,7 @@ export const StockTable = ({
   lastUpdated,
 }: StockTableProps) => {
   const [globalFilter, setGlobalFilter] = useState('')
+  const { show } = useWizardToast()
 
   const priceBodyTemplate = (rowData: StockData) => {
     return <span className="font-semibold">${rowData.price.toFixed(2)}</span>
@@ -66,9 +69,45 @@ export const StockTable = ({
   }
 
   const handleRemoveStock = (symbol: string) => {
-    storageUtils.removeFromWatchlist(symbol)
-    // Trigger a page refresh to update the table
-    window.location.reload()
+    confirmDialog({
+      message: `Are you sure you want to remove ${symbol} from your watchlist?`,
+      header: 'Confirm Remove',
+      icon: 'pi pi-exclamation-triangle',
+      acceptClassName: 'p-button-danger',
+      accept: () => {
+        try {
+          storageUtils.removeFromWatchlist(symbol)
+          show({
+            severity: 'success',
+            summary: 'Stock Removed',
+            detail: `${symbol} was removed from your watchlist.`,
+            life: 4000,
+            closable: true,
+          })
+          window.location.reload()
+        } catch (error) {
+          show({
+            severity: 'error',
+            summary: 'Remove Failed',
+            detail:
+              error instanceof Error
+                ? error.message
+                : 'Failed to remove stock.',
+            life: 4000,
+            closable: true,
+          })
+        }
+      },
+      reject: () => {
+        show({
+          severity: 'info',
+          summary: 'Cancelled',
+          detail: 'Stock removal cancelled.',
+          life: 3000,
+          closable: true,
+        })
+      },
+    })
   }
 
   const exportCSV = () => {
@@ -158,50 +197,53 @@ export const StockTable = ({
   )
 
   return (
-    <DataTable
-      value={stocks}
-      globalFilter={globalFilter}
-      header={header}
-      loading={loading}
-      emptyMessage={emptyMessage}
-      className="p-datatable-sm"
-      stripedRows
-      showGridlines
-    >
-      <Column
-        field="symbol"
-        header="Symbol"
-        sortable
-        style={{ minWidth: '100px' }}
-      />
-      <Column
-        field="name"
-        header="Company"
-        sortable
-        style={{ minWidth: '150px' }}
-      />
-      <Column
-        field="price"
-        header="Price"
-        body={priceBodyTemplate}
-        sortable
-        style={{ minWidth: '100px' }}
-      />
-      <Column
-        field="change"
-        header="Change"
-        body={changeBodyTemplate}
-        sortable
-        style={{ minWidth: '120px' }}
-      />
-      <Column
-        field="volume"
-        header="Volume"
-        body={volumeBodyTemplate}
-        sortable
-        style={{ minWidth: '120px' }}
-      />
-      <Column body={actionsBodyTemplate} style={{ width: '80px' }} />
-    </DataTable>
+    <>
+      <ConfirmDialog />
+      <DataTable
+        value={stocks}
+        globalFilter={globalFilter}
+        header={header}
+        loading={loading}
+        emptyMessage={emptyMessage}
+        className="p-datatable-sm"
+        stripedRows
+        showGridlines
+      >
+        <Column
+          field="symbol"
+          header="Symbol"
+          sortable
+          style={{ minWidth: '100px' }}
+        />
+        <Column
+          field="name"
+          header="Company"
+          sortable
+          style={{ minWidth: '150px' }}
+        />
+        <Column
+          field="price"
+          header="Price"
+          body={priceBodyTemplate}
+          sortable
+          style={{ minWidth: '100px' }}
+        />
+        <Column
+          field="change"
+          header="Change"
+          body={changeBodyTemplate}
+          sortable
+          style={{ minWidth: '120px' }}
+        />
+        <Column
+          field="volume"
+          header="Volume"
+          body={volumeBodyTemplate}
+          sortable
+          style={{ minWidth: '120px' }}
+        />
+        <Column body={actionsBodyTemplate} style={{ width: '80px' }} />
+      </DataTable>
+    </>
   )
 }

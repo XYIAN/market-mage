@@ -258,8 +258,8 @@ export function MarketDashboard() {
       : 0
 
   return (
-    <div className="min-h-screen p-4">
-      <div className="mb-6">
+    <div className="min-h-screen p-4 flex flex-col items-center">
+      <div className="mb-6 w-full max-w-4xl">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold">{config.name}</h1>
@@ -277,7 +277,7 @@ export function MarketDashboard() {
       </div>
 
       {enabledSections.length === 0 ? (
-        <div className="text-center py-12">
+        <div className="text-center py-12 w-full max-w-2xl">
           <i className="pi pi-exclamation-triangle text-4xl text-gray-400 mb-4"></i>
           <h2 className="text-xl font-semibold mb-2">No Features Enabled</h2>
           <p className="text-gray-600 mb-4">
@@ -290,10 +290,15 @@ export function MarketDashboard() {
           />
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="flex flex-col items-center gap-8 w-full">
           {enabledSections.map((section: DashboardSection) => (
-            <div key={section.id} className="h-full">
-              {renderSection(section)}
+            <div
+              key={section.id}
+              className="w-full max-w-3xl flex justify-center"
+            >
+              <div className="w-full flex flex-col items-center">
+                {renderSection(section)}
+              </div>
             </div>
           ))}
         </div>
