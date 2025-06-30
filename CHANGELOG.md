@@ -2,6 +2,234 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.3.0] - 2024-12-30
+
+### Added
+
+- **Username System**: Unique username support with automatic profile creation
+- **Games Section in Sidebar**: Dedicated navigation section for Trading Academy and Achievements
+- **Achievement Points Display**: Shows user points and level after welcome message expires
+- **5-Minute Welcome Timer**: Welcome message automatically changes to achievement display after 5 minutes
+- **Username Hook**: useUsername hook for managing username functionality and availability checking
+- **User Profile Database**: New user_profiles table with username and profile management
+- **Database Migration Script**: Manual SQL script for fixing database issues
+
+### Changed
+
+- **Sidebar Layout**: Reduced padding and spacing for better content visibility
+- **Welcome Message**: Smaller text size and tighter line height for compact design
+- **Header Design**: Added username display under Market-Mage title when available
+- **Navigation Structure**: Reorganized menu items with dedicated Games section
+- **Achievement Integration**: Sidebar now shows real-time achievement points and level
+- **Version Display**: Fixed visibility of version number and "Powered by AI Magic" text
+
+### Fixed
+
+- **Database Errors**: Fixed missing api_cache table causing 404 errors
+- **Sidebar Padding**: Reduced excessive padding that was hiding footer content
+- **Username Management**: Proper username validation and uniqueness checking
+- **Game Integration**: Fixed sidebar to properly display game-related navigation
+- **Layout Issues**: Improved spacing and visibility of all sidebar elements
+
+### Technical
+
+- **Database Schema**: Added user_profiles table with proper RLS policies
+- **Username Validation**: Real-time username availability checking
+- **Profile Management**: Automatic profile creation on user signup
+- **Cache System**: Fixed API cache table and policies
+- **Type Safety**: Added comprehensive username-related TypeScript types
+
+## [2.2.0] - 2024-12-30
+
+### Added
+
+- **Wizard Trading Academy**: Complete educational game system with quest-based learning
+- **Interactive Stock Trading Game**: Real-time stock trading simulation with buy/sell mechanics
+- **Comprehensive Achievement System**: 50+ achievements across 6 categories (dashboard, trading, streak, exploration, mastery, social)
+- **Mage Level Progression**: 15+ levels from Apprentice to Archmage with point-based progression
+- **Quest System**: 2 basic quests (stocks/crypto) + 6 advanced quests requiring login
+- **Avatar Unlock System**: New avatars unlocked every 2 mage levels
+- **Dynamic Theme System**: Accent colors and themes change with mage level progression
+- **Login Streak Tracking**: Automatic tracking of consecutive login days
+- **Game Database Schema**: Complete Supabase tables for user progress, achievements, and quests
+
+### Game Features
+
+- **Basic Quests**: Stock Market Apprentice & Cryptocurrency Initiate (available to all users)
+- **Advanced Quests**: Technical Analysis, Fundamental Analysis, DeFi Master, Options Trading, NFT Specialist, Portfolio Management
+- **Achievement Categories**: Bronze (10 pts), Silver (25 pts), Gold (55 pts) difficulty levels
+- **Mage Titles**: Apprentice → Sorcerer → Junior Mage → Master Mage → Grandmaster Mage → Battlemage → Grand Battlemage → Archmage
+- **Interactive Trading Simulation**: Real-time stock price movements, portfolio management, and performance tracking
+- **Quest Rewards**: Points, titles, and special unlocks for completing quests
+
+### Technical Implementation
+
+- **Game Types**: Comprehensive TypeScript interfaces for quests, achievements, mage levels, and themes
+- **Game Data**: Centralized game configuration with quests, achievements, and progression data
+- **Game Hooks**: useGame hook for managing game state, achievements, and user progress
+- **Database Integration**: Supabase tables with RLS policies for secure user data
+- **Achievement System Component**: Modal-based achievement tracking with progress indicators
+- **Stock Trading Game Component**: Interactive simulation with charts, portfolio management, and scoring
+
+### User Experience
+
+- **Quest Selection**: Visual quest cards with difficulty indicators and login requirements
+- **Progress Tracking**: Real-time progress bars and achievement completion tracking
+- **Login Prompts**: Elegant dialogs for advanced quests requiring authentication
+- **Game Navigation**: Integrated game access through sidebar navigation
+- **Responsive Design**: Mobile-first design for all game components
+- **Toast Notifications**: User feedback for game actions and achievements
+
+### Database Schema
+
+- **user_game_progress**: User level, points, title, avatars, achievements, quests, login streak
+- **game_achievements**: Individual achievement tracking with progress and unlock dates
+- **game_quests**: Quest progress tracking with step completion
+- **game_sessions**: Game play session data for analytics
+- **Automatic Triggers**: Login streak tracking and user progress initialization
+
+### Security & Performance
+
+- **Row Level Security**: All game tables protected with RLS policies
+- **User Isolation**: Users can only access their own game data
+- **Automatic Initialization**: New users automatically get game progress records
+- **Optimized Queries**: Indexed database tables for fast game data access
+- **Error Handling**: Comprehensive error handling for all game operations
+
+## [2.1.2] - 2024-12-30
+
+### Added
+
+- **Comprehensive Toast Notifications**: Added toast notifications for all user actions across the application
+- **Dashboard Action Feedback**: Success/error toasts for dashboard creation, editing, and saving
+- **Stock Management Toasts**: Confirmation dialogs and toast notifications for stock removal
+- **Enhanced Stepper Dialog**: Added close button and improved header design with dark space theme
+- **User Action Feedback**: Toast notifications for login, logout, and all dashboard operations
+
+### Changed
+
+- **Stepper Dialog Design**: Added close button in header with proper icon and styling
+- **Dialog Header Enhancement**: Custom header with dashboard type icon and close functionality
+- **Toast Integration**: Replaced local state feedback with global toast notifications
+- **User Experience**: Improved feedback for all user interactions with consistent messaging
+
+### Fixed
+
+- **Stepper Dialog Accessibility**: Added proper close functionality and keyboard navigation
+- **Toast Consistency**: Unified toast notification system across all components
+- **Dialog State Management**: Proper dialog state reset when closing stepper
+- **Build Process**: Ensured successful builds with all new toast integrations
+
+### Technical
+
+- **Toast Provider Integration**: Added Toast components to all dashboard components
+- **Error Handling**: Enhanced error handling with user-friendly toast messages
+- **State Management**: Improved dialog state management with proper cleanup
+- **Component Architecture**: Better separation of concerns with toast notifications
+
+## [2.1.1] - 2024-12-30
+
+### Added
+
+- **Professional Email Templates**: Updated all Supabase email templates with branded Market-Mage design
+- **App Icon Integration**: Added `icon-1.png` to email templates with proper sizing (60x60px)
+- **Centralized API Caching System**: Implemented shared caching across all users for optimal performance
+- **User Metrics Tracking**: Added real-time user statistics and API call monitoring
+- **Database Schema Enhancement**: Added API cache and user metrics tables with proper RLS policies
+
+### Changed
+
+- **Background Fix**: Fixed parallax background to use `bg-4.png` without stretching/zooming
+- **Email Template Styling**: Reduced icon size from 80x80px to 60x60px for better email proportions
+- **Caching Architecture**: Refactored all services (crypto, stock, news, historical) to use centralized Supabase cache
+- **Performance Optimization**: Implemented shared cache with automatic expiration and metrics tracking
+
+### Fixed
+
+- **Background Zoom Issue**: Removed `background-size: cover` that caused background stretching
+- **Email Template Sizing**: Added `object-fit: cover` and proper CSS for icon scaling
+- **Cache Management**: Replaced old cache utilities with centralized Supabase-based system
+- **Type Safety**: Fixed all TypeScript errors in services and components
+
+### Technical
+
+- **Database Migrations**: Added comprehensive SQL setup for API cache and user metrics
+- **Environment Configuration**: Updated README with complete deployment instructions for both localhost and Netlify
+- **Email Template Management**: Created reference migration file with all email template HTML
+- **Cross-Environment Compatibility**: Ensured app works seamlessly on localhost:3000 and production
+
+### Documentation
+
+- **Deployment Guide**: Added comprehensive Netlify deployment instructions
+- **Environment Variables**: Documented all required and optional API keys
+- **Database Setup**: Provided both CLI and manual setup instructions
+- **Email Template Setup**: Added step-by-step guide for updating Supabase email templates
+
+## [2.1.0] - 2024-12-30
+
+### Added
+
+- **User Authentication System**: Complete Supabase Auth integration with email/password
+- **Persistent User Data**: User-specific watchlists and dashboard customizations
+- **Enhanced Signup Experience**: Optional user info fields and 14 magic-themed avatars
+- **Personalized Sidebar**: Dynamic welcome messages and user-specific content
+- **User Metrics Display**: Homepage section showing current user count and platform statistics
+- **Custom Email Templates**: Branded confirmation emails with dark space theme
+- **Confirmation Page**: Professional account confirmation experience
+
+### Changed
+
+- **Dashboard Protection**: All dashboard pages now require authentication
+- **Sidebar Navigation**: Simplified menu structure with proper user context
+- **Version Display**: Dynamic version number in sidebar footer
+- **Stepper Design**: Enhanced with dark space theme and better component styling
+
+### Fixed
+
+- **Sidebar Scrollbar**: Fixed 100vh height and proper scrolling behavior
+- **Navigation Structure**: Removed duplicate dashboard links and improved organization
+- **User Experience**: Enhanced onboarding flow with personalized elements
+
+### Technical
+
+- **Supabase Integration**: Complete auth and database setup with proper RLS policies
+- **Protected Routes**: Implemented authentication guards for sensitive pages
+- **User State Management**: Persistent user sessions and data across browser sessions
+- **Email Confirmation Flow**: Custom confirmation page with proper error handling
+
+## [2.0.0] - 2024-12-30
+
+### Added
+
+- **Unified Dashboard System**: Single customizable dashboard for both stocks and crypto
+- **Stepper Setup Wizard**: Guided initial dashboard configuration with React Hook Form
+- **Edit Dialog**: In-place dashboard customization with feature toggles
+- **Component Registry**: Dynamic component loading based on user preferences
+- **Dashboard Presets**: Quick start templates for common configurations
+- **About & Terms Pages**: Professional legal and information pages
+- **Enhanced Navigation**: SpeedDial with proper menu structure and neon glow effects
+
+### Changed
+
+- **Version Management**: Updated to 2.0.0 with comprehensive changelog
+- **Sidebar Design**: Added neon glow effects and improved visual hierarchy
+- **Menu Structure**: Simplified navigation with logical grouping
+- **Component Architecture**: Unified dashboard components with props-based configuration
+
+### Fixed
+
+- **Navigation Issues**: Resolved nested button problems and improved accessibility
+- **Dialog Functionality**: Fixed customization dialog rendering and state management
+- **Type Safety**: Resolved all TypeScript errors in unified components
+- **Build Process**: Ensured successful builds with all new features
+
+### Technical
+
+- **Unified Types**: Created shared dashboard configuration types
+- **Component Reusability**: Implemented props-based component configuration
+- **State Management**: Enhanced localStorage integration for user preferences
+- **Form Validation**: Added comprehensive form validation with React Hook Form
+
 ## [1.2.0] - 2024-12-19
 
 ### Added
@@ -200,26 +428,3 @@ All notable changes to this project will be documented in this file.
 - Improved card dimensions and responsive layout
 - Enhanced button styling with gradient backgrounds
 - Better visual hierarchy in feature cards
-
-## [2.0.0] - 2024-06-09
-
-### Added
-
-- Unified customizable dashboard system for both Crypto and Stock dashboards
-- Unified stepper and edit dialog for dashboard setup and editing
-- Sidebar/menu structure simplified: Home, Dashboards (Crypto, Stock), News (Crypto, Stock), FAQ, About, Terms & Privacy
-- About page with app info, usage, and author details
-- Terms & Privacy page for XYIAN Software
-- Version and "Powered by AI Magic" now snap to sidebar/footer
-- Neon blue glow effect on sidebar (CSS)
-
-### Changed
-
-- Major UI/UX improvements for dashboard setup and editing
-- All dashboard config and section types unified and type-safe
-- Sidebar version always in sync with package.json
-
-### Fixed
-
-- Sidebar nested menu bugs
-- Type errors and build issues

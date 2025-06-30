@@ -6,16 +6,86 @@ import { PrimeReactProvider } from 'primereact/api'
 import { AppContent } from '@/components/layout/AppContent'
 import { WizardToastProvider } from '@/components/layout/WizardToastProvider'
 import LayoutShell from '@/components/layout/LayoutShell'
+import { SupabaseProvider } from '@/lib/providers/SupabaseProvider'
+import { GlobalDataProvider } from '@/providers/GlobalDataProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Market-Mage - AI-Powered Stock Dashboard',
+  title: {
+    default: 'Market-Mage | AI-Powered Stock & Crypto Dashboard',
+    template: '%s | Market-Mage',
+  },
   description:
-    'A modern stock dashboard with AI-powered trading insights, real-time market data, and portfolio management tools.',
-  keywords:
-    'stock dashboard, trading insights, AI trading, portfolio management, market data',
+    'Advanced AI-powered trading dashboard with real-time stock and cryptocurrency data, market insights, and intelligent trading suggestions. Track your portfolio, get AI oracle insights, and stay ahead of the markets.',
+  keywords: [
+    'stock dashboard',
+    'crypto dashboard',
+    'AI trading',
+    'market analysis',
+    'portfolio tracker',
+    'trading insights',
+    'real-time data',
+    'cryptocurrency',
+    'stocks',
+    'investment tools',
+    'trading platform',
+    'market intelligence',
+    'financial dashboard',
+  ],
   authors: [{ name: 'Market-Mage Team' }],
+  creator: 'Market-Mage',
+  publisher: 'Market-Mage',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL('https://market-mage.netlify.app'),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://market-mage.netlify.app',
+    siteName: 'Market-Mage',
+    title: 'Market-Mage | AI-Powered Stock & Crypto Dashboard',
+    description:
+      'Advanced AI-powered trading dashboard with real-time stock and cryptocurrency data, market insights, and intelligent trading suggestions.',
+    images: [
+      {
+        url: '/icon-mm-1.png',
+        width: 1200,
+        height: 630,
+        alt: 'Market-Mage Dashboard Preview',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@marketmage',
+    creator: '@marketmage',
+    title: 'Market-Mage | AI-Powered Stock & Crypto Dashboard',
+    description:
+      'Advanced AI-powered trading dashboard with real-time stock and cryptocurrency data, market insights, and intelligent trading suggestions.',
+    images: ['/icon-mm-1.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: 'your-google-verification-code',
+  },
+  category: 'finance',
 }
 
 export const viewport: Viewport = {
@@ -31,13 +101,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <PrimeReactProvider>
-          <WizardToastProvider>
-            <LayoutShell>
-              <AppContent>{children}</AppContent>
-            </LayoutShell>
-          </WizardToastProvider>
-        </PrimeReactProvider>
+        <SupabaseProvider>
+          <PrimeReactProvider>
+            <WizardToastProvider>
+              <GlobalDataProvider>
+                <LayoutShell>
+                  <AppContent>{children}</AppContent>
+                </LayoutShell>
+              </GlobalDataProvider>
+            </WizardToastProvider>
+          </PrimeReactProvider>
+        </SupabaseProvider>
       </body>
     </html>
   )

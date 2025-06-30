@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://market-mage.netlify.app/sitemap.xml
+
+# Disallow private/dashboard areas
+Disallow: /api/
+Disallow: /_next/
+Disallow: /supabase/
+
+# Allow public pages
+Allow: /
+Allow: /about
+Allow: /faq
+Allow: /terms
+Allow: /login
+Allow: /news
+Allow: /crypto/news 

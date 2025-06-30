@@ -2,6 +2,20 @@
 
 import '@/styles/components/hero.css'
 
+/**
+ * Hero Section Component
+ *
+ * The main hero section of the homepage featuring the Market-Mage branding
+ * and tagline. Includes animated elements and the platform's primary messaging.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <HeroSection />
+ * ```
+ *
+ * @returns {JSX.Element} The hero section with branding and messaging
+ */
 export const HeroSection = () => {
   return (
     <div className="hero-section flex justify-center mb-8">

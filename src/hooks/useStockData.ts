@@ -5,12 +5,14 @@ import { StockData } from '@/types'
 import { apiUtils } from '@/utils/api'
 import { useWizardToast } from '@/components/layout/WizardToastProvider'
 import { createWizardToast } from '@/utils/toast'
+import { useGlobalData } from '@/providers/GlobalDataProvider'
 
 export const useStockData = (symbols: string[]) => {
   const [stockData, setStockData] = useState<StockData[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const { show } = useWizardToast()
+  const { globalStockData, marketLoading } = useGlobalData()
 
   const fetchStockData = useCallback(async () => {
     if (!symbols.length) return
@@ -48,6 +50,16 @@ export const useStockData = (symbols: string[]) => {
   useEffect(() => {
     fetchStockData()
   }, [fetchStockData])
+
+  // If no specific symbols are requested, return global stock data
+  if (!symbols.length) {
+    return {
+      stockData: globalStockData,
+      loading: marketLoading,
+      error: null,
+      refresh: () => {}, // Global refresh is handled by GlobalDataProvider
+    }
+  }
 
   return {
     stockData,

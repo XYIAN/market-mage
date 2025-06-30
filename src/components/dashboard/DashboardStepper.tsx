@@ -9,6 +9,8 @@ import { InputText } from 'primereact/inputtext'
 import { Card } from 'primereact/card'
 import { Fieldset } from 'primereact/fieldset'
 import { Checkbox } from 'primereact/checkbox'
+import { Toast } from 'primereact/toast'
+import { useRef } from 'react'
 import {
   DashboardConfig,
   DashboardType,
@@ -50,6 +52,7 @@ export function DashboardStepper({
 }: DashboardStepperProps) {
   const [activeStep, setActiveStep] = useState(0)
   const [saving, setSaving] = useState(false)
+  const toast = useRef<Toast>(null)
 
   const {
     control,
@@ -91,6 +94,14 @@ export function DashboardStepper({
     if (activeStep > 0) {
       setActiveStep(activeStep - 1)
     }
+  }
+
+  const handleClose = () => {
+    if (activeStep > 0) {
+      // Reset to first step when closing
+      setActiveStep(0)
+    }
+    onHide()
   }
 
   const onSubmit = async (data: FormData) => {
@@ -140,8 +151,20 @@ export function DashboardStepper({
 
       await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate save delay
       onSave(config)
+      toast.current?.show({
+        severity: 'success',
+        summary: 'Dashboard Created',
+        detail: `${data.dashboardName} has been successfully created!`,
+        life: 3000,
+      })
     } catch (error) {
       console.error('Error saving dashboard:', error)
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to create dashboard. Please try again.',
+        life: 3000,
+      })
     } finally {
       setSaving(false)
     }
@@ -401,51 +424,73 @@ export function DashboardStepper({
   }
 
   return (
-    <Dialog
-      visible={visible}
-      onHide={onHide}
-      header="Setup Your Dashboard"
-      style={{ width: '90vw', maxWidth: '800px' }}
-      modal
-      closable={false}
-      className="dashboard-stepper"
-    >
-      <div className="space-y-6">
-        <Steps model={STEPS} activeIndex={activeStep} />
-
-        <div className="min-h-[400px]">{renderStepContent()}</div>
-
-        <div className="flex justify-between">
-          <Button
-            label="Previous"
-            icon="pi pi-chevron-left"
-            onClick={handlePrev}
-            disabled={activeStep === 0}
-            className="p-button-outlined"
-          />
-
-          {activeStep === STEPS.length - 1 ? (
+    <>
+      <Toast ref={toast} />
+      <Dialog
+        visible={visible}
+        onHide={handleClose}
+        header={
+          <div className="flex justify-between items-center w-full">
+            <div className="flex items-center space-x-3">
+              <i
+                className={`pi ${
+                  dashboardType === 'crypto' ? 'pi-bitcoin' : 'pi-chart-bar'
+                } text-xl text-orange-500`}
+              ></i>
+              <span className="text-lg font-semibold">
+                Setup Your Dashboard
+              </span>
+            </div>
             <Button
-              label={saving ? 'Creating...' : 'Create Dashboard'}
-              icon={saving ? 'pi pi-spinner pi-spin' : 'pi pi-check'}
-              onClick={handleSubmit(onSubmit)}
-              loading={saving}
-              disabled={saving}
+              icon="pi pi-times"
+              onClick={handleClose}
+              className="p-button-text p-button-rounded"
+              aria-label="Close"
             />
-          ) : (
+          </div>
+        }
+        style={{ width: '90vw', maxWidth: '800px' }}
+        modal
+        closable={false}
+        className="dashboard-stepper"
+      >
+        <div className="space-y-6">
+          <Steps model={STEPS} activeIndex={activeStep} />
+
+          <div className="min-h-[400px]">{renderStepContent()}</div>
+
+          <div className="flex justify-between">
             <Button
-              label="Next"
-              icon="pi pi-chevron-right"
-              iconPos="right"
-              onClick={handleNext}
-              disabled={
-                (activeStep === 0 && !watch('dashboardName')) ||
-                (activeStep === 2 && selectedSections.length === 0)
-              }
+              label="Previous"
+              icon="pi pi-chevron-left"
+              onClick={handlePrev}
+              disabled={activeStep === 0}
+              className="p-button-outlined"
             />
-          )}
+
+            {activeStep === STEPS.length - 1 ? (
+              <Button
+                label={saving ? 'Creating...' : 'Create Dashboard'}
+                icon={saving ? 'pi pi-spinner pi-spin' : 'pi pi-check'}
+                onClick={handleSubmit(onSubmit)}
+                loading={saving}
+                disabled={saving}
+              />
+            ) : (
+              <Button
+                label="Next"
+                icon="pi pi-chevron-right"
+                iconPos="right"
+                onClick={handleNext}
+                disabled={
+                  (activeStep === 0 && !watch('dashboardName')) ||
+                  (activeStep === 2 && selectedSections.length === 0)
+                }
+              />
+            )}
+          </div>
         </div>
-      </div>
-    </Dialog>
+      </Dialog>
+    </>
   )
 }

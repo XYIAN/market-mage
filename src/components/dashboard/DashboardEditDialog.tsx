@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { Dialog } from 'primereact/dialog'
 import { Button } from 'primereact/button'
@@ -10,6 +10,7 @@ import { Card } from 'primereact/card'
 import { Checkbox } from 'primereact/checkbox'
 import { OrderList } from 'primereact/orderlist'
 import { ScrollPanel } from 'primereact/scrollpanel'
+import { Toast } from 'primereact/toast'
 import {
   DashboardConfig,
   DashboardType,
@@ -45,6 +46,7 @@ export function DashboardEditDialog({
 }: DashboardEditDialogProps) {
   const [saving, setSaving] = useState(false)
   const [activeTab, setActiveTab] = useState(0)
+  const toast = useRef<Toast>(null)
 
   const {
     control,
@@ -70,8 +72,10 @@ export function DashboardEditDialog({
         selectedSections: initialConfig.sections,
         assets:
           dashboardType === 'crypto'
-            ? (initialConfig as any).assets || []
-            : (initialConfig as any).stocks || [],
+            ? (initialConfig as DashboardConfig & { assets?: CryptoAsset[] })
+                .assets || []
+            : (initialConfig as DashboardConfig & { stocks?: WatchlistItem[] })
+                .stocks || [],
       })
     }
   }, [visible, initialConfig, dashboardType, reset])
@@ -98,8 +102,21 @@ export function DashboardEditDialog({
         icon: sectionInfo?.icon || 'pi pi-cog',
       }
       currentSections.push(newSection)
+      toast.current?.show({
+        severity: 'success',
+        summary: 'Feature Added',
+        detail: `${sectionInfo?.name || sectionType} has been enabled`,
+        life: 2000,
+      })
     } else if (!enabled && existingIndex !== -1) {
+      const removedSection = currentSections[existingIndex]
       currentSections.splice(existingIndex, 1)
+      toast.current?.show({
+        severity: 'info',
+        summary: 'Feature Disabled',
+        detail: `${removedSection.name} has been disabled`,
+        life: 2000,
+      })
     }
 
     setValue('selectedSections', currentSections)
@@ -113,6 +130,12 @@ export function DashboardEditDialog({
       })
     )
     setValue('selectedSections', reorderedSections)
+    toast.current?.show({
+      severity: 'info',
+      summary: 'Layout Updated',
+      detail: 'Dashboard layout has been reordered',
+      life: 2000,
+    })
   }
 
   const onSubmit = async (data: FormData) => {
@@ -135,6 +158,12 @@ export function DashboardEditDialog({
         }
         await new Promise((resolve) => setTimeout(resolve, 900)) // Simulate save delay
         onSave(updatedConfig)
+        toast.current?.show({
+          severity: 'success',
+          summary: 'Dashboard Saved',
+          detail: `${data.dashboardName} has been updated successfully!`,
+          life: 3000,
+        })
       } else {
         const updatedConfig: DashboardConfig = {
           ...(initialConfig || {}),
@@ -149,9 +178,21 @@ export function DashboardEditDialog({
         }
         await new Promise((resolve) => setTimeout(resolve, 900)) // Simulate save delay
         onSave(updatedConfig)
+        toast.current?.show({
+          severity: 'success',
+          summary: 'Dashboard Saved',
+          detail: `${data.dashboardName} has been updated successfully!`,
+          life: 3000,
+        })
       }
     } catch (error) {
       console.error('Error saving dashboard:', error)
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to save dashboard. Please try again.',
+        life: 3000,
+      })
     } finally {
       setSaving(false)
     }
@@ -259,81 +300,84 @@ export function DashboardEditDialog({
   )
 
   return (
-    <Dialog
-      visible={visible}
-      onHide={onHide}
-      header={`${mode === 'edit' ? 'Edit' : 'Create'} Dashboard`}
-      style={{ width: '90vw', maxWidth: '900px' }}
-      modal
-      className="dashboard-edit-dialog"
-    >
-      <div className="space-y-6">
-        {/* Dashboard Name */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">Dashboard Name</label>
-          <Controller
-            name="dashboardName"
-            control={control}
-            rules={{ required: 'Dashboard name is required' }}
-            render={({ field }) => (
-              <InputText
-                {...field}
-                placeholder="My Dashboard"
-                className="w-full"
-              />
+    <>
+      <Toast ref={toast} />
+      <Dialog
+        visible={visible}
+        onHide={onHide}
+        header={`${mode === 'edit' ? 'Edit' : 'Create'} Dashboard`}
+        style={{ width: '90vw', maxWidth: '900px' }}
+        modal
+        className="dashboard-edit-dialog"
+      >
+        <div className="space-y-6">
+          {/* Dashboard Name */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium">Dashboard Name</label>
+            <Controller
+              name="dashboardName"
+              control={control}
+              rules={{ required: 'Dashboard name is required' }}
+              render={({ field }) => (
+                <InputText
+                  {...field}
+                  placeholder="My Dashboard"
+                  className="w-full"
+                />
+              )}
+            />
+            {errors.dashboardName && (
+              <small className="text-red-500">
+                {errors.dashboardName.message}
+              </small>
             )}
-          />
-          {errors.dashboardName && (
-            <small className="text-red-500">
-              {errors.dashboardName.message}
-            </small>
-          )}
-        </div>
+          </div>
 
-        {/* Tabs */}
-        <TabView
-          activeIndex={activeTab}
-          onTabChange={(e) => setActiveTab(e.index)}
-        >
-          <TabPanel header="Features" leftIcon="pi pi-cog">
-            <ScrollPanel style={{ height: '400px' }}>
-              {renderFeaturesTab()}
-            </ScrollPanel>
-          </TabPanel>
-
-          <TabPanel header="Layout" leftIcon="pi pi-list">
-            <ScrollPanel style={{ height: '400px' }}>
-              {renderLayoutTab()}
-            </ScrollPanel>
-          </TabPanel>
-
-          <TabPanel
-            header={dashboardType === 'crypto' ? 'Assets' : 'Stocks'}
-            leftIcon="pi pi-wallet"
+          {/* Tabs */}
+          <TabView
+            activeIndex={activeTab}
+            onTabChange={(e) => setActiveTab(e.index)}
           >
-            <ScrollPanel style={{ height: '400px' }}>
-              {renderAssetsTab()}
-            </ScrollPanel>
-          </TabPanel>
-        </TabView>
+            <TabPanel header="Features" leftIcon="pi pi-cog">
+              <ScrollPanel style={{ height: '400px' }}>
+                {renderFeaturesTab()}
+              </ScrollPanel>
+            </TabPanel>
 
-        {/* Actions */}
-        <div className="flex justify-end space-x-2">
-          <Button
-            label="Cancel"
-            icon="pi pi-times"
-            onClick={onHide}
-            className="p-button-outlined"
-          />
-          <Button
-            label={saving ? 'Saving...' : 'Save Changes'}
-            icon={saving ? 'pi pi-spinner pi-spin' : 'pi pi-check'}
-            onClick={handleSubmit(onSubmit)}
-            loading={saving}
-            disabled={saving}
-          />
+            <TabPanel header="Layout" leftIcon="pi pi-list">
+              <ScrollPanel style={{ height: '400px' }}>
+                {renderLayoutTab()}
+              </ScrollPanel>
+            </TabPanel>
+
+            <TabPanel
+              header={dashboardType === 'crypto' ? 'Assets' : 'Stocks'}
+              leftIcon="pi pi-wallet"
+            >
+              <ScrollPanel style={{ height: '400px' }}>
+                {renderAssetsTab()}
+              </ScrollPanel>
+            </TabPanel>
+          </TabView>
+
+          {/* Actions */}
+          <div className="flex justify-end space-x-2">
+            <Button
+              label="Cancel"
+              icon="pi pi-times"
+              onClick={onHide}
+              className="p-button-outlined"
+            />
+            <Button
+              label={saving ? 'Saving...' : 'Save Changes'}
+              icon={saving ? 'pi pi-spinner pi-spin' : 'pi pi-check'}
+              onClick={handleSubmit(onSubmit)}
+              loading={saving}
+              disabled={saving}
+            />
+          </div>
         </div>
-      </div>
-    </Dialog>
+      </Dialog>
+    </>
   )
 }

@@ -1,7 +1,22 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  /* config options here */
-};
+  // Optimize images
+  images: {
+    domains: ['localhost'],
+    unoptimized: true,
+  },
 
-export default nextConfig;
+  // Disable strict mode in development to avoid double rendering
+  reactStrictMode: false,
+
+  // Handle static files better
+  trailingSlash: false,
+
+  // Improve build performance
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+}
+
+export default nextConfig

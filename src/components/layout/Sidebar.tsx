@@ -1,98 +1,273 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Sidebar as PrimeSidebar } from 'primereact/sidebar'
 import { PanelMenu } from 'primereact/panelmenu'
+import { Button } from 'primereact/button'
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog'
 import { useRouter } from 'next/navigation'
 import { HamburgerMenu } from './HamburgerMenu'
-import packageJson from '../../../package.json'
+import { useSupabase } from '@/lib/providers/SupabaseProvider'
+import { createClient } from '@/lib/supabase/client'
+import { useWizardToast } from './WizardToastProvider'
+import { useGame } from '@/hooks/useGame'
+import { useUsername } from '@/hooks/useUsername'
 
 export const Sidebar = () => {
   const [visible, setVisible] = useState(false)
+  const [showWelcome, setShowWelcome] = useState(true)
   const menu = useRef<PanelMenu>(null)
   const router = useRouter()
+  const { user } = useSupabase()
+  const { userProgress } = useGame()
+  const { username } = useUsername()
+  const supabase = createClient()
+  const { show } = useWizardToast()
+
+  // Timer to hide welcome message after 5 minutes
+  useEffect(() => {
+    if (user) {
+      const timer = setTimeout(() => {
+        setShowWelcome(false)
+      }, 5 * 60 * 1000) // 5 minutes
+
+      return () => clearTimeout(timer)
+    }
+  }, [user])
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut()
+      show({
+        severity: 'success',
+        summary: 'Logged Out',
+        detail: `Goodbye, ${
+          username || user?.user_metadata?.full_name || user?.email
+        }! You have been successfully logged out.`,
+        life: 4000,
+        closable: true,
+      })
+      router.push('/')
+      setVisible(false)
+    } catch {
+      show({
+        severity: 'error',
+        summary: 'Logout Failed',
+        detail: 'There was an error logging you out. Please try again.',
+        life: 4000,
+        closable: true,
+      })
+    }
+  }
+
+  const confirmLogout = () => {
+    confirmDialog({
+      message: 'Are you sure you want to sign out?',
+      header: 'Confirm Sign Out',
+      icon: 'pi pi-exclamation-triangle',
+      acceptClassName: 'p-button-danger',
+      accept: handleLogout,
+      reject: () => {
+        show({
+          severity: 'info',
+          summary: 'Cancelled',
+          detail: 'Sign out was cancelled.',
+          life: 3000,
+          closable: true,
+        })
+      },
+    })
+  }
 
   const menuItems = [
     {
-      label: '🏠 Home',
+      label: 'Home',
       icon: 'pi pi-home',
       command: () => {
         router.push('/')
         setVisible(false)
+        show({
+          severity: 'info',
+          summary: 'Navigation',
+          detail: 'Returning to Home...',
+          life: 3000,
+          closable: true,
+        })
       },
     },
     {
-      label: '📊 Dashboards',
+      label: 'Dashboard',
+      icon: 'pi pi-chart-line',
+      command: () => {
+        router.push('/dashboard')
+        setVisible(false)
+        show({
+          severity: 'info',
+          summary: 'Navigation',
+          detail: 'Opening Dashboard...',
+          life: 3000,
+          closable: true,
+        })
+      },
+    },
+    {
+      label: 'Games',
+      icon: 'pi pi-gamepad',
+      items: [
+        {
+          label: 'Trading Academy',
+          icon: 'pi pi-graduation-cap',
+          command: () => {
+            router.push('/game')
+            setVisible(false)
+            show({
+              severity: 'info',
+              summary: 'Navigation',
+              detail: 'Opening Trading Academy...',
+              life: 3000,
+              closable: true,
+            })
+          },
+        },
+        {
+          label: 'Achievements',
+          icon: 'pi pi-trophy',
+          command: () => {
+            router.push('/game?tab=achievements')
+            setVisible(false)
+            show({
+              severity: 'info',
+              summary: 'Navigation',
+              detail: 'Opening Achievements...',
+              life: 3000,
+              closable: true,
+            })
+          },
+        },
+      ],
+    },
+    {
+      label: 'Markets',
       icon: 'pi pi-chart-line',
       items: [
         {
-          label: '⚡ Crypto Dashboard',
+          label: 'Crypto Dashboard',
           icon: 'pi pi-bitcoin',
           command: () => {
             router.push('/crypto')
             setVisible(false)
+            show({
+              severity: 'info',
+              summary: 'Navigation',
+              detail: 'Opening Crypto Dashboard...',
+              life: 3000,
+              closable: true,
+            })
           },
         },
         {
-          label: '📈 Stock Dashboard',
+          label: 'Stock Dashboard',
           icon: 'pi pi-chart-bar',
           command: () => {
             router.push('/market')
             setVisible(false)
+            show({
+              severity: 'info',
+              summary: 'Navigation',
+              detail: 'Opening Stock Dashboard...',
+              life: 3000,
+              closable: true,
+            })
           },
         },
       ],
     },
     {
-      label: '📰 News',
+      label: 'News',
       icon: 'pi pi-globe',
       items: [
         {
-          label: '⚡ Crypto News',
+          label: 'Crypto News',
           icon: 'pi pi-bitcoin',
           command: () => {
             router.push('/crypto/news')
             setVisible(false)
+            show({
+              severity: 'info',
+              summary: 'Navigation',
+              detail: 'Loading Crypto News...',
+              life: 3000,
+              closable: true,
+            })
           },
         },
         {
-          label: '📈 Stock News',
+          label: 'Stock News',
           icon: 'pi pi-chart-bar',
           command: () => {
             router.push('/news?type=stocks')
             setVisible(false)
+            show({
+              severity: 'info',
+              summary: 'Navigation',
+              detail: 'Loading Stock News...',
+              life: 3000,
+              closable: true,
+            })
           },
         },
       ],
     },
     {
-      label: '❓ FAQ',
+      label: 'FAQ',
       icon: 'pi pi-question-circle',
       command: () => {
         router.push('/faq')
         setVisible(false)
+        show({
+          severity: 'info',
+          summary: 'Navigation',
+          detail: 'Opening FAQ...',
+          life: 3000,
+          closable: true,
+        })
       },
     },
     {
-      label: 'ℹ️ About',
+      label: 'About',
       icon: 'pi pi-info-circle',
       command: () => {
         router.push('/about')
         setVisible(false)
+        show({
+          severity: 'info',
+          summary: 'Navigation',
+          detail: 'Opening About page...',
+          life: 3000,
+          closable: true,
+        })
       },
     },
     {
-      label: '📄 Terms & Privacy',
+      label: 'Terms & Privacy',
       icon: 'pi pi-file',
       command: () => {
         router.push('/terms')
         setVisible(false)
+        show({
+          severity: 'info',
+          summary: 'Navigation',
+          detail: 'Opening Terms & Privacy...',
+          life: 3000,
+          closable: true,
+        })
       },
     },
   ]
 
   return (
     <>
+      <ConfirmDialog />
       <HamburgerMenu onClick={() => setVisible(true)} isOpen={visible} />
 
       <PrimeSidebar
@@ -101,14 +276,46 @@ export const Sidebar = () => {
         onHide={() => setVisible(false)}
         className="w-80 bg-black/95 backdrop-blur-xl border-r border-blue-500/30"
         header={
-          <div className="flex items-center gap-3 p-4">
+          <div className="flex items-center gap-3 p-3">
             <span className="text-2xl">🧙</span>
-            <h2 className="text-xl font-bold text-blue-200">Market-Mage</h2>
+            <div className="flex flex-col">
+              <h2 className="text-xl font-bold text-blue-200">Market-Mage</h2>
+              {username && (
+                <p className="text-sm text-blue-300 leading-tight">
+                  @{username}
+                </p>
+              )}
+            </div>
           </div>
         }
       >
-        <div className="relative h-full w-64 bg-surface-900 shadow-lg flex flex-col sidebar-neon-glow">
-          <div className="p-4 flex flex-col h-full">
+        <div className="relative h-screen w-64 bg-surface-900 shadow-lg flex flex-col sidebar-neon-glow overflow-hidden">
+          <div className="p-3 flex flex-col h-full">
+            {user && (
+              <div className="mb-3 p-2 bg-surface-800 rounded-lg">
+                {showWelcome ? (
+                  <>
+                    <p className="text-xs text-gray-400 leading-tight">
+                      Welcome back,
+                    </p>
+                    <p className="text-xs font-medium truncate leading-tight">
+                      {username || user.user_metadata?.full_name || user.email}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-xs text-gray-400 leading-tight">
+                      Achievement Points
+                    </p>
+                    <p className="text-xs font-medium leading-tight">
+                      {userProgress?.points || 0} pts • Level{' '}
+                      {userProgress?.level || 1}
+                    </p>
+                  </>
+                )}
+              </div>
+            )}
+
             <PanelMenu
               ref={menu}
               model={menuItems}
@@ -116,10 +323,38 @@ export const Sidebar = () => {
               multiple={false}
             />
 
-            <div className="border-t border-blue-500/30 my-6"></div>
+            <div className="border-t border-blue-500/30 my-3"></div>
 
-            <div className="w-full flex flex-col items-center pb-4">
-              <p className="text-xs mt-1">Version {packageJson.version}</p>
+            <div className="w-full flex flex-col items-center pb-2 space-y-2">
+              {user ? (
+                <Button
+                  label="Sign Out"
+                  icon="pi pi-sign-out"
+                  onClick={confirmLogout}
+                  className="w-full"
+                  severity="secondary"
+                  size="small"
+                />
+              ) : (
+                <Button
+                  label="Sign In"
+                  icon="pi pi-sign-in"
+                  onClick={() => {
+                    router.push('/login')
+                    setVisible(false)
+                    show({
+                      severity: 'info',
+                      summary: 'Navigation',
+                      detail: 'Opening Login page...',
+                      life: 3000,
+                      closable: true,
+                    })
+                  }}
+                  className="w-full"
+                  size="small"
+                />
+              )}
+              <p className="text-xs">Version 2.3.0</p>
               <p className="text-xs text-gray-400">Powered by AI Magic</p>
             </div>
           </div>

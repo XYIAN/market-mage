@@ -1,42 +1,53 @@
 'use client'
 
-import Link from 'next/link'
 import { Button } from 'primereact/button'
-import { Card } from 'primereact/card'
+import { useRouter } from 'next/navigation'
 
+/**
+ * Call to Action Component
+ *
+ * A prominent call-to-action section encouraging users to create a dashboard
+ * or learn more about the platform. Features gradient styling and multiple
+ * action buttons for different user intents.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <CallToAction />
+ * ```
+ *
+ * @returns {JSX.Element} A styled call-to-action section with navigation buttons
+ */
 export const CallToAction = () => {
+  const router = useRouter()
+
   return (
-    <div className="flex justify-center mb-8">
-      <Card className="w-full max-w-2xl">
-        <div className="p-1rem text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <span className="text-2xl">🧙</span>
-            <h3 className="text-xl font-semibold">
-              Ready to Start Trading Smarter?
-            </h3>
-          </div>
-          <p className="mb-6 text-gray-300">
-            Access your personalized market dashboard with AI-powered insights,
-            real-time data, and advanced portfolio management tools.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/market">
-              <Button
-                label="Open Market Dashboard"
-                icon="pi pi-chart-line"
-                className="p-button-primary"
-              />
-            </Link>
-            <Link href="/crypto">
-              <Button
-                label="Open Crypto Dashboard"
-                icon="pi pi-bitcoin"
-                className="p-button-secondary"
-              />
-            </Link>
-          </div>
+    <div className="text-center mb-12">
+      <div className="bg-gradient-to-r from-primary to-purple-600 p-8 rounded-lg">
+        <h2 className="text-3xl font-bold text-white mb-4">
+          Ready to Start Trading?
+        </h2>
+        <p className="text-white/80 mb-6 max-w-2xl mx-auto">
+          Join thousands of traders using Market-Mage to make smarter investment
+          decisions. Get started with your personalized dashboard today.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button
+            label="Create Dashboard"
+            icon="pi pi-plus"
+            size="large"
+            onClick={() => router.push('/dashboard')}
+            className="p-button-primary"
+          />
+          <Button
+            label="Learn More"
+            icon="pi pi-info-circle"
+            size="large"
+            onClick={() => router.push('/about')}
+            className="p-button-outlined p-button-secondary"
+          />
         </div>
-      </Card>
+      </div>
     </div>
   )
 }

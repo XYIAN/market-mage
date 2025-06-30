@@ -1,13 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Button } from 'primereact/button'
 import { SpeedDial } from 'primereact/speeddial'
+import { Toast } from 'primereact/toast'
 import { StockTable } from './StockTable'
 import { AIOracle } from './AIOracle'
 import { HistoricalNotes } from './HistoricalNotes'
 import { DashboardStepper } from './DashboardStepper'
 import { DashboardEditDialog } from './DashboardEditDialog'
+import { UserProfile } from './UserProfile'
 import {
   DashboardConfig,
   DashboardSection,
@@ -29,6 +31,7 @@ export function MarketDashboard() {
   const [notes, setNotes] = useState<HistoricalNote[]>([])
   const [loading, setLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+  const toast = useRef<Toast>(null)
 
   useEffect(() => {
     loadDashboardConfig()
@@ -44,6 +47,12 @@ export function MarketDashboard() {
       }
     } catch (error) {
       console.error('Error loading dashboard config:', error)
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to load dashboard configuration',
+        life: 3000,
+      })
     }
   }
 
@@ -79,6 +88,12 @@ export function MarketDashboard() {
       setLastUpdated(new Date())
     } catch (err) {
       console.error('Error fetching stock data:', err)
+      toast.current?.show({
+        severity: 'warn',
+        summary: 'Data Unavailable',
+        detail: 'Using mock data due to API limitations',
+        life: 3000,
+      })
       // Set mock data if API fails
       setStockData([
         {
@@ -123,8 +138,20 @@ export function MarketDashboard() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newConfig))
       setConfig(newConfig)
+      toast.current?.show({
+        severity: 'success',
+        summary: 'Dashboard Saved',
+        detail: `${newConfig.name} has been updated successfully!`,
+        life: 3000,
+      })
     } catch (error) {
       console.error('Error saving dashboard config:', error)
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to save dashboard configuration',
+        life: 3000,
+      })
     }
   }
 
@@ -210,42 +237,45 @@ export function MarketDashboard() {
   // If no configuration exists, show the initial setup
   if (!config) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="w-full max-w-2xl text-center bg-transparent">
-          <div className="py-12">
-            <i className="pi pi-chart-bar text-6xl text-orange-500 mb-6"></i>
-            <h1 className="text-3xl font-bold mb-4">
-              Welcome to Your Market Dashboard
-            </h1>
-            <p className="text-gray-600 mb-8 max-w-md mx-auto">
-              Customize your dashboard by selecting features, charts, and stocks
-              to track. Get AI-powered insights and monitor your portfolio all
-              in one place.
-            </p>
-            <Button
-              label="Customize My Dashboard"
-              icon="pi pi-cog"
-              onClick={handleInitialSetup}
-              className="p-button-lg"
-            />
+      <>
+        <Toast ref={toast} />
+        <div className="min-h-screen flex items-center justify-center p-4">
+          <div className="w-full max-w-2xl text-center bg-transparent">
+            <div className="py-12">
+              <i className="pi pi-chart-bar text-6xl text-orange-500 mb-6"></i>
+              <h1 className="text-3xl font-bold mb-4">
+                Welcome to Your Market Dashboard
+              </h1>
+              <p className="text-gray-600 mb-8 max-w-md mx-auto">
+                Customize your dashboard by selecting features, charts, and
+                stocks to track. Get AI-powered insights and monitor your
+                portfolio all in one place.
+              </p>
+              <Button
+                label="Customize My Dashboard"
+                icon="pi pi-cog"
+                onClick={handleInitialSetup}
+                className="p-button-lg"
+              />
+            </div>
           </div>
+
+          {/* Initial Setup Stepper */}
+          <DashboardStepper
+            visible={showStepper}
+            onHide={() => setShowStepper(false)}
+            onSave={handleStepperSave}
+            dashboardType="market"
+          />
+
+          {/* Loading Overlay */}
+          {saving && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+              <i className="pi pi-spin pi-spinner text-4xl text-white"></i>
+            </div>
+          )}
         </div>
-
-        {/* Initial Setup Stepper */}
-        <DashboardStepper
-          visible={showStepper}
-          onHide={() => setShowStepper(false)}
-          onSave={handleStepperSave}
-          dashboardType="market"
-        />
-
-        {/* Loading Overlay */}
-        {saving && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-            <i className="pi pi-spin pi-spinner text-4xl text-white"></i>
-          </div>
-        )}
-      </div>
+      </>
     )
   }
 
@@ -258,81 +288,95 @@ export function MarketDashboard() {
       : 0
 
   return (
-    <div className="min-h-screen p-4">
-      <div className="mb-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold">{config.name}</h1>
-            <p className="text-gray-600">
-              {stockCount} stocks • {enabledSections.length} features
-            </p>
-          </div>
-          <Button
-            label="Edit Dashboard"
-            icon="pi pi-pencil"
-            onClick={handleEditDashboard}
-            className="p-button-outlined"
-          />
-        </div>
-      </div>
-
-      {enabledSections.length === 0 ? (
-        <div className="text-center py-12">
-          <i className="pi pi-exclamation-triangle text-4xl text-gray-400 mb-4"></i>
-          <h2 className="text-xl font-semibold mb-2">No Features Enabled</h2>
-          <p className="text-gray-600 mb-4">
-            Your dashboard doesn&apos;t have any features enabled yet.
-          </p>
-          <Button
-            label="Add Features"
-            icon="pi pi-plus"
-            onClick={handleEditDashboard}
-          />
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {enabledSections.map((section: DashboardSection) => (
-            <div key={section.id} className="h-full">
-              {renderSection(section)}
+    <>
+      <Toast ref={toast} />
+      <div className="min-h-screen p-4 flex flex-col items-center">
+        <div className="mb-6 w-full max-w-4xl">
+          {/* Title and Edit Button Row */}
+          <div className="flex justify-between items-start mb-4">
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold">{config.name}</h1>
+              <p className="text-gray-600">
+                {stockCount} stocks • {enabledSections.length} features
+              </p>
             </div>
-          ))}
+            <Button
+              label="Edit Dashboard"
+              icon="pi pi-pencil"
+              onClick={handleEditDashboard}
+              className="p-button-outlined flex-shrink-0"
+            />
+          </div>
+
+          {/* User Profile Card - Responsive Layout */}
+          <div className="flex justify-center md:justify-start">
+            <UserProfile />
+          </div>
         </div>
-      )}
 
-      <SpeedDial
-        model={[
-          {
-            label: 'Edit Dashboard',
-            icon: 'pi pi-pencil',
-            command: handleEditDashboard,
-          },
-          {
-            label: 'Add Stock',
-            icon: 'pi pi-plus',
-            command: handleEditDashboard,
-          },
-        ]}
-        radius={80}
-        type="semi-circle"
-        className="fixed bottom-6 left-6"
-      />
+        {enabledSections.length === 0 ? (
+          <div className="text-center py-12 w-full max-w-2xl">
+            <i className="pi pi-exclamation-triangle text-4xl text-gray-400 mb-4"></i>
+            <h2 className="text-xl font-semibold mb-2">No Features Enabled</h2>
+            <p className="text-gray-600 mb-4">
+              Your dashboard doesn&apos;t have any features enabled yet.
+            </p>
+            <Button
+              label="Add Features"
+              icon="pi pi-plus"
+              onClick={handleEditDashboard}
+            />
+          </div>
+        ) : (
+          <div className="flex flex-col items-center gap-8 w-full">
+            {enabledSections.map((section: DashboardSection) => (
+              <div
+                key={section.id}
+                className="w-full max-w-3xl flex justify-center"
+              >
+                <div className="w-full flex flex-col items-center">
+                  {renderSection(section)}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
-      {/* Edit Dialog */}
-      <DashboardEditDialog
-        visible={showEditDialog}
-        onHide={() => setShowEditDialog(false)}
-        mode={editMode ? 'edit' : 'create'}
-        initialConfig={editMode && config ? config : undefined}
-        onSave={handleSaveConfig}
-        dashboardType="market"
-      />
+        <SpeedDial
+          model={[
+            {
+              label: 'Edit Dashboard',
+              icon: 'pi pi-pencil',
+              command: handleEditDashboard,
+            },
+            {
+              label: 'Add Stock',
+              icon: 'pi pi-plus',
+              command: handleEditDashboard,
+            },
+          ]}
+          radius={80}
+          type="semi-circle"
+          className="fixed bottom-6 left-6"
+        />
 
-      {/* Loading Overlay */}
-      {saving && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-          <i className="pi pi-spin pi-spinner text-4xl text-white"></i>
-        </div>
-      )}
-    </div>
+        {/* Edit Dialog */}
+        <DashboardEditDialog
+          visible={showEditDialog}
+          onHide={() => setShowEditDialog(false)}
+          mode={editMode ? 'edit' : 'create'}
+          initialConfig={editMode && config ? config : undefined}
+          onSave={handleSaveConfig}
+          dashboardType="market"
+        />
+
+        {/* Loading Overlay */}
+        {saving && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <i className="pi pi-spin pi-spinner text-4xl text-white"></i>
+          </div>
+        )}
+      </div>
+    </>
   )
 }

@@ -1,4 +1,4 @@
-import { cacheManager, CACHE_KEYS, withCache } from '@/utils/cache'
+import { apiCacheService, CACHE_DURATIONS } from './apiCacheService'
 
 interface StockData {
   symbol: string
@@ -12,33 +12,56 @@ interface StockData {
 }
 
 class StockService {
-  private readonly STOCK_CACHE_TTL = 2 * 60 * 1000 // 2 minutes
   private readonly FINNHUB_API_KEY =
     process.env.NEXT_PUBLIC_FINNHUB_API_KEY || 'demo'
   private readonly POLYGON_API_KEY =
     process.env.NEXT_PUBLIC_POLYGON_API_KEY || 'demo'
 
   async getStockData(symbols: string[]): Promise<StockData[]> {
-    return withCache(
-      `${CACHE_KEYS.STOCK_DATA}_${symbols.join(',')}`,
-      async () => {
-        try {
-          // Try Finnhub and Polygon.io in parallel
-          const [finnhubData, polygonData] = await Promise.all([
-            this.fetchFromFinnhub(symbols),
-            this.fetchFromPolygon(symbols),
-          ])
-          // Combine and deduplicate
-          const allData: StockData[] = [...finnhubData, ...polygonData]
-          const uniqueData = this.removeDuplicates(allData)
-          return uniqueData
-        } catch (error) {
-          console.error('Error fetching stock data:', error)
-          return this.getMockStockData(symbols)
-        }
-      },
-      this.STOCK_CACHE_TTL
-    )
+    try {
+      // Try to get cached data first
+      const cacheKey = apiCacheService.generateCacheKey('stock_data', {
+        symbols: symbols.join(','),
+      })
+      const cachedData = await apiCacheService.getCachedData<StockData[]>(
+        cacheKey
+      )
+
+      if (cachedData) {
+        return cachedData
+      }
+
+      // If no cache, fetch fresh data
+      let freshData: StockData[]
+      try {
+        // Try Finnhub and Polygon.io in parallel
+        const [finnhubData, polygonData] = await Promise.all([
+          this.fetchFromFinnhub(symbols),
+          this.fetchFromPolygon(symbols),
+        ])
+        // Combine and deduplicate
+        const allData: StockData[] = [...finnhubData, ...polygonData]
+        freshData = this.removeDuplicates(allData)
+      } catch (error) {
+        console.error('Error fetching stock data:', error)
+        freshData = this.getMockStockData(symbols)
+      }
+
+      // Cache the fresh data
+      await apiCacheService.setCachedData(
+        cacheKey,
+        freshData,
+        CACHE_DURATIONS.STOCK_PRICES
+      )
+
+      // Increment API calls metric
+      await apiCacheService.incrementMetric('total_api_calls')
+
+      return freshData
+    } catch (error) {
+      console.error('Error in getStockData:', error)
+      return this.getMockStockData(symbols)
+    }
   }
 
   private async fetchFromFinnhub(symbols: string[]): Promise<StockData[]> {
@@ -230,42 +253,77 @@ class StockService {
   }
 
   async searchStocks(query: string): Promise<StockData[]> {
-    // This would typically call a search API
-    // For now, we'll filter from a predefined list
-    const allSymbols = [
-      'AAPL',
-      'GOOGL',
-      'MSFT',
-      'AMZN',
-      'TSLA',
-      'META',
-      'NVDA',
-      'NFLX',
-      'AMD',
-      'INTC',
-      'CRM',
-      'ORCL',
-      'IBM',
-      'CSCO',
-      'ADBE',
-      'PYPL',
-      'NKE',
-      'DIS',
-      'WMT',
-      'JPM',
-    ]
+    try {
+      // Try to get cached search results first
+      const cacheKey = apiCacheService.generateCacheKey('stock_search', {
+        query: query.toLowerCase(),
+      })
+      const cachedData = await apiCacheService.getCachedData<StockData[]>(
+        cacheKey
+      )
 
-    const filteredSymbols = allSymbols.filter(
-      (symbol) =>
-        symbol.toLowerCase().includes(query.toLowerCase()) ||
-        this.getCompanyName(symbol).toLowerCase().includes(query.toLowerCase())
-    )
+      if (cachedData) {
+        return cachedData
+      }
 
-    return this.getStockData(filteredSymbols.slice(0, 10))
+      // This would typically call a search API
+      // For now, we'll filter from a predefined list
+      const allSymbols = [
+        'AAPL',
+        'GOOGL',
+        'MSFT',
+        'AMZN',
+        'TSLA',
+        'META',
+        'NVDA',
+        'NFLX',
+        'AMD',
+        'INTC',
+        'CRM',
+        'ORCL',
+        'IBM',
+        'CSCO',
+        'ADBE',
+        'PYPL',
+        'NKE',
+        'DIS',
+        'WMT',
+        'JPM',
+      ]
+
+      const filteredSymbols = allSymbols.filter(
+        (symbol) =>
+          symbol.toLowerCase().includes(query.toLowerCase()) ||
+          this.getCompanyName(symbol)
+            .toLowerCase()
+            .includes(query.toLowerCase())
+      )
+
+      const searchResults = await this.getStockData(
+        filteredSymbols.slice(0, 10)
+      )
+
+      // Cache the search results
+      await apiCacheService.setCachedData(
+        cacheKey,
+        searchResults,
+        CACHE_DURATIONS.STOCK_PRICES
+      )
+
+      return searchResults
+    } catch (error) {
+      console.error('Error in searchStocks:', error)
+      return []
+    }
   }
 
-  invalidateCache(): void {
-    cacheManager.invalidate(CACHE_KEYS.STOCK_DATA)
+  async clearCache(): Promise<void> {
+    try {
+      // Clear expired cache entries
+      await apiCacheService.clearExpiredCache()
+    } catch (error) {
+      console.error('Error clearing cache:', error)
+    }
   }
 }
 

@@ -1,62 +1,61 @@
 'use client'
 
-import { Card } from 'primereact/card'
 import { useStockData } from '@/hooks/useStockData'
 
+/**
+ * Stats Section Component
+ *
+ * Displays key market statistics including stocks tracked, total volume,
+ * and market cap. Shows real-time data from the stock service.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <StatsSection />
+ * ```
+ *
+ * @returns {JSX.Element} A grid of market statistics cards
+ */
 export const StatsSection = () => {
   const { stockData } = useStockData([])
 
-  // Calculate summary stats
-  const totalStocks = stockData.length
-  const positiveStocks = stockData.filter((s) => s.change >= 0).length
-  const negativeStocks = stockData.filter((s) => s.change < 0).length
-  const avgChange =
-    stockData.length > 0
-      ? stockData.reduce((sum, s) => sum + s.changePercent, 0) /
-        stockData.length
-      : 0
-
-  if (totalStocks === 0) return null
+  const stats = [
+    {
+      label: 'Stocks Tracked',
+      value: stockData.length,
+      icon: 'pi pi-chart-line',
+    },
+    {
+      label: 'Total Volume',
+      value: stockData
+        .reduce((sum, stock) => sum + (stock.volume || 0), 0)
+        .toLocaleString(),
+      icon: 'pi pi-chart-bar',
+    },
+    {
+      label: 'Market Cap',
+      value: `$${(
+        stockData.reduce((sum, stock) => sum + (stock.marketCap || 0), 0) / 1e9
+      ).toFixed(1)}B`,
+      icon: 'pi pi-dollar',
+    },
+  ]
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 justify-items-center">
-      <Card className="w-full max-w-xs text-center">
-        <div className="p-1rem">
-          <div className="text-2xl font-bold text-primary mb-1">
-            {totalStocks}
-          </div>
-          <div className="text-sm">Stocks Tracked</div>
-        </div>
-      </Card>
-      <Card className="w-full max-w-xs text-center">
-        <div className="p-1rem">
-          <div className="text-2xl font-bold text-green-500 mb-1">
-            {positiveStocks}
-          </div>
-          <div className="text-sm">Gaining</div>
-        </div>
-      </Card>
-      <Card className="w-full max-w-xs text-center">
-        <div className="p-1rem">
-          <div className="text-2xl font-bold text-red-500 mb-1">
-            {negativeStocks}
-          </div>
-          <div className="text-sm">Declining</div>
-        </div>
-      </Card>
-      <Card className="w-full max-w-xs text-center">
-        <div className="p-1rem">
+    <div className="mb-12">
+      <h2 className="text-3xl font-bold text-center mb-8">Market Stats</h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {stats.map((stat, index) => (
           <div
-            className={`text-2xl font-bold mb-1 ${
-              avgChange >= 0 ? 'text-green-500' : 'text-red-500'
-            }`}
+            key={index}
+            className="bg-card p-6 rounded-lg border border-border text-center"
           >
-            {avgChange >= 0 ? '+' : ''}
-            {avgChange.toFixed(2)}%
+            <i className={`${stat.icon} text-3xl text-primary mb-4`}></i>
+            <div className="text-2xl font-bold mb-2">{stat.value}</div>
+            <div className="text-muted-foreground">{stat.label}</div>
           </div>
-          <div className="text-sm">Avg Change</div>
-        </div>
-      </Card>
+        ))}
+      </div>
     </div>
   )
 }
