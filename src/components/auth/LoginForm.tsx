@@ -6,10 +6,10 @@ import { Card } from 'primereact/card'
 import { InputText } from 'primereact/inputtext'
 import { Password } from 'primereact/password'
 import { Button } from 'primereact/button'
-import { Message } from 'primereact/message'
 import { Divider } from 'primereact/divider'
 import { Dropdown } from 'primereact/dropdown'
 import { createClient } from '@/lib/supabase/client'
+import { useWizardToast } from '../layout/WizardToastProvider'
 
 interface UserProfile {
   email: string
@@ -62,20 +62,17 @@ const OCCUPATIONS = [
 export const LoginForm = () => {
   const [isSignUp, setIsSignUp] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
   const [profile, setProfile] = useState<UserProfile>({
     email: '',
     password: '',
   })
   const router = useRouter()
   const supabase = createClient()
+  const { show } = useWizardToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError(null)
-    setSuccess(null)
 
     try {
       if (isSignUp) {
@@ -96,19 +93,41 @@ export const LoginForm = () => {
           },
         })
         if (error) throw error
-        setSuccess(
-          '🎉 Account created successfully! Check your email for the confirmation link.'
-        )
+        show({
+          severity: 'success',
+          summary: 'Account Created',
+          detail:
+            '🎉 Account created! Check your email for the confirmation link.',
+          life: 5000,
+          closable: true,
+        })
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { error, data } = await supabase.auth.signInWithPassword({
           email: profile.email,
           password: profile.password,
         })
         if (error) throw error
+        show({
+          severity: 'success',
+          summary: 'Logged In',
+          detail: `Welcome, ${
+            data.user?.user_metadata?.full_name ||
+            data.user?.email ||
+            profile.email
+          }!`,
+          life: 4000,
+          closable: true,
+        })
         router.push('/market')
       }
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'An error occurred')
+      show({
+        severity: 'error',
+        summary: 'Authentication Failed',
+        detail: error instanceof Error ? error.message : 'An error occurred',
+        life: 5000,
+        closable: true,
+      })
     } finally {
       setLoading(false)
     }
@@ -309,14 +328,6 @@ export const LoginForm = () => {
             </>
           )}
 
-          {error && (
-            <Message severity="error" text={error} className="w-full" />
-          )}
-
-          {success && (
-            <Message severity="success" text={success} className="w-full" />
-          )}
-
           <Button
             type="submit"
             label={isSignUp ? 'Create Account' : 'Sign In'}
@@ -333,8 +344,6 @@ export const LoginForm = () => {
             link
             onClick={() => {
               setIsSignUp(!isSignUp)
-              setError(null)
-              setSuccess(null)
             }}
             label={
               isSignUp
