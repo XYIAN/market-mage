@@ -6,6 +6,7 @@ import {
   StatsSection,
   AIInsightPreview,
   CallToAction,
+  UserMetrics,
 } from '@/components'
 import { useStockData } from '@/hooks/useStockData'
 import { useAIInsight } from '@/hooks/useAIInsight'
@@ -20,6 +21,9 @@ export default function HomePage() {
       <div className="max-w-6xl mx-auto py-6">
         {/* Hero Section */}
         <HeroSection />
+
+        {/* User Metrics */}
+        <UserMetrics />
 
         {/* Features Grid */}
         <FeatureCards />

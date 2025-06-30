@@ -4,7 +4,9 @@
 
 Market-Mage is a modern, responsive stock dashboard that combines real-time market data with AI-powered trading insights. Built with a focus on user experience and professional design, it provides traders and investors with the tools they need to make informed decisions.
 
-![Market-Mage Dashboard](https://img.shields.io/badge/Version-2.0.0-blue) ![Next.js](https://img.shields.io/badge/Next.js-15.3.4-black) ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue) ![PrimeReact](https://img.shields.io/badge/PrimeReact-10.7.0-purple) ![Supabase](https://img.shields.io/badge/Supabase-Auth%20%26%20DB-green)
+![Market-Mage Dashboard](https://img.shields.io/badge/Version-2.1.0-blue) ![Next.js](https://img.shields.io/badge/Next.js-15.3.4-black) ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue) ![PrimeReact](https://img.shields.io/badge/PrimeReact-10.7.0-purple) ![Supabase](https://img.shields.io/badge/Supabase-Auth%20%26%20DB-green)
+
+**🌐 Live Demo**: [https://market-mage.netlify.app/](https://market-mage.netlify.app/)
 
 ## ✨ What Market-Mage Does
 
@@ -17,6 +19,7 @@ Market-Mage transforms how you interact with financial markets by providing:
 - **Professional analytics** with charts and historical data
 - **User authentication** with persistent watchlists and preferences
 - **Personalized dashboards** that save your customizations
+- **Centralized API caching** for optimal performance across all users
 
 ## 🚀 Getting Started
 
@@ -50,11 +53,14 @@ Market-Mage transforms how you interact with financial markets by providing:
    NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 
-   # OpenAI Configuration (Optional)
+   # OpenAI Configuration (Optional - for AI insights)
    OPENAI_API_KEY=your-openai-api-key
 
-   # Alpha Vantage Configuration (Optional)
-   ALPHA_VANTAGE_API_KEY=your-alpha-vantage-api-key
+   # Stock Data APIs (Optional - for enhanced data)
+   NEXT_PUBLIC_ALPHA_VANTAGE_API_KEY=your-alpha-vantage-api-key
+   NEXT_PUBLIC_FINNHUB_API_KEY=your-finnhub-api-key
+   NEXT_PUBLIC_POLYGON_API_KEY=your-polygon-api-key
+   NEXT_PUBLIC_NEWS_API_KEY=your-news-api-key
    ```
 
 4. **Set up Supabase**
@@ -64,7 +70,20 @@ Market-Mage transforms how you interact with financial markets by providing:
    - Get your project URL and anon key from Settings > API
    - Add them to your `.env.local` file
 
-5. **Create the database table**
+5. **Create the database tables**
+
+   **Option A: Using Supabase CLI (Recommended)**
+
+   ```bash
+   # Install Supabase CLI (if not already installed)
+   brew install supabase/tap/supabase
+
+   # Run the setup script with your project reference ID
+   ./scripts/supabase-setup.sh YOUR_PROJECT_REF
+   ```
+
+   **Option B: Manual setup in Supabase Dashboard**
+
    In your Supabase SQL editor, run:
 
    ```sql
@@ -73,13 +92,32 @@ Market-Mage transforms how you interact with financial markets by providing:
      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
      user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
      symbol TEXT NOT NULL,
+     name TEXT,
      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+   );
+
+   -- Create API cache table for shared caching
+   CREATE TABLE api_cache (
+     cache_key TEXT PRIMARY KEY,
+     data JSONB NOT NULL,
+     expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+   );
+
+   -- Create user metrics table
+   CREATE TABLE user_metrics (
+     metric_key TEXT PRIMARY KEY,
+     metric_value BIGINT DEFAULT 0,
+     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
    );
 
    -- Enable Row Level Security
    ALTER TABLE watchlists ENABLE ROW LEVEL SECURITY;
+   ALTER TABLE api_cache ENABLE ROW LEVEL SECURITY;
+   ALTER TABLE user_metrics ENABLE ROW LEVEL SECURITY;
 
-   -- Create policies
+   -- Create policies for watchlists
    CREATE POLICY "Users can view their own watchlist" ON watchlists
      FOR SELECT USING (auth.uid() = user_id);
 
@@ -88,6 +126,41 @@ Market-Mage transforms how you interact with financial markets by providing:
 
    CREATE POLICY "Users can delete from their own watchlist" ON watchlists
      FOR DELETE USING (auth.uid() = user_id);
+
+   -- Create policies for API cache (read-only for all authenticated users)
+   CREATE POLICY "Authenticated users can read cache" ON api_cache
+     FOR SELECT USING (auth.role() = 'authenticated');
+
+   CREATE POLICY "Service role can manage cache" ON api_cache
+     FOR ALL USING (auth.role() = 'service_role');
+
+   -- Create policies for user metrics (read-only for all authenticated users)
+   CREATE POLICY "Authenticated users can read metrics" ON user_metrics
+     FOR SELECT USING (auth.role() = 'authenticated');
+
+   CREATE POLICY "Service role can manage metrics" ON user_metrics
+     FOR ALL USING (auth.role() = 'service_role');
+
+   -- Create function to increment metrics
+   CREATE OR REPLACE FUNCTION increment_metric(metric_key TEXT)
+   RETURNS void AS $$
+   BEGIN
+     INSERT INTO user_metrics (metric_key, metric_value)
+     VALUES (metric_key, 1)
+     ON CONFLICT (metric_key)
+     DO UPDATE SET
+       metric_value = user_metrics.metric_value + 1,
+       updated_at = NOW();
+   END;
+   $$ LANGUAGE plpgsql;
+
+   -- Insert initial metrics
+   INSERT INTO user_metrics (metric_key, metric_value) VALUES
+     ('total_users', 0),
+     ('active_dashboards', 0),
+     ('total_api_calls', 0),
+     ('cached_responses', 0)
+   ON CONFLICT (metric_key) DO NOTHING;
    ```
 
 6. **Run the development server**
@@ -98,6 +171,88 @@ Market-Mage transforms how you interact with financial markets by providing:
 
 7. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
+
+## 🚀 Deployment
+
+### Local Development
+
+The app is configured to work seamlessly on `localhost:3000`:
+
+```bash
+npm run dev
+```
+
+### Netlify Deployment
+
+1. **Connect your repository to Netlify**
+
+   - Push your code to GitHub/GitLab
+   - Connect your repository in Netlify dashboard
+
+2. **Configure environment variables in Netlify**
+   Go to Site settings > Environment variables and add:
+
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+   OPENAI_API_KEY=your-openai-api-key
+   NEXT_PUBLIC_ALPHA_VANTAGE_API_KEY=your-alpha-vantage-api-key
+   NEXT_PUBLIC_FINNHUB_API_KEY=your-finnhub-api-key
+   NEXT_PUBLIC_POLYGON_API_KEY=your-polygon-api-key
+   NEXT_PUBLIC_NEWS_API_KEY=your-news-api-key
+   ```
+
+3. **Build settings**
+
+   - Build command: `npm run build`
+   - Publish directory: `.next`
+   - Node version: 18 (or higher)
+
+4. **Deploy**
+   - Netlify will automatically deploy on every push to your main branch
+   - Your app will be available at your Netlify URL
+
+### Environment Variables Reference
+
+| Variable                            | Required | Description                    | Example                                   |
+| ----------------------------------- | -------- | ------------------------------ | ----------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`          | ✅       | Your Supabase project URL      | `https://xyz.supabase.co`                 |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY`     | ✅       | Your Supabase anonymous key    | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
+| `OPENAI_API_KEY`                    | ❌       | OpenAI API key for AI insights | `sk-...`                                  |
+| `NEXT_PUBLIC_ALPHA_VANTAGE_API_KEY` | ❌       | Alpha Vantage API key          | `demo`                                    |
+| `NEXT_PUBLIC_FINNHUB_API_KEY`       | ❌       | Finnhub API key                | `demo`                                    |
+| `NEXT_PUBLIC_POLYGON_API_KEY`       | ❌       | Polygon.io API key             | `demo`                                    |
+| `NEXT_PUBLIC_NEWS_API_KEY`          | ❌       | News API key                   | `demo`                                    |
+
+**Note**: The app works with demo data if API keys are not provided, but real-time data requires valid API keys.
+
+### Useful Supabase CLI Commands
+
+```bash
+# Link to your project
+supabase link --project-ref YOUR_PROJECT_REF
+
+# Push migrations to remote database
+supabase db push
+
+# Pull latest schema from remote database
+supabase db pull
+
+# Generate a new migration
+supabase migration new add_new_feature
+
+# Reset local database (for development)
+supabase db reset
+
+# View database logs
+supabase logs
+
+# Start local development environment
+supabase start
+
+# Stop local development environment
+supabase stop
+```
 
 ### First Steps
 
@@ -116,13 +271,15 @@ Market-Mage transforms how you interact with financial markets by providing:
 - Persistent sessions across browser sessions
 - Protected dashboard with user-specific data
 - Automatic logout and session management
+- Custom email templates with app branding
 
 #### 📊 **Personalized Dashboard**
 
 - Save your favorite stocks and crypto
-- Customizable dashboard layouts
+- Customizable dashboard layouts with stepper setup
 - Persistent watchlists across sessions
 - User-specific AI insights and notes
+- Unified dashboard system for both stocks and crypto
 
 #### 📊 **Stock Dashboard**
 
@@ -130,6 +287,15 @@ Market-Mage transforms how you interact with financial markets by providing:
 - Sort and filter your watchlist
 - Track portfolio gains and losses
 - Export your data to CSV
+- Multiple ways to add stocks (search, picklist, popular)
+
+#### 🪙 **Crypto Dashboard**
+
+- Real-time cryptocurrency tracking
+- Customizable dashboard sections
+- AI oracle with daily insights
+- Market distribution charts
+- Asset tracking with multiple data sources
 
 #### 🤖 **AI Oracle**
 
@@ -137,6 +303,7 @@ Market-Mage transforms how you interact with financial markets by providing:
 - Get market analysis and trend predictions
 - Track historical notes and learn from past decisions
 - Generate new insights when needed
+- Limited to 5 refreshes daily for cost control
 
 #### 📰 **Live News Feed**
 
@@ -144,6 +311,7 @@ Market-Mage transforms how you interact with financial markets by providing:
 - Smooth infinite scrolling display
 - Source attribution and timestamps
 - Always visible at the top of the screen
+- Separate crypto and stock news sections
 
 #### 📈 **Analytics & Charts**
 
@@ -151,6 +319,15 @@ Market-Mage transforms how you interact with financial markets by providing:
 - Technical analysis indicators
 - Historical data visualization
 - Responsive design for all devices
+- PrimeReact Chart.js integration
+
+#### ⚡ **Performance Optimizations**
+
+- Centralized API caching system
+- Shared cache across all users
+- Automatic cache expiration
+- User metrics tracking
+- Optimized API calls with fallbacks
 
 ## 🎨 User Experience
 
@@ -161,15 +338,16 @@ Market-Mage transforms how you interact with financial markets by providing:
 - **Intuitive Navigation**: SpeedDial provides quick access to all features
 - **Smooth Animations**: Polished interactions and transitions
 - **Fast Performance**: Optimized for quick loading and responsiveness
+- **Parallax Backgrounds**: Immersive visual experience
 
 ### Navigation Guide
 
 - **🏠 Home**: Overview of features and capabilities
-- **📊 Dashboard**: Main stock tracking and management (requires login)
-- **📊 Markets**: Public market dashboards
+- **📊 Dashboards**: Stock and crypto dashboards (requires login)
 - **📰 News**: Detailed news with charts and analysis
-- **🪙 Crypto**: Cryptocurrency tracking and news
 - **❓ FAQ**: Help and frequently asked questions
+- **ℹ️ About**: Information about Market-Mage
+- **📄 Terms**: Terms of service and privacy policy
 
 ## 🎯 Perfect For
 
@@ -213,6 +391,7 @@ Market-Mage transforms how you interact with financial markets by providing:
 - **PrimeReact 10.7.0** - Professional UI components
 - **Tailwind CSS** - Utility-first styling
 - **Chart.js** - Data visualization
+- **React Hook Form** - Form management
 
 ### Backend & APIs
 
@@ -220,6 +399,7 @@ Market-Mage transforms how you interact with financial markets by providing:
 - **OpenAI API** - AI-powered insights
 - **Alpha Vantage** - Real-time stock data
 - **Next.js API Routes** - Server-side functionality
+- **Centralized Caching** - Shared API cache system
 
 ### Development Tools
 

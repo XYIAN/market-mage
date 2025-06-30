@@ -32,18 +32,6 @@ export const Sidebar = () => {
         setVisible(false)
       },
     },
-    ...(user
-      ? [
-          {
-            label: '📊 Dashboard',
-            icon: 'pi pi-chart-line',
-            command: () => {
-              router.push('/dashboard')
-              setVisible(false)
-            },
-          },
-        ]
-      : []),
     {
       label: '📊 Markets',
       icon: 'pi pi-chart-line',
@@ -130,12 +118,14 @@ export const Sidebar = () => {
           </div>
         }
       >
-        <div className="relative h-full w-64 bg-surface-900 shadow-lg flex flex-col sidebar-neon-glow">
+        <div className="relative h-screen w-64 bg-surface-900 shadow-lg flex flex-col sidebar-neon-glow overflow-hidden">
           <div className="p-4 flex flex-col h-full">
             {user && (
               <div className="mb-4 p-3 bg-surface-800 rounded-lg">
                 <p className="text-sm text-gray-400">Welcome back,</p>
-                <p className="text-sm font-medium truncate">{user.email}</p>
+                <p className="text-sm font-medium truncate">
+                  {user.user_metadata?.full_name || user.email}
+                </p>
               </div>
             )}
 

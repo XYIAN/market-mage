@@ -1,0 +1,11 @@
+-- This file contains seed data for the watchlists table
+-- Note: You'll need to replace the user_id with actual user IDs from your auth.users table
+-- You can get user IDs by running: SELECT id, email FROM auth.users;
+
+-- Example seed data (uncomment and modify as needed):
+-- INSERT INTO public.watchlists (user_id, symbol) VALUES
+--   ('your-user-id-here', 'AAPL'),
+--   ('your-user-id-here', 'GOOGL'),
+--   ('your-user-id-here', 'MSFT'),
+--   ('your-user-id-here', 'TSLA'),
+--   ('your-user-id-here', 'BTC'); 

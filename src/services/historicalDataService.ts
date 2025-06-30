@@ -1,4 +1,4 @@
-import { cacheManager, CACHE_KEYS } from '@/utils/cache'
+import { apiCacheService, CACHE_DURATIONS } from './apiCacheService'
 
 interface HistoricalPrice {
   price: number
@@ -16,13 +16,18 @@ interface CryptoHistoricalData {
 }
 
 class HistoricalDataService {
-  private readonly HISTORICAL_CACHE_TTL = 24 * 60 * 60 * 1000 // 24 hours
   private readonly UPDATE_INTERVAL = 5 * 60 * 1000 // 5 minutes
 
   async getHistoricalData(): Promise<CryptoHistoricalData> {
-    return (
-      cacheManager.get<CryptoHistoricalData>(CACHE_KEYS.HISTORICAL_DATA) || {}
-    )
+    try {
+      const cacheKey = apiCacheService.generateCacheKey('historical_data')
+      const cachedData =
+        await apiCacheService.getCachedData<CryptoHistoricalData>(cacheKey)
+      return cachedData || {}
+    } catch (error) {
+      console.error('Error fetching historical data:', error)
+      return {}
+    }
   }
 
   async updateHistoricalData(
@@ -30,76 +35,91 @@ class HistoricalDataService {
     currentPrice: number,
     currentVolume: number
   ): Promise<{ change24h: number; changePercent: number }> {
-    const historicalData = await this.getHistoricalData()
-    const now = Date.now()
+    try {
+      const historicalData = await this.getHistoricalData()
+      const now = Date.now()
 
-    // Get or create historical record for this symbol
-    if (!historicalData[symbol]) {
-      historicalData[symbol] = {
-        current: { price: currentPrice, volume: currentVolume, timestamp: now },
-        previous: {
-          price: currentPrice,
-          volume: currentVolume,
-          timestamp: now,
-        },
-        change24h: 0,
-        changePercent: 0,
-      }
-    } else {
-      const record = historicalData[symbol]
-
-      // Check if we need to update (every 5 minutes)
-      if (now - record.current.timestamp > this.UPDATE_INTERVAL) {
-        // Move current to previous if it's been more than 24 hours
-        if (now - record.current.timestamp > 24 * 60 * 60 * 1000) {
-          record.previous = { ...record.current }
+      // Get or create historical record for this symbol
+      if (!historicalData[symbol]) {
+        historicalData[symbol] = {
+          current: {
+            price: currentPrice,
+            volume: currentVolume,
+            timestamp: now,
+          },
+          previous: {
+            price: currentPrice,
+            volume: currentVolume,
+            timestamp: now,
+          },
+          change24h: 0,
+          changePercent: 0,
         }
+      } else {
+        const record = historicalData[symbol]
 
-        // Update current data
-        record.current = {
-          price: currentPrice,
-          volume: currentVolume,
-          timestamp: now,
+        // Check if we need to update (every 5 minutes)
+        if (now - record.current.timestamp > this.UPDATE_INTERVAL) {
+          // Move current to previous if it's been more than 24 hours
+          if (now - record.current.timestamp > 24 * 60 * 60 * 1000) {
+            record.previous = { ...record.current }
+          }
+
+          // Update current data
+          record.current = {
+            price: currentPrice,
+            volume: currentVolume,
+            timestamp: now,
+          }
+
+          // Calculate change
+          const priceChange = currentPrice - record.previous.price
+          const changePercent =
+            record.previous.price > 0
+              ? (priceChange / record.previous.price) * 100
+              : 0
+
+          record.change24h = priceChange
+          record.changePercent = changePercent
         }
-
-        // Calculate change
-        const priceChange = currentPrice - record.previous.price
-        const changePercent =
-          record.previous.price > 0
-            ? (priceChange / record.previous.price) * 100
-            : 0
-
-        record.change24h = priceChange
-        record.changePercent = changePercent
       }
-    }
 
-    // Save updated data
-    cacheManager.set(
-      CACHE_KEYS.HISTORICAL_DATA,
-      historicalData,
-      this.HISTORICAL_CACHE_TTL
-    )
+      // Save updated data
+      const cacheKey = apiCacheService.generateCacheKey('historical_data')
+      await apiCacheService.setCachedData(
+        cacheKey,
+        historicalData,
+        CACHE_DURATIONS.MARKET_DATA
+      )
 
-    return {
-      change24h: historicalData[symbol].change24h,
-      changePercent: historicalData[symbol].changePercent,
+      return {
+        change24h: historicalData[symbol].change24h,
+        changePercent: historicalData[symbol].changePercent,
+      }
+    } catch (error) {
+      console.error('Error updating historical data:', error)
+      return { change24h: 0, changePercent: 0 }
     }
   }
 
   async getChangeData(
     symbol: string
   ): Promise<{ change24h: number; changePercent: number }> {
-    const historicalData = await this.getHistoricalData()
-    const record = historicalData[symbol]
+    try {
+      const historicalData = await this.getHistoricalData()
+      const record = historicalData[symbol]
 
-    if (!record) {
+      if (!record) {
+        return { change24h: 0, changePercent: 0 }
+      }
+
+      return {
+        change24h: record.change24h,
+        changePercent: record.changePercent,
+      }
+    } catch (error) {
+      console.error('Error getting change data:', error)
       return { change24h: 0, changePercent: 0 }
-    }
-
-    return {
-      change24h: record.change24h,
-      changePercent: record.changePercent,
     }
   }
 
@@ -110,40 +130,49 @@ class HistoricalDataService {
 
   // Generate mock historical data for initial setup
   async generateMockHistoricalData(symbols: string[]): Promise<void> {
-    const historicalData: CryptoHistoricalData = {}
-    const now = Date.now()
-    const oneDayAgo = now - 24 * 60 * 60 * 1000
+    try {
+      const historicalData: CryptoHistoricalData = {}
+      const now = Date.now()
+      const oneDayAgo = now - 24 * 60 * 60 * 1000
 
-    symbols.forEach((symbol) => {
-      const basePrice = Math.random() * 1000 + 10 // Random price between 10-1010
-      const changePercent = (Math.random() - 0.5) * 20 // Random change between -10% and +10%
-      const currentPrice = basePrice * (1 + changePercent / 100)
+      symbols.forEach((symbol) => {
+        const basePrice = Math.random() * 1000 + 10 // Random price between 10-1010
+        const changePercent = (Math.random() - 0.5) * 20 // Random change between -10% and +10%
+        const currentPrice = basePrice * (1 + changePercent / 100)
 
-      historicalData[symbol] = {
-        current: {
-          price: currentPrice,
-          volume: Math.random() * 1000000 + 100000,
-          timestamp: now,
-        },
-        previous: {
-          price: basePrice,
-          volume: Math.random() * 1000000 + 100000,
-          timestamp: oneDayAgo,
-        },
-        change24h: currentPrice - basePrice,
-        changePercent: changePercent,
-      }
-    })
+        historicalData[symbol] = {
+          current: {
+            price: currentPrice,
+            volume: Math.random() * 1000000 + 100000,
+            timestamp: now,
+          },
+          previous: {
+            price: basePrice,
+            volume: Math.random() * 1000000 + 100000,
+            timestamp: oneDayAgo,
+          },
+          change24h: currentPrice - basePrice,
+          changePercent: changePercent,
+        }
+      })
 
-    cacheManager.set(
-      CACHE_KEYS.HISTORICAL_DATA,
-      historicalData,
-      this.HISTORICAL_CACHE_TTL
-    )
+      const cacheKey = apiCacheService.generateCacheKey('historical_data')
+      await apiCacheService.setCachedData(
+        cacheKey,
+        historicalData,
+        CACHE_DURATIONS.MARKET_DATA
+      )
+    } catch (error) {
+      console.error('Error generating mock historical data:', error)
+    }
   }
 
-  clearHistoricalData(): void {
-    cacheManager.invalidate(CACHE_KEYS.HISTORICAL_DATA)
+  async clearHistoricalData(): Promise<void> {
+    try {
+      await apiCacheService.clearExpiredCache()
+    } catch (error) {
+      console.error('Error clearing historical data:', error)
+    }
   }
 }
 

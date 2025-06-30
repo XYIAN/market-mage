@@ -2,6 +2,109 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.1] - 2024-12-30
+
+### Added
+
+- **Professional Email Templates**: Updated all Supabase email templates with branded Market-Mage design
+- **App Icon Integration**: Added `icon-1.png` to email templates with proper sizing (60x60px)
+- **Centralized API Caching System**: Implemented shared caching across all users for optimal performance
+- **User Metrics Tracking**: Added real-time user statistics and API call monitoring
+- **Database Schema Enhancement**: Added API cache and user metrics tables with proper RLS policies
+
+### Changed
+
+- **Background Fix**: Fixed parallax background to use `bg-4.png` without stretching/zooming
+- **Email Template Styling**: Reduced icon size from 80x80px to 60x60px for better email proportions
+- **Caching Architecture**: Refactored all services (crypto, stock, news, historical) to use centralized Supabase cache
+- **Performance Optimization**: Implemented shared cache with automatic expiration and metrics tracking
+
+### Fixed
+
+- **Background Zoom Issue**: Removed `background-size: cover` that caused background stretching
+- **Email Template Sizing**: Added `object-fit: cover` and proper CSS for icon scaling
+- **Cache Management**: Replaced old cache utilities with centralized Supabase-based system
+- **Type Safety**: Fixed all TypeScript errors in services and components
+
+### Technical
+
+- **Database Migrations**: Added comprehensive SQL setup for API cache and user metrics
+- **Environment Configuration**: Updated README with complete deployment instructions for both localhost and Netlify
+- **Email Template Management**: Created reference migration file with all email template HTML
+- **Cross-Environment Compatibility**: Ensured app works seamlessly on localhost:3000 and production
+
+### Documentation
+
+- **Deployment Guide**: Added comprehensive Netlify deployment instructions
+- **Environment Variables**: Documented all required and optional API keys
+- **Database Setup**: Provided both CLI and manual setup instructions
+- **Email Template Setup**: Added step-by-step guide for updating Supabase email templates
+
+## [2.1.0] - 2024-12-30
+
+### Added
+
+- **User Authentication System**: Complete Supabase Auth integration with email/password
+- **Persistent User Data**: User-specific watchlists and dashboard customizations
+- **Enhanced Signup Experience**: Optional user info fields and 14 magic-themed avatars
+- **Personalized Sidebar**: Dynamic welcome messages and user-specific content
+- **User Metrics Display**: Homepage section showing current user count and platform statistics
+- **Custom Email Templates**: Branded confirmation emails with dark space theme
+- **Confirmation Page**: Professional account confirmation experience
+
+### Changed
+
+- **Dashboard Protection**: All dashboard pages now require authentication
+- **Sidebar Navigation**: Simplified menu structure with proper user context
+- **Version Display**: Dynamic version number in sidebar footer
+- **Stepper Design**: Enhanced with dark space theme and better component styling
+
+### Fixed
+
+- **Sidebar Scrollbar**: Fixed 100vh height and proper scrolling behavior
+- **Navigation Structure**: Removed duplicate dashboard links and improved organization
+- **User Experience**: Enhanced onboarding flow with personalized elements
+
+### Technical
+
+- **Supabase Integration**: Complete auth and database setup with proper RLS policies
+- **Protected Routes**: Implemented authentication guards for sensitive pages
+- **User State Management**: Persistent user sessions and data across browser sessions
+- **Email Confirmation Flow**: Custom confirmation page with proper error handling
+
+## [2.0.0] - 2024-12-30
+
+### Added
+
+- **Unified Dashboard System**: Single customizable dashboard for both stocks and crypto
+- **Stepper Setup Wizard**: Guided initial dashboard configuration with React Hook Form
+- **Edit Dialog**: In-place dashboard customization with feature toggles
+- **Component Registry**: Dynamic component loading based on user preferences
+- **Dashboard Presets**: Quick start templates for common configurations
+- **About & Terms Pages**: Professional legal and information pages
+- **Enhanced Navigation**: SpeedDial with proper menu structure and neon glow effects
+
+### Changed
+
+- **Version Management**: Updated to 2.0.0 with comprehensive changelog
+- **Sidebar Design**: Added neon glow effects and improved visual hierarchy
+- **Menu Structure**: Simplified navigation with logical grouping
+- **Component Architecture**: Unified dashboard components with props-based configuration
+
+### Fixed
+
+- **Navigation Issues**: Resolved nested button problems and improved accessibility
+- **Dialog Functionality**: Fixed customization dialog rendering and state management
+- **Type Safety**: Resolved all TypeScript errors in unified components
+- **Build Process**: Ensured successful builds with all new features
+
+### Technical
+
+- **Unified Types**: Created shared dashboard configuration types
+- **Component Reusability**: Implemented props-based component configuration
+- **State Management**: Enhanced localStorage integration for user preferences
+- **Form Validation**: Added comprehensive form validation with React Hook Form
+
 ## [1.2.0] - 2024-12-19
 
 ### Added
@@ -200,26 +303,3 @@ All notable changes to this project will be documented in this file.
 - Improved card dimensions and responsive layout
 - Enhanced button styling with gradient backgrounds
 - Better visual hierarchy in feature cards
-
-## [2.0.0] - 2024-06-09
-
-### Added
-
-- Unified customizable dashboard system for both Crypto and Stock dashboards
-- Unified stepper and edit dialog for dashboard setup and editing
-- Sidebar/menu structure simplified: Home, Dashboards (Crypto, Stock), News (Crypto, Stock), FAQ, About, Terms & Privacy
-- About page with app info, usage, and author details
-- Terms & Privacy page for XYIAN Software
-- Version and "Powered by AI Magic" now snap to sidebar/footer
-- Neon blue glow effect on sidebar (CSS)
-
-### Changed
-
-- Major UI/UX improvements for dashboard setup and editing
-- All dashboard config and section types unified and type-safe
-- Sidebar version always in sync with package.json
-
-### Fixed
-
-- Sidebar nested menu bugs
-- Type errors and build issues
