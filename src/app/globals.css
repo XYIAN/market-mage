@@ -79,7 +79,7 @@ a {
   background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: auto;
 }
 
 /* Shimmer animation for news cards */
@@ -357,11 +357,13 @@ a {
 /* Custom styles */
 body {
   padding: 1rem;
-  background-image: url('/bg-3.png');
-  background-size: cover;
+  background-image: url('/bg-4.png');
+  background-size: auto;
   background-attachment: fixed;
   background-position: center;
+  background-repeat: no-repeat;
   min-height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 /* Card elevation and transparency */
@@ -545,14 +547,7 @@ body {
 }
 
 /* Global styles */
-body {
-  padding: 1rem;
-  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-  background-attachment: fixed;
-  background-size: cover;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
+/* Removed duplicate body styles - using main body style at top */
 
 /* Parallax background */
 body::before {
@@ -562,9 +557,10 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('/bg-poly-1.png');
-  background-size: cover;
+  background-image: url('/bg-4.png');
+  background-size: auto;
   background-position: center;
+  background-repeat: no-repeat;
   opacity: 0.1;
   z-index: -1;
   pointer-events: none;
