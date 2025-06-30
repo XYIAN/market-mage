@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.2] - 2024-12-30
+
+### Added
+
+- **Comprehensive Toast Notifications**: Added toast notifications for all user actions across the application
+- **Dashboard Action Feedback**: Success/error toasts for dashboard creation, editing, and saving
+- **Stock Management Toasts**: Confirmation dialogs and toast notifications for stock removal
+- **Enhanced Stepper Dialog**: Added close button and improved header design with dark space theme
+- **User Action Feedback**: Toast notifications for login, logout, and all dashboard operations
+
+### Changed
+
+- **Stepper Dialog Design**: Added close button in header with proper icon and styling
+- **Dialog Header Enhancement**: Custom header with dashboard type icon and close functionality
+- **Toast Integration**: Replaced local state feedback with global toast notifications
+- **User Experience**: Improved feedback for all user interactions with consistent messaging
+
+### Fixed
+
+- **Stepper Dialog Accessibility**: Added proper close functionality and keyboard navigation
+- **Toast Consistency**: Unified toast notification system across all components
+- **Dialog State Management**: Proper dialog state reset when closing stepper
+- **Build Process**: Ensured successful builds with all new toast integrations
+
+### Technical
+
+- **Toast Provider Integration**: Added Toast components to all dashboard components
+- **Error Handling**: Enhanced error handling with user-friendly toast messages
+- **State Management**: Improved dialog state management with proper cleanup
+- **Component Architecture**: Better separation of concerns with toast notifications
+
 ## [2.1.1] - 2024-12-30
 
 ### Added

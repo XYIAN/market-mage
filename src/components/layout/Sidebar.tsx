@@ -264,7 +264,7 @@ export const Sidebar = () => {
                   size="small"
                 />
               )}
-              <p className="text-xs mt-1">Version 2.1.1</p>
+              <p className="text-xs mt-1">Version 2.1.2</p>
               <p className="text-xs text-gray-400">Powered by AI Magic</p>
             </div>
           </div>
