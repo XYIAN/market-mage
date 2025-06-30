@@ -10,6 +10,21 @@ import { ProgressBar } from 'primereact/progressbar'
 import { useState } from 'react'
 import { AchievementSystem } from '@/components/game/AchievementSystem'
 
+/**
+ * User Profile Component
+ *
+ * Displays the current user's game profile including avatar, mage level,
+ * points, achievements, and progress. Provides quick access to the
+ * achievement system and game features.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <UserProfile />
+ * ```
+ *
+ * @returns {JSX.Element | null} The user profile card or null if not logged in
+ */
 export function UserProfile() {
   const { user } = useAuth()
   const { userProgress, achievements } = useGame()

@@ -3,6 +3,21 @@
 import { Button } from 'primereact/button'
 import { useRouter } from 'next/navigation'
 
+/**
+ * Call to Action Component
+ *
+ * A prominent call-to-action section encouraging users to create a dashboard
+ * or learn more about the platform. Features gradient styling and multiple
+ * action buttons for different user intents.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <CallToAction />
+ * ```
+ *
+ * @returns {JSX.Element} A styled call-to-action section with navigation buttons
+ */
 export const CallToAction = () => {
   const router = useRouter()
 

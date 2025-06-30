@@ -14,6 +14,24 @@ interface AIInsightPreviewProps {
   insight?: AIInsight
 }
 
+/**
+ * AI Insight Preview Component
+ *
+ * Displays a preview of the latest AI-generated trading insight.
+ * Shows the insight title, content preview, and timestamp with navigation
+ * to the full dashboard for complete details.
+ *
+ * @component
+ * @param {AIInsightPreviewProps} props - Component props
+ * @param {AIInsight} [props.insight] - The AI insight to display
+ *
+ * @example
+ * ```tsx
+ * <AIInsightPreview insight={latestInsight} />
+ * ```
+ *
+ * @returns {JSX.Element | null} The insight preview card or null if no insight
+ */
 export const AIInsightPreview = ({ insight }: AIInsightPreviewProps) => {
   const router = useRouter()
 

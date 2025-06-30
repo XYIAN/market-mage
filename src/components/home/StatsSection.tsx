@@ -2,6 +2,20 @@
 
 import { useStockData } from '@/hooks/useStockData'
 
+/**
+ * Stats Section Component
+ *
+ * Displays key market statistics including stocks tracked, total volume,
+ * and market cap. Shows real-time data from the stock service.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <StatsSection />
+ * ```
+ *
+ * @returns {JSX.Element} A grid of market statistics cards
+ */
 export const StatsSection = () => {
   const { stockData } = useStockData([])
 
